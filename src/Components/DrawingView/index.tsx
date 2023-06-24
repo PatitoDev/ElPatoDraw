@@ -53,6 +53,7 @@ export const DrawingView = ({ drawing, onChange, onDelete }: DrawingViewProps) =
   }, [debouncedValue]);
 
   const onDrawingChange = useCallback((elements: readonly ExcalidrawElement[], appState: AppState, files: BinaryFiles) => {
+    if (opened) return;
     console.log('changed state');
     const appStateModified = {
       ...appState,
