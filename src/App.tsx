@@ -1,4 +1,5 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { Text } from '@mantine/core';
 import DrawingsPage from './Pages/DrawingsPage';
 import { MantineProvider } from '@mantine/core';
 import { useEffect, useState } from 'react';
@@ -34,19 +35,31 @@ function App () {
 
   if (!session) {
     return (
-      <div style={{ height: '50vh', width: '80vw', margin: 'auto' }} >
-        <Auth providers={[
-          'twitch'
-        ]} supabaseClient={client} appearance={{ theme: ThemeSupa }} >
-          <MantineProvider theme={{ 
-            fontFamily: 'Arial',
-            colorScheme: 'dark',
-            colors: {
-            }
-          }} withGlobalStyles withNormalizeCSS>
-          </MantineProvider>
-        </Auth>
-      </div>
+      <MantineProvider theme={{ 
+        fontFamily: 'Arial',
+        colorScheme: 'dark',
+      }} withGlobalStyles withNormalizeCSS>
+        <Text size="3em" weight="bold" align="center" m="1em">
+          El Pato Draw
+        </Text>
+        <div style={{ 
+            height: '50vh',
+            maxWidth: '30em',
+            width: '100%',
+            margin: 'auto' 
+          }} >
+          <Auth 
+            providers={[ 'twitch' ]} 
+            supabaseClient={client} 
+            appearance={{ 
+              theme: ThemeSupa,
+            }}
+            theme='dark'
+          >
+
+          </Auth>
+        </div>
+      </MantineProvider>
     );
   }
 

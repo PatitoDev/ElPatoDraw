@@ -86,11 +86,16 @@ export const DrawingView = ({ drawing, onChange, onDelete }: DrawingViewProps) =
     onDelete(drawing.id);
   }, []);
 
+  const onFileNameInputChange = useCallback((e:React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    setDrawingName(e.target.value);
+  }, []);
+
   if (initalState) return (
     <>
       {drawing && (
         <Modal opened={opened} onClose={close} title="Edit" centered>
-          <TextInput label="Name" mb="2em" value={drawingName} onChange={(v) => setDrawingName(v.target.value)} />
+          <TextInput label="Name" mb="2em" value={drawingName} onChange={onFileNameInputChange} />
           <Flex justify="space-between" direction="row">
             <Button color="red" onClick={() => onDrawingDeleteClick()}>Delete</Button>
             <Flex direction="row" gap={10}>
