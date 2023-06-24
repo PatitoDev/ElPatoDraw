@@ -64,7 +64,7 @@ export const DrawingView = ({ drawing, onChange, onDelete }: DrawingViewProps) =
       appState: appStateModified as any,
       files
     });
-  }, []);
+  }, [opened]);
 
   const renderTopRightUI = useCallback(() => {
     return (
