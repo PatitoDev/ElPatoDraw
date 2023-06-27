@@ -1,0 +1,12 @@
+{
+  "name": "El Pato Draw",
+  "icons": [
+    {
+      "src": "512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "https://elpatodraw.com",
+  "display": "standalone"
+}
