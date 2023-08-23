@@ -1,7 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '../types/db';
+import { SUPABASE_CONFIG } from '../settings';
 
-export const client = createClient<Database>('https://qvvzhuuxhdxpkbeaasqp.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2dnpodXV4aGR4cGtiZWFhc3FwIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODQyNTg2MTgsImV4cCI6MTk5OTgzNDYxOH0.Wx5fbJtRDFTizlNBgn4VvgJVK6L0OZ2KhHWRGORXaZ0');
+export const client = createClient<Database>(SUPABASE_CONFIG.url, SUPABASE_CONFIG.token);
 
 const getDrawings = async () => {
   const { data } = await client.from('Drawing').select();
