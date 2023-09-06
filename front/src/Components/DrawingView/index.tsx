@@ -2,14 +2,14 @@ import { Excalidraw, restoreAppState, restoreElements } from '@excalidraw/excali
 import { AppState, BinaryFiles, ExcalidrawInitialDataState } from '@excalidraw/excalidraw/types/types';
 import { useCallback, useEffect, useState } from 'react';
 import { Api } from '../../api';
-import { Database } from '../../types/db';
 import { ExcalidrawElement } from '@excalidraw/excalidraw/types/element/types';
 import { useDebouncedValue, useDisclosure } from '@mantine/hooks';
 import { Button, Flex, Modal, TextInput } from '@mantine/core';
+import { Drawing } from '../../types/Entity';
 
 export interface DrawingViewProps {
-  drawing: Database['public']['Tables']['Drawing']['Row'],
-  onDelete: (id: number) => void,
+  drawing: Drawing,
+  onDelete: (id: string) => void,
   onChange: (drawing: DrawingViewProps['drawing']) => void,
 }
 
