@@ -1,0 +1,9 @@
+name = "elpatodraw-worker"
+main = "src/worker.ts"
+compatibility_date = "2023-08-21"
+
+# Bind an R2 Bucket. Use R2 to store arbitrarily large blobs of data, such as files.
+# Docs: https://developers.cloudflare.com/r2/api/workers/workers-api-usage/
+[[r2_buckets]]
+binding = "elpatodraw"
+bucket_name = "elpatodraw"
