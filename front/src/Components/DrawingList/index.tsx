@@ -17,16 +17,22 @@ export const DrawingList = ({ files, onFileClick }: DrawingListProps) => {
       {files.map((file) => (
         <Card
           sx={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            transition: 'transform 0.3s, box-shadow 0.3s',
+            boxShadow: 'inset 0 0 0 0px rgb(193 194 197 / 0%)',
             ':hover' : {
               cursor: 'pointer',
-              outline: 'solid 1px white',
+              boxShadow: 'inset 0 0 0 3px rgb(193 194 197 / 100%)',
+              transform: 'scale(1.03)'
             }
           }}
-          miw="20em"
+          miw="min(15em, 100%)"
           key={file.id} 
           onClick={() => onFileClick(file.id)}>
-          <Text>{file.name}</Text>
-          <Text>{parseDate(file.created_at)}</Text>
+          <Text weight='bold'>{file.name}</Text>
+          <Text size="sm">{parseDate(file.created_at)}</Text>
         </Card>
       ))}
     </Flex>

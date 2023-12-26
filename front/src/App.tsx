@@ -36,7 +36,7 @@ function App () {
   if (!session) {
     return (
       <MantineProvider theme={{ 
-        fontFamily: 'Arial',
+        fontFamily: 'Poppins',
         colorScheme: 'dark',
       }} withGlobalStyles withNormalizeCSS>
         <Text size="3em" weight="bold" align="center" m="1em">
@@ -65,7 +65,7 @@ function App () {
 
   return (
     <MantineProvider theme={{ 
-      fontFamily: 'Arial',
+      fontFamily: 'Poppins',
       colorScheme: 'dark',
       colors: {
       }

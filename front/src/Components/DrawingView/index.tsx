@@ -4,13 +4,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { Api } from '../../api';
 import { ExcalidrawElement } from '@excalidraw/excalidraw/types/element/types';
 import { useDebouncedValue, useDisclosure } from '@mantine/hooks';
-import { Button, Flex, Modal, TextInput } from '@mantine/core';
-import { Drawing } from '../../types/Entity';
+import { Button, Flex, Loader, Modal, TextInput } from '@mantine/core';
+import { Drawing, DrawingMetadata } from '../../types/Entity';
 
 export interface DrawingViewProps {
   drawing: Drawing,
   onDelete: (id: string) => void,
-  onChange: (drawing: DrawingViewProps['drawing']) => void,
+  onTitleChange: (drawing: DrawingMetadata) => void,
 }
 
 interface ExcalidrawDataState {
@@ -19,7 +19,7 @@ interface ExcalidrawDataState {
   files: BinaryFiles
 }
 
-export const DrawingView = ({ drawing, onChange, onDelete }: DrawingViewProps) => {
+export const DrawingView = ({ drawing, onTitleChange, onDelete }: DrawingViewProps) => {
   const [drawingName, setDrawingName] = useState<string>('');
   const [opened, { open, close }] = useDisclosure(false);
   const [initalState, setInitalState] = useState<ExcalidrawInitialDataState | null>(null);
@@ -45,7 +45,6 @@ export const DrawingView = ({ drawing, onChange, onDelete }: DrawingViewProps) =
       console.log('update db');
       // TODO - FIX THIS HACK
       const data = JSON.parse(JSON.stringify(debouncedValue));
-      onChange({...drawing, data});
       Api.updateDrawing(drawing.id, {
         data,
       });
@@ -77,9 +76,13 @@ export const DrawingView = ({ drawing, onChange, onDelete }: DrawingViewProps) =
   const onDrawingClientWhichHasBeenSelectedNameHasChangeAndTheUserHasClickedTheSaveButtonCallbackXD = useCallback(async () => {
     if (!drawing) return;
     await Api.updateDrawing(drawing.id, { name: drawingName });
-    onChange({ ...drawing, name: drawingName });
+    onTitleChange({
+      created_at: drawing.created_at,
+      id: drawing.id,
+      name: drawingName
+    });
     close();
-  }, [drawingName]);
+  }, [drawingName, onTitleChange, drawing]);
 
   const onDrawingDeleteClick = useCallback(async () => {
     if (!drawing) return;
@@ -116,6 +119,6 @@ export const DrawingView = ({ drawing, onChange, onDelete }: DrawingViewProps) =
   );
 
   return (
-    <div>loading...</div>
+    <Loader size="md" />
   );
 };
