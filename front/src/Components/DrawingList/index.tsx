@@ -1,4 +1,4 @@
-import { Card, Flex, Text } from '@mantine/core';
+import { Card, SimpleGrid, Text } from '@mantine/core';
 import { DrawingMetadata } from '../../types/Entity';
 
 export interface DrawingListProps {
@@ -13,13 +13,10 @@ const parseDate = (date: string) => (
 export const DrawingList = ({ files, onFileClick }: DrawingListProps) => {
 
   return (
-    <Flex p="md" gap="sm" wrap="wrap">
+    <SimpleGrid sx={{ padding: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(15em, 1fr))' }} spacing="0.75rem">
       {files.map((file) => (
         <Card
           sx={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
             transition: 'transform 0.3s, box-shadow 0.3s',
             boxShadow: 'inset 0 0 0 0px rgb(193 194 197 / 0%)',
             ':hover' : {
@@ -28,13 +25,12 @@ export const DrawingList = ({ files, onFileClick }: DrawingListProps) => {
               transform: 'scale(1.03)'
             }
           }}
-          miw="min(15em, 100%)"
           key={file.id} 
           onClick={() => onFileClick(file.id)}>
           <Text weight='bold'>{file.name}</Text>
           <Text size="sm">{parseDate(file.created_at)}</Text>
         </Card>
       ))}
-    </Flex>
+    </SimpleGrid>
   );
 };
