@@ -6,15 +6,27 @@ export interface DrawingListProps {
   onFileClick: (id: string) => void,
 }
 
+const dateAsTimestamp = (date: string) => (
+  new Date(date).valueOf()
+);
+
+
 const parseDate = (date: string) => (
   new Date(date).toLocaleDateString()
 );
 
 export const DrawingList = ({ files, onFileClick }: DrawingListProps) => {
 
+  const sortedFiles = [...files];
+  sortedFiles.sort((a, b) => {
+    const tsA = dateAsTimestamp(a.created_at);
+    const tsB = dateAsTimestamp(b.created_at);
+    return tsB - tsA;
+  });
+
   return (
     <SimpleGrid sx={{ padding: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(15em, 1fr))' }} spacing="0.75rem">
-      {files.map((file) => (
+      {sortedFiles.map((file) => (
         <Card
           sx={{
             transition: 'transform 0.3s, box-shadow 0.3s',
