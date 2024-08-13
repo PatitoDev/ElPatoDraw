@@ -43,16 +43,16 @@ function App () {
           El Pato Draw
         </Text>
         <div style={{ 
-            height: '50vh',
-            maxWidth: '30em',
-            width: '100%',
-            margin: 'auto' 
-          }} >
+          height: '50vh',
+          maxWidth: '30em',
+          width: '100%',
+          margin: 'auto' 
+        }} >
           <Auth 
             providers={[ 'twitch' ]} 
             supabaseClient={client} 
             appearance={{ 
-              theme: ThemeSupa,
+              theme: ThemeSupa
             }}
             theme='dark'
           >
