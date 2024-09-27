@@ -29,7 +29,7 @@ export const DrawingList = ({ files, onFileClick }: DrawingListProps) => {
   const [sortedFiles, setSortedFiles] = useState<DrawingMetadata[]>([]);
 
   useEffect(() => {
-    let realFiles;
+    let realFiles: DrawingMetadata[];
     if (!searchQuery) {
       realFiles = [...files];
     } else {
