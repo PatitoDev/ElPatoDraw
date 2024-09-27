@@ -1,7 +1,9 @@
 import {
+  ActionIcon,
   Card,
   CloseButton,
   Group,
+  Menu,
   SimpleGrid,
   Text,
   TextInput,
@@ -14,6 +16,11 @@ export interface DrawingListProps {
   onFileClick: (id: string) => void,
 }
 
+export interface ToolbarProps {
+  currentSearch?: string;
+  onChangeSearch?: (newSearch: string) => void;
+}
+
 const dateAsTimestamp = (date: string) => (
   new Date(date).valueOf()
 );
@@ -22,6 +29,55 @@ const dateAsTimestamp = (date: string) => (
 const parseDate = (date: string) => (
   new Date(date).toLocaleDateString()
 );
+
+export const Toolbar = ({ currentSearch, onChangeSearch }: ToolbarProps) => {
+  const Cancel = (
+    <CloseButton
+      variant="transparent"
+      onClick={() => onChangeSearch && onChangeSearch('')}
+      disabled={!currentSearch || currentSearch.length === 0}
+      sx={{ ':disabled': { color: 'transparent' } }}
+    />
+  );
+  return (
+    <Group
+      style={{
+        justifyContent: 'center',
+        marginLeft: '1rem',
+        marginRight: '1rem',
+      }}
+    >
+      <Group sx={{ flex: 1, justifyContent: 'center' }}>
+        <TextInput
+          sx={{ flex: 1, maxWidth: '540px' }}
+          value={currentSearch || ''}
+          onChange={(e) =>
+            onChangeSearch && onChangeSearch(e.currentTarget.value)
+          }
+          placeholder="Search..."
+          rightSection={Cancel}
+        />
+      </Group>
+      <Menu position="bottom-end">
+        <Menu.Target>
+          <ActionIcon size="lg" variant="filled" aria-label="Options">
+            <img alt="" src="/img/menu.svg" />
+          </ActionIcon>
+        </Menu.Target>
+
+        <Menu.Dropdown>
+          <Menu.Item
+            component="a"
+            href="https://github.com/PatitoDev/ElPatoDraw"
+            target="_blank"
+          >
+            Star on GitHub
+          </Menu.Item>
+        </Menu.Dropdown>
+      </Menu>
+    </Group>
+  );
+};
 
 export const DrawingList = ({ files, onFileClick }: DrawingListProps) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -46,25 +102,9 @@ export const DrawingList = ({ files, onFileClick }: DrawingListProps) => {
     setSortedFiles(realFiles);
   });
 
-  const Cancel = (
-    <CloseButton
-      variant="transparent"
-      onClick={() => setSearchQuery('')}
-      disabled={searchQuery.length === 0}
-      sx={{ ':disabled': { color: 'transparent' } }}
-    />
-  );
-
   return (
     <>
-      <Group style={{ justifyContent: 'center' }}>
-        <TextInput
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.currentTarget.value)}
-          placeholder="Search..."
-          rightSection={Cancel}
-        />
-      </Group>
+      <Toolbar currentSearch={searchQuery} onChangeSearch={setSearchQuery} />
       <SimpleGrid
         sx={{
           padding: '1rem',
