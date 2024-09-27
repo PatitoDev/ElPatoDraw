@@ -21,7 +21,11 @@ dist-ssr
 *.suo
 *.ntvs*
 *.njsproj
-*.sln
 *.sw?
 
 supabase
+.vs
+bin
+obj
+appsettings.json
+**/*csproj.user
