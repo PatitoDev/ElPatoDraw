@@ -1,26 +1,24 @@
 ﻿namespace PatoDraw.Infrastructure.Entities;
 
-public class Folder
+public class File
 {
     public required Guid Id;
 
     public required string Name;
 
+    public required FileTypeEnum Type;
+
     public required string Color;
 
     public required Guid OwnerId;
 
-    public required DateTime CreatedAt;
+    public required DateTime CreatedAt; 
 
-    public required DateTime ModifiedAt;
+    public required DateTime ModifiedAt; 
 
     public DateTime? DeletedAt;
 
-    public Folder? ParentFolder;
-
     public Guid? ParentFolderId;
 
-    public IList<Folder> Folders = new List<Folder>();
-
-    public IList<File> Files = new List<File>();
+    public Folder? ParentFolder;
 }
