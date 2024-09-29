@@ -100,7 +100,7 @@ export const DrawingList = ({ files, onFileClick }: DrawingListProps) => {
       return tsB - tsA;
     });
     setSortedFiles(realFiles);
-  });
+  }, [searchQuery, files]);
 
   return (
     <>
