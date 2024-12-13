@@ -80,6 +80,10 @@ public class PatoDrawDbContext: DbContext
             .IsRequired();
 
         modelBuilder.Entity<Folder>()
+            .Property(f => f.Depth)
+            .IsRequired();
+
+        modelBuilder.Entity<Folder>()
             .Property(f => f.DeletedAt)
             .IsRequired(false);
     }

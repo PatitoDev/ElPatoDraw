@@ -9,6 +9,8 @@ public class CreateFolderHandler : IRequestHandler<CreateFolderRequest, ApiResul
 {
     private readonly PatoDrawDbContext _dbContext;
 
+    private const int DEPTH_LIMIT = 1000;
+
     public CreateFolderHandler(PatoDrawDbContext dbContext)
     {
         _dbContext = dbContext;
@@ -16,6 +18,8 @@ public class CreateFolderHandler : IRequestHandler<CreateFolderRequest, ApiResul
 
     public async Task<ApiResult<Guid?>> Handle(CreateFolderRequest request, CancellationToken cancellationToken)
     {
+        var depth = 0;
+
         if (request.Payload.ParentFolderId.HasValue)
         {
             // check we have permission to add to parent
@@ -25,13 +29,23 @@ public class CreateFolderHandler : IRequestHandler<CreateFolderRequest, ApiResul
 
             if (parentFolder == null)
             {
-                return new ApiResult<Guid?>() { Status = StatusCodes.Status404NotFound };
+                return ApiResult<Guid?>.Failure(StatusCodes.Status404NotFound, "Parent folder not found");
             }
 
             if (!parentFolder.OwnerId.Equals(request.OwnerId))
             {
-                return new ApiResult<Guid?>() { Status = StatusCodes.Status403Forbidden };
+                return ApiResult<Guid?>.Failure(StatusCodes.Status403Forbidden, "User does not have permission to parent folder");
             }
+
+            depth = parentFolder.Depth + 1;
+        }
+
+        if (depth >= DEPTH_LIMIT)
+        {
+            return ApiResult<Guid?>.Failure(
+                StatusCodes.Status400BadRequest,
+                "Depth limit reached, think abuot what you are doing with your life..."
+            );
         }
 
         // check name is valid
@@ -44,6 +58,7 @@ public class CreateFolderHandler : IRequestHandler<CreateFolderRequest, ApiResul
             Name = request.Payload.Name,
             ParentFolderId = request.Payload.ParentFolderId,
             ModifiedAt = DateTime.Now,
+            Depth = depth,
         };
 
         _dbContext.Add(createdFolder);

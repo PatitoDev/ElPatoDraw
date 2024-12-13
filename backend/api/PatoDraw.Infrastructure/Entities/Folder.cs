@@ -14,6 +14,8 @@ public class Folder
 
     public required DateTime ModifiedAt;
 
+    public required int Depth;
+
     public DateTime? DeletedAt;
 
     public Folder? ParentFolder;

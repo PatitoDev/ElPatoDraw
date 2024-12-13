@@ -21,6 +21,7 @@ public class GetFolderHandler : IRequestHandler<GetFolderRequest, ApiResult<Fold
         {
             var folder = await _dbContext
                 .Folders
+                .Include(f => f.ParentFolder)
                 .Where(f => f.Id == request.FolderId)
                 .FirstOrDefaultAsync(cancellationToken);
 
@@ -37,7 +38,15 @@ public class GetFolderHandler : IRequestHandler<GetFolderRequest, ApiResult<Fold
                 ModifiedAt = folder.ModifiedAt,
                 Name = folder.Name,
                 Id = folder.Id,
-                ParentFolder = folder.ParentFolderId
+                ParentFolder = folder.ParentFolder != null ? 
+                    new FolderChildResult() { 
+                        Color = folder.ParentFolder.Color,
+                        CreatedAt = folder.ParentFolder.CreatedAt,
+                        ModifiedAt = folder.ParentFolder.CreatedAt,
+                        Name = folder.ParentFolder.Name,
+                        Id = folder.ParentFolder.Id,
+                    } 
+                : null
             };
         }
 

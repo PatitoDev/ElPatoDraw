@@ -5,7 +5,7 @@ namespace PatoDraw.Api.Features.Folders.GetFolder;
 
 public record GetFolderRequest: IRequest<ApiResult<FolderResult?>>
 {
-    public Guid? DirectoryId { get; init; }
+    public Guid? FolderId { get; init; }
     public required Guid OwnerId { get; init; }
 }
 
@@ -24,7 +24,7 @@ public record FolderMetadata
     public required string Color { get; init; }
     public required DateTime CreatedAt { get; init; }
     public required DateTime ModifiedAt { get; init; }
-    public Guid? ParentFolder { get; init; }
+    public FolderChildResult? ParentFolder { get; init; }
 }
 
 public record FolderChildResult

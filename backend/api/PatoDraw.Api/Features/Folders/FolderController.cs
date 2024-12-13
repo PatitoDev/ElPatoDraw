@@ -1,7 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using PatoDraw.Api.Features.Folders.CreateFolder;
+using PatoDraw.Api.Features.Folders.DeleteFolder;
 using PatoDraw.Api.Features.Folders.GetFolder;
+using PatoDraw.Api.Features.Folders.UpdateFolder;
 
 namespace PatoDraw.Api.Features.Folders;
 
@@ -17,25 +19,18 @@ public class FolderController : Controller
 
     [HttpGet("")]
     [HttpGet("{folderId:Guid?}")]
-    public async Task<IActionResult> GetDirectory(Guid? folderId, Guid ownerId)
+    public async Task<IActionResult> GetFolder(Guid? folderId, Guid ownerId)
     {
         var result = await _mediator.Send(new GetFolderRequest(){ 
             FolderId = folderId,
             OwnerId = ownerId
         });
 
-        if (result.Payload != null)
-        {
-            var resultPayload = new JsonResult(result.Payload);
-            resultPayload.StatusCode = result.Status;
-            return resultPayload;
-        }
-
-        return new StatusCodeResult(result.Status);
+        return result.GetActionResult();
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateDirectory([FromBody] FolderPayload payload, Guid ownerId)
+    public async Task<IActionResult> CreateFolder([FromBody] FolderPayload payload, Guid ownerId)
     {
         var result = await _mediator.Send(new CreateFolderRequest()
         {
@@ -43,27 +38,28 @@ public class FolderController : Controller
             Payload = payload
         });
 
-        if (result.Payload != null)
-        {
-            var resultPayload = new JsonResult(result.Payload);
-            resultPayload.StatusCode = result.Status;
-            return resultPayload;
-        }
-
-        // TODO - return actual error
-        return new StatusCodeResult(result.Status);
+        return result.GetActionResult();
     }
 
-    [HttpPatch("{directoryId:Guid}")]
-    public void UpdateDirectory(Guid directoryId)
+    [HttpPut("update")]
+    public async Task<IActionResult> UpdateFolders([FromBody] UpdateFolderPayload payload, Guid ownerId)
     {
-        throw new NotImplementedException();
+        var result = await _mediator.Send(new UpdateFolderRequest() {
+            FoldersToUpdate = payload.FoldersToUpdate,
+            OwnerId = ownerId
+        });
+
+        return result.GetActionResult();
     }
 
-
-    [HttpDelete("{directoryId:Guid}")]
-    public void DeleteDirectory(Guid directoryId)
+    [HttpDelete("")]
+    public async Task<IActionResult> DeleteFolder([FromBody] IReadOnlyList<Guid> folderIdsToDelete, Guid ownerId)
     {
-        throw new NotImplementedException();
+        var result = await _mediator.Send(new DeleteFolderRequest() {
+            FolderIds = folderIdsToDelete,
+            OwnerId = ownerId
+        });
+
+        return result.GetActionResult();
     }
 }

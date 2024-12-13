@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using PatoDraw.Api.Features.Files.CreateDirectory;
+using PatoDraw.Api.Features.Files.UpdateFiles;
 
 namespace PatoDraw.Api.Features.Files;
 
@@ -28,18 +29,20 @@ public class FileController : Controller
             OwnerId = ownerId
         });
 
-        if (result.Payload != null) { 
-            return Json(result.Payload);
-        }
-
-        return StatusCode(result.Status);
+        return result.GetActionResult();
     }
 
 
     [HttpPatch("{fileID:Guid}")]
-    public void UpdateFile(Guid fileId)
+    public async Task<IActionResult> UpdateFile([FromBody] UpdateFilePayload payload, Guid ownerId)
     {
-        throw new NotImplementedException();
+        var result = await _mediator.Send(new UpdateFileRequest()
+        {
+            FilesToUpdate = payload.FilesToUpdate,
+            OwnerId = ownerId
+        });
+
+        return result.GetActionResult();
     }
 
 

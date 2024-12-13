@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using PatoDraw.Api.Features.Directories;
+using PatoDraw.Api.Features.Folders;
 using PatoDraw.Infrastructure;
 using System.Text.Json.Serialization;
 

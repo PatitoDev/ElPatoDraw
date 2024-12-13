@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using PatoDraw.Api.ValidationHelpers;
 using PatoDraw.Infrastructure;
 
 namespace PatoDraw.Api.Features.Files.CreateDirectory;
@@ -19,31 +20,49 @@ public class CreateFileHandler : IRequestHandler<CreateFileRequest, ApiResult<Gu
 
         if (request.OwnerId.Equals(Guid.Empty))
         {
-            return new ApiResult<Guid?> { Status = StatusCodes.Status400BadRequest };
+            return new ApiResult<Guid?> { Status = StatusCodes.Status400BadRequest, Error = "Missing owner" };
         }
 
-        // TODO - validate color
-
-        // check if user has permission to parent folder
         if (request.FilePayload.ParentFolderId != null)
         {
-            var parentFolderOwnerId = await _dbContext
+            var parentFolder = await _dbContext
                 .Folders
                 .AsNoTracking()
                 .Where(f => f.Id == request.FilePayload.ParentFolderId)
-                .Select(f => f.OwnerId)
-                .Cast<Guid?>()
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if (parentFolderOwnerId == null)
+            if (parentFolder == null)
             {
-                return new ApiResult<Guid?> { Status = StatusCodes.Status404NotFound };
+                return ApiResult<Guid?>.Failure(
+                    StatusCodes.Status404NotFound,
+                    "Parent folder not found"
+                );
             }
 
-            if (parentFolderOwnerId != request.OwnerId)
+            if (parentFolder.OwnerId != request.OwnerId)
             {
-                return new ApiResult<Guid?> { Status = StatusCodes.Status403Forbidden };
+                return ApiResult<Guid?>.Failure( 
+                    StatusCodes.Status403Forbidden,
+                    "You don't not have permissions to create a file in this directory"
+                );
             }
+
+            if (parentFolder.DeletedAt.HasValue)
+            {
+                return ApiResult<Guid?>.Failure( 
+                    StatusCodes.Status400BadRequest,
+                    "Target folder has been deleted"
+                );
+            }
+        }
+
+        var isNameValid = NameValidationHelper.IsValid(request.FilePayload.Name);
+        if (!isNameValid.IsValid)
+        {
+            return ApiResult<Guid?>.Failure(
+                StatusCodes.Status400BadRequest,
+                isNameValid.Reason
+            );
         }
 
         var createdFile = new Infrastructure.Entities.File()
@@ -62,10 +81,6 @@ public class CreateFileHandler : IRequestHandler<CreateFileRequest, ApiResult<Gu
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return new ApiResult<Guid?>()
-        {
-            Payload = id,
-            Status = StatusCodes.Status201Created
-        };
+        return ApiResult<Guid?>.Success(id, StatusCodes.Status201Created);
     }
 }
