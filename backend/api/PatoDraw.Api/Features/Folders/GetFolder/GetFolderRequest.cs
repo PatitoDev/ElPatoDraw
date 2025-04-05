@@ -24,6 +24,7 @@ public record FolderMetadata
     public required string Color { get; init; }
     public required DateTime CreatedAt { get; init; }
     public required DateTime ModifiedAt { get; init; }
+    public required DateTime? DeletedAt { get; init; }
     public FolderChildResult? ParentFolder { get; init; }
 }
 
@@ -34,6 +35,7 @@ public record FolderChildResult
     public required string Color { get; init; }
     public required DateTime CreatedAt { get; init; }
     public required DateTime ModifiedAt { get; init; }
+    public required DateTime? DeletedAt { get; init; }
 }
 
 public record FileChildResult
@@ -41,7 +43,7 @@ public record FileChildResult
     public required Guid Id { get; init; }
     public required string Name { get; init; }
     public required FileTypeEnum Type { get; init; }
-    public required string Color { get; init; }
     public required DateTime CreatedAt { get; init; }
     public required DateTime ModifiedAt { get; init; }
+    public required DateTime? DeletedAt { get; init; }
 }

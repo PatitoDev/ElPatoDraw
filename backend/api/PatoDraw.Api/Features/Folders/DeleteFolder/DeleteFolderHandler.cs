@@ -20,9 +20,9 @@ public class DeleteFolderHandler : IRequestHandler<DeleteFolderRequest, ApiResul
         var folders = await _dbContext
             .Folders
             .Where(f => request.FolderIds.Contains(f.Id))
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
-        var hasPermission = folders.Any(f => !f.OwnerId.Equals(request.OwnerId));
+        var hasPermission = folders.All(f => f.OwnerId.Equals(request.OwnerId));
         if (!hasPermission)
         {
             return new ApiResult<bool>()
@@ -31,40 +31,14 @@ public class DeleteFolderHandler : IRequestHandler<DeleteFolderRequest, ApiResul
             };
         }
 
-        // this might explode someday... consider a depth limit
         foreach (var folder in folders)
         {
-            await DeleteParent(folder, request.OwnerId, cancellationToken);
+            // we mark as deleted the folder and later, in a clean up schedule we fully delete the folder and its children
+            folder.DeletedAt = DateTime.Now;
         }
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         return new ApiResult<bool>() { Status = StatusCodes.Status200OK };
     }
-
-    public async Task DeleteParent(Folder folder, Guid ownerId, CancellationToken cancellationToken)
-    {
-
-        if (!ownerId.Equals(folder.OwnerId))
-            throw new NoDeletePermissionException();
-
-        folder.DeletedAt = DateTime.Now;
-
-        var childFolders = await _dbContext
-            .Folders
-            .Where(f => f.ParentFolderId == folder.Id)
-            .ToListAsync(cancellationToken);
-
-        foreach (var child in childFolders)
-        {
-            await DeleteParent(child, ownerId, cancellationToken);
-        }
-    }
 }
-
-public class DepthLimit()
-{
-
-}
-
-public class NoDeletePermissionException: Exception { }

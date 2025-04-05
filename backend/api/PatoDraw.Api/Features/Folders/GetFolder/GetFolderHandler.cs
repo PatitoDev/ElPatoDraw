@@ -36,6 +36,7 @@ public class GetFolderHandler : IRequestHandler<GetFolderRequest, ApiResult<Fold
                 Color = folder.Color,
                 CreatedAt = folder.CreatedAt,
                 ModifiedAt = folder.ModifiedAt,
+                DeletedAt = folder.DeletedAt,
                 Name = folder.Name,
                 Id = folder.Id,
                 ParentFolder = folder.ParentFolder != null ? 
@@ -43,8 +44,9 @@ public class GetFolderHandler : IRequestHandler<GetFolderRequest, ApiResult<Fold
                         Color = folder.ParentFolder.Color,
                         CreatedAt = folder.ParentFolder.CreatedAt,
                         ModifiedAt = folder.ParentFolder.CreatedAt,
+                        DeletedAt = folder.DeletedAt,
                         Name = folder.ParentFolder.Name,
-                        Id = folder.ParentFolder.Id,
+                        Id = folder.ParentFolder.Id
                     } 
                 : null
             };
@@ -53,12 +55,13 @@ public class GetFolderHandler : IRequestHandler<GetFolderRequest, ApiResult<Fold
         var fileChilds = await _dbContext
             .Files
             .Where(f => f.ParentFolderId.Equals(request.FolderId) && f.OwnerId.Equals(request.OwnerId))
+            .Where(f => !f.DeletedAt.HasValue)
             .Select(f => new FileChildResult()
             {
-                Color = f.Color,
                 CreatedAt = f.CreatedAt,
                 Id = f.Id,
                 ModifiedAt = f.ModifiedAt,
+                DeletedAt = f.DeletedAt,
                 Name = f.Name,
                 Type = f.Type
             })
@@ -67,12 +70,14 @@ public class GetFolderHandler : IRequestHandler<GetFolderRequest, ApiResult<Fold
         var folderChilds = await _dbContext
             .Folders
             .Where(f => f.ParentFolderId == request.FolderId && f.OwnerId.Equals(request.OwnerId))
+            .Where(f => !f.DeletedAt.HasValue)
             .Select(f => new FolderChildResult()
             {
                 Color = f.Color,
-                CreatedAt = f.CreatedAt,
                 Id = f.Id,
+                CreatedAt = f.CreatedAt,
                 ModifiedAt = f.ModifiedAt,
+                DeletedAt = f.DeletedAt,
                 Name = f.Name,
             })
             .ToListAsync(cancellationToken);

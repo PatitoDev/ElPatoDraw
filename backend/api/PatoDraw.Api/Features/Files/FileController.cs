@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using PatoDraw.Api.Features.Files.CreateDirectory;
+using PatoDraw.Api.Features.Files.DeleteFile;
+using PatoDraw.Api.Features.Files.GetFile;
 using PatoDraw.Api.Features.Files.UpdateFiles;
 
 namespace PatoDraw.Api.Features.Files;
@@ -15,13 +17,18 @@ public class FileController : Controller
         _mediator = mediator;
     }
 
-    [HttpGet("{fileID:Guid}")]
-    public void GetFile(Guid fileId)
+    [HttpGet("{fileId:Guid}")]
+    public async Task<IActionResult> GetFile(Guid fileId, Guid ownerId)
     {
-        throw new NotImplementedException();
+        var result = await _mediator.Send(new GetFileRequest { 
+            FileId = fileId, 
+            OwnerId = ownerId
+        });
+
+        return result.GetActionResult();
     }
 
-    [HttpPost("")]
+    [HttpPost]
     public async Task<IActionResult> CreateFile([FromBody] FileCreatePayload payload, Guid ownerId)
     {
         var result = await _mediator.Send(new CreateFileRequest() { 
@@ -33,7 +40,7 @@ public class FileController : Controller
     }
 
 
-    [HttpPatch("{fileID:Guid}")]
+    [HttpPut]
     public async Task<IActionResult> UpdateFile([FromBody] UpdateFilePayload payload, Guid ownerId)
     {
         var result = await _mediator.Send(new UpdateFileRequest()
@@ -46,9 +53,15 @@ public class FileController : Controller
     }
 
 
-    [HttpDelete("{fileID:Guid}")]
-    public void DeleteFile(Guid fileId)
+    [HttpDelete]
+    public async Task<IActionResult> DeleteFiles([FromBody] IReadOnlyList<Guid> fileIds, Guid ownerId)
     {
-        throw new NotImplementedException();
+        var result = await _mediator.Send(new DeleteFileRequest()
+        {
+            OwnerId = ownerId,
+            FileIds = fileIds
+        });
+
+        return result.GetActionResult();
     }
 }

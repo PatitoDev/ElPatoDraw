@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PatoDraw.Infrastructure;
+using PatoDraw.Infrastructure.Entities;
 
 namespace PatoDraw.Api.Features.Folders.UpdateFolder;
 
@@ -65,8 +66,8 @@ public class UpdateFolderHandler : IRequestHandler<UpdateFolderRequest, ApiResul
 
 
                 folderEntity.ParentFolderId = newFolderData.ParentFolderId;
-                // TODO - iterate on child and update depth
                 folderEntity.Depth = parent.Depth + 1;
+                await UpdateDepthRecursively(folderEntity, cancellationToken);
             }
         }
 
@@ -76,5 +77,18 @@ public class UpdateFolderHandler : IRequestHandler<UpdateFolderRequest, ApiResul
             Status = StatusCodes.Status200OK,
             Payload = true
         };
+    }
+
+    private async Task UpdateDepthRecursively(Folder folder, CancellationToken cancellationToken)
+    {
+        var childrenFolders = await _context.Folders
+            .Where(f => f.ParentFolderId.Equals(folder.Id))
+            .ToListAsync(cancellationToken);
+
+        foreach (var folderChild in childrenFolders)
+        {
+            folderChild.Depth = folder.Depth + 1;
+            await UpdateDepthRecursively(folderChild, cancellationToken);
+        }
     }
 }

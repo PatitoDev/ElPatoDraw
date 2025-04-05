@@ -34,7 +34,7 @@ public class CreateFolderHandler : IRequestHandler<CreateFolderRequest, ApiResul
 
             if (!parentFolder.OwnerId.Equals(request.OwnerId))
             {
-                return ApiResult<Guid?>.Failure(StatusCodes.Status403Forbidden, "User does not have permission to parent folder");
+                return ApiResult<Guid?>.Failure(StatusCodes.Status403Forbidden, "User does not have edit permission");
             }
 
             depth = parentFolder.Depth + 1;
@@ -44,11 +44,19 @@ public class CreateFolderHandler : IRequestHandler<CreateFolderRequest, ApiResul
         {
             return ApiResult<Guid?>.Failure(
                 StatusCodes.Status400BadRequest,
-                "Depth limit reached, think abuot what you are doing with your life..."
+                "Depth limit reached, think about what you are doing with your life..."
             );
         }
 
-        // check name is valid
+        var nameValidationResult = ValidationHelpers.NameValidationHelper.IsValid(request.Payload.Name);
+        if (!nameValidationResult.IsValid)
+        {
+            return ApiResult<Guid?>.Failure(
+                StatusCodes.Status400BadRequest,
+                "Folder name " + nameValidationResult.Reason
+            );
+        }
+
         var createdFolder = new Folder()
         {
             Id = Guid.NewGuid(),

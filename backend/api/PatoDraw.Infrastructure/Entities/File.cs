@@ -8,8 +8,6 @@ public class File
 
     public required FileTypeEnum Type;
 
-    public required string Color;
-
     public required Guid OwnerId;
 
     public required DateTime CreatedAt; 

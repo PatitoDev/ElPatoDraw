@@ -36,10 +36,6 @@ public class PatoDrawDbContext: DbContext
             .IsRequired();
 
         modelBuilder.Entity<Entities.File>()
-            .Property(f => f.Color)
-            .IsRequired();
-
-        modelBuilder.Entity<Entities.File>()
             .Property(f => f.CreatedAt)
             .IsRequired();
 

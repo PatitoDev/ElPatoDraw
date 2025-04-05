@@ -5,14 +5,13 @@ namespace PatoDraw.Api.Features.Files.CreateDirectory;
 
 public record CreateFileRequest : IRequest<ApiResult<Guid?>>
 {
-    public required Guid OwnerId;
-    public required FileCreatePayload FilePayload;
+    public required Guid OwnerId { get; init; }
+    public required FileCreatePayload FilePayload { get; init; }
 }
 
 public record FileCreatePayload
 {
     public required string Name { get; init; }
     public required FileTypeEnum Type { get; init; }
-    public required string Color { get; init; }
     public Guid? ParentFolderId { get; init; }
 }

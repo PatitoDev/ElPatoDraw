@@ -46,14 +46,6 @@ public class CreateFileHandler : IRequestHandler<CreateFileRequest, ApiResult<Gu
                     "You don't not have permissions to create a file in this directory"
                 );
             }
-
-            if (parentFolder.DeletedAt.HasValue)
-            {
-                return ApiResult<Guid?>.Failure( 
-                    StatusCodes.Status400BadRequest,
-                    "Target folder has been deleted"
-                );
-            }
         }
 
         var isNameValid = NameValidationHelper.IsValid(request.FilePayload.Name);
@@ -61,14 +53,13 @@ public class CreateFileHandler : IRequestHandler<CreateFileRequest, ApiResult<Gu
         {
             return ApiResult<Guid?>.Failure(
                 StatusCodes.Status400BadRequest,
-                isNameValid.Reason
+                "File name " + isNameValid.Reason
             );
         }
 
         var createdFile = new Infrastructure.Entities.File()
         {
             Id = id,
-            Color = request.FilePayload.Color,
             CreatedAt = DateTime.UtcNow,
             ModifiedAt = DateTime.UtcNow,
             Name = request.FilePayload.Name,

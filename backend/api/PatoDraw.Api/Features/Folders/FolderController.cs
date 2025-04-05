@@ -17,7 +17,7 @@ public class FolderController : Controller
         _mediator = mediator;
     }
 
-    [HttpGet("")]
+    [HttpGet]
     [HttpGet("{folderId:Guid?}")]
     public async Task<IActionResult> GetFolder(Guid? folderId, Guid ownerId)
     {
@@ -52,7 +52,7 @@ public class FolderController : Controller
         return result.GetActionResult();
     }
 
-    [HttpDelete("")]
+    [HttpDelete]
     public async Task<IActionResult> DeleteFolder([FromBody] IReadOnlyList<Guid> folderIdsToDelete, Guid ownerId)
     {
         var result = await _mediator.Send(new DeleteFolderRequest() {
