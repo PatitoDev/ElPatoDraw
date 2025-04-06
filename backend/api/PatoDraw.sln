@@ -5,7 +5,9 @@ VisualStudioVersion = 17.11.35208.52
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PatoDraw.Api", "PatoDraw.Api\PatoDraw.Api.csproj", "{2D5E6824-3AE2-4BEE-9ACF-9F7737589481}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatoDraw.Infrastructure", "PatoDraw.Infrastructure\PatoDraw.Infrastructure.csproj", "{D8AB302B-9985-44A5-9E5F-3053480B20DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PatoDraw.Infrastructure", "PatoDraw.Infrastructure\PatoDraw.Infrastructure.csproj", "{D8AB302B-9985-44A5-9E5F-3053480B20DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatoDraw.Worker", "PatoDraw.WorkerClient\PatoDraw.Worker.csproj", "{FC6DD9F1-40C5-42AA-87AC-949FCF6335AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{D8AB302B-9985-44A5-9E5F-3053480B20DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8AB302B-9985-44A5-9E5F-3053480B20DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8AB302B-9985-44A5-9E5F-3053480B20DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC6DD9F1-40C5-42AA-87AC-949FCF6335AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC6DD9F1-40C5-42AA-87AC-949FCF6335AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC6DD9F1-40C5-42AA-87AC-949FCF6335AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC6DD9F1-40C5-42AA-87AC-949FCF6335AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

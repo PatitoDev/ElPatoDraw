@@ -2,22 +2,23 @@
 using Microsoft.EntityFrameworkCore;
 using PatoDraw.Api.ValidationHelpers;
 using PatoDraw.Infrastructure;
+using PatoDraw.Worker;
 
 namespace PatoDraw.Api.Features.Files.CreateDirectory;
 
 public class CreateFileHandler : IRequestHandler<CreateFileRequest, ApiResult<Guid?>>
 {
     private readonly PatoDrawDbContext _dbContext;
+    private readonly IWorkerClient _workerClient;
 
-    public CreateFileHandler(PatoDrawDbContext dbContext)
+    public CreateFileHandler(PatoDrawDbContext dbContext, IWorkerClient workerClient)
     {
         _dbContext = dbContext;
+        _workerClient = workerClient;
     }
 
     public async Task<ApiResult<Guid?>> Handle(CreateFileRequest request, CancellationToken cancellationToken)
     {
-        var id = Guid.NewGuid();
-
         if (request.OwnerId.Equals(Guid.Empty))
         {
             return new ApiResult<Guid?> { Status = StatusCodes.Status400BadRequest, Error = "Missing owner" };
@@ -57,9 +58,11 @@ public class CreateFileHandler : IRequestHandler<CreateFileRequest, ApiResult<Gu
             );
         }
 
+        var storageFile = await _workerClient.CreateFile(request.Token, cancellationToken);
+
         var createdFile = new Infrastructure.Entities.File()
         {
-            Id = id,
+            Id = storageFile.Id,
             CreatedAt = DateTime.UtcNow,
             ModifiedAt = DateTime.UtcNow,
             Name = request.FilePayload.Name,
@@ -72,6 +75,6 @@ public class CreateFileHandler : IRequestHandler<CreateFileRequest, ApiResult<Gu
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return ApiResult<Guid?>.Success(id, StatusCodes.Status201Created);
+        return ApiResult<Guid?>.Success(storageFile.Id, StatusCodes.Status201Created);
     }
 }

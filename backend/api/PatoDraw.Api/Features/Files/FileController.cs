@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using PatoDraw.Api.Authorization;
 using PatoDraw.Api.Features.Files.CreateDirectory;
 using PatoDraw.Api.Features.Files.DeleteFile;
 using PatoDraw.Api.Features.Files.GetFile;
@@ -18,22 +19,28 @@ public class FileController : Controller
     }
 
     [HttpGet("{fileId:Guid}")]
-    public async Task<IActionResult> GetFile(Guid fileId, Guid ownerId)
+    public async Task<IActionResult> GetFile(Guid fileId)
     {
+        var userId = HttpContext.GetUserId();
         var result = await _mediator.Send(new GetFileRequest { 
             FileId = fileId, 
-            OwnerId = ownerId
+            OwnerId = userId
         });
 
         return result.GetActionResult();
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateFile([FromBody] FileCreatePayload payload, Guid ownerId)
+    public async Task<IActionResult> CreateFile([FromBody] FileCreatePayload payload)
     {
+        var userId = HttpContext.GetUserId();
+        var token = HttpContext.Request.Headers.Authorization.FirstOrDefault();
+        if (token == null) return new UnauthorizedResult();
+
         var result = await _mediator.Send(new CreateFileRequest() { 
+            Token = token,
             FilePayload = payload,
-            OwnerId = ownerId
+            OwnerId = userId
         });
 
         return result.GetActionResult();
@@ -41,12 +48,13 @@ public class FileController : Controller
 
 
     [HttpPut]
-    public async Task<IActionResult> UpdateFile([FromBody] UpdateFilePayload payload, Guid ownerId)
+    public async Task<IActionResult> UpdateFile([FromBody] UpdateFilePayload payload)
     {
+        var userId = HttpContext.GetUserId();
         var result = await _mediator.Send(new UpdateFileRequest()
         {
             FilesToUpdate = payload.FilesToUpdate,
-            OwnerId = ownerId
+            OwnerId = userId
         });
 
         return result.GetActionResult();
@@ -54,11 +62,12 @@ public class FileController : Controller
 
 
     [HttpDelete]
-    public async Task<IActionResult> DeleteFiles([FromBody] IReadOnlyList<Guid> fileIds, Guid ownerId)
+    public async Task<IActionResult> DeleteFiles([FromBody] IReadOnlyList<Guid> fileIds)
     {
+        var userId = HttpContext.GetUserId();
         var result = await _mediator.Send(new DeleteFileRequest()
         {
-            OwnerId = ownerId,
+            OwnerId = userId,
             FileIds = fileIds
         });
 

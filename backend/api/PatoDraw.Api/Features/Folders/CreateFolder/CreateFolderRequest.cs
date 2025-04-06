@@ -2,7 +2,7 @@
 
 namespace PatoDraw.Api.Features.Folders.CreateFolder;
 
-public class CreateFolderRequest: IRequest<ApiResult<Guid?>>
+public record CreateFolderRequest: IRequest<ApiResult<Guid?>>
 {
     public required Guid OwnerId { get; init; }
     public required FolderPayload Payload { get; init; }

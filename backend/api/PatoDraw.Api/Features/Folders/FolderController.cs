@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using PatoDraw.Api.Authorization;
 using PatoDraw.Api.Features.Folders.CreateFolder;
 using PatoDraw.Api.Features.Folders.DeleteFolder;
 using PatoDraw.Api.Features.Folders.GetFolder;
@@ -19,22 +20,24 @@ public class FolderController : Controller
 
     [HttpGet]
     [HttpGet("{folderId:Guid?}")]
-    public async Task<IActionResult> GetFolder(Guid? folderId, Guid ownerId)
+    public async Task<IActionResult> GetFolder(Guid? folderId)
     {
+        var userId = HttpContext.GetUserId();
         var result = await _mediator.Send(new GetFolderRequest(){ 
             FolderId = folderId,
-            OwnerId = ownerId
+            OwnerId = userId
         });
 
         return result.GetActionResult();
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateFolder([FromBody] FolderPayload payload, Guid ownerId)
+    public async Task<IActionResult> CreateFolder([FromBody] FolderPayload payload)
     {
+        var userId = HttpContext.GetUserId();
         var result = await _mediator.Send(new CreateFolderRequest()
         {
-            OwnerId = ownerId,
+            OwnerId = userId,
             Payload = payload
         });
 
@@ -42,22 +45,24 @@ public class FolderController : Controller
     }
 
     [HttpPut("update")]
-    public async Task<IActionResult> UpdateFolders([FromBody] UpdateFolderPayload payload, Guid ownerId)
+    public async Task<IActionResult> UpdateFolders([FromBody] UpdateFolderPayload payload)
     {
+        var userId = HttpContext.GetUserId();
         var result = await _mediator.Send(new UpdateFolderRequest() {
             FoldersToUpdate = payload.FoldersToUpdate,
-            OwnerId = ownerId
+            OwnerId = userId
         });
 
         return result.GetActionResult();
     }
 
     [HttpDelete]
-    public async Task<IActionResult> DeleteFolder([FromBody] IReadOnlyList<Guid> folderIdsToDelete, Guid ownerId)
+    public async Task<IActionResult> DeleteFolder([FromBody] IReadOnlyList<Guid> folderIdsToDelete)
     {
+        var userId = HttpContext.GetUserId();
         var result = await _mediator.Send(new DeleteFolderRequest() {
             FolderIds = folderIdsToDelete,
-            OwnerId = ownerId
+            OwnerId = userId
         });
 
         return result.GetActionResult();

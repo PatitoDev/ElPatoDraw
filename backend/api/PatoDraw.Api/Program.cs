@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using PatoDraw.Api.Authorization;
 using PatoDraw.Api.Features.Folders;
 using PatoDraw.Infrastructure;
+using PatoDraw.Worker;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,11 +26,18 @@ builder.Services
     );
 
 
-// TODO - find a better file type for this
 builder.Services.AddMediatR(c => c.RegisterServicesFromAssemblyContaining<FolderController>());
 
-var app = builder.Build();
+var workerBaseUrl = builder.Configuration.GetValue<string>("WorkerApiUrl");
+if (workerBaseUrl == null)
+    throw new Exception("Missing worker api url in appsettings");
 
+var workerHttpClient = new HttpClient();
+builder.Services.AddScoped<IWorkerClient, WorkerClient>(c => 
+    new WorkerClient(workerHttpClient, workerBaseUrl)
+);
+
+var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -37,8 +46,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseAuthorization();
+app.UseCors(b => 
+    b
+    .AllowAnyOrigin()
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+);
+
+app.UseMiddleware<AuthorizationMiddleware>();
 
 app.MapControllers();
+
 
 app.Run();

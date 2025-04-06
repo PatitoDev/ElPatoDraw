@@ -3,13 +3,13 @@ using PatoDraw.Infrastructure.Entities;
 
 namespace PatoDraw.Api.Features.Files.GetFile;
 
-public class GetFileRequest: IRequest<ApiResult<FileResult>>
+public record GetFileRequest: IRequest<ApiResult<FileResult>>
 {
     public required Guid FileId { get; init; }
     public required Guid OwnerId { get; init; }
 }
 
-public class FileResult
+public record FileResult
 {
     public required Guid Id { get; init; }
 
@@ -26,7 +26,7 @@ public class FileResult
     public ParentFolder? ParentFolder { get; set; }
 }
 
-public class ParentFolder
+public record ParentFolder
 {
     public Guid Id { get; init; }
     public required string Name { get; init; }
