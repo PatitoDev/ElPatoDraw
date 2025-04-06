@@ -45,11 +45,11 @@ public class FolderController : Controller
     }
 
     [HttpPut("update")]
-    public async Task<IActionResult> UpdateFolders([FromBody] UpdateFolderPayload payload)
+    public async Task<IActionResult> UpdateFolders([FromBody] IReadOnlyList<UpdateFolderData> payload)
     {
         var userId = HttpContext.GetUserId();
         var result = await _mediator.Send(new UpdateFolderRequest() {
-            FoldersToUpdate = payload.FoldersToUpdate,
+            FoldersToUpdate = payload,
             OwnerId = userId
         });
 

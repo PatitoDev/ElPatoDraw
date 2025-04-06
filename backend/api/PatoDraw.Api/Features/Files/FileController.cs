@@ -48,12 +48,12 @@ public class FileController : Controller
 
 
     [HttpPut]
-    public async Task<IActionResult> UpdateFile([FromBody] UpdateFilePayload payload)
+    public async Task<IActionResult> UpdateFile([FromBody] IReadOnlyList<UpdateFileData> payload)
     {
         var userId = HttpContext.GetUserId();
         var result = await _mediator.Send(new UpdateFileRequest()
         {
-            FilesToUpdate = payload.FilesToUpdate,
+            FilesToUpdate = payload,
             OwnerId = userId
         });
 

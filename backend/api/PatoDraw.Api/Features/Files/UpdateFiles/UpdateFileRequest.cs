@@ -8,11 +8,6 @@ public record UpdateFileRequest: IRequest<ApiResult<bool>>
     public required IReadOnlyList<UpdateFileData> FilesToUpdate { get; init; }
 }
 
-public record UpdateFilePayload
-{
-    public required IReadOnlyList<UpdateFileData> FilesToUpdate { get; init; }
-}
-
 public record UpdateFileData
 {
     public required Guid Id { get; init; }
