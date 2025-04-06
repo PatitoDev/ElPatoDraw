@@ -1,29 +1,21 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Api } from '../../api';
+import { useEffect, useState } from 'react';
 import { Tabs } from '@mantine/core';
 import { DrawingList } from '../../Components/DrawingList';
-import { DrawingMetadata } from '../../types/Entity';
 import DrawingLoader from '../../Components/DrawingView/DrawingLoader';
 import DrawingTabs from './DrawingTabs';
+import { MetadataApi } from '../../api/MetadataApi';
+import { FileChild, Folder } from '../../types/File';
 
 const DrawingPage = () =>  {
-  const [drawings, setDrawings] = useState<Array<{
-    metadata: DrawingMetadata,
-    isOpened: boolean
-  }>>([]);
-  const [selectedDrawingId, setSelectedDrawingId] = useState<string | null>(null);
-
-  const selectedDrawing = useMemo(() => 
-    drawings.find((item) => item.metadata.id === selectedDrawingId)
-  , [selectedDrawingId, drawings]);
+  const [folder, setFolder] = useState<Folder | null>(null);
+  const [activeFiles, setActiveFiles] = useState<Array<FileChild>>([]);
+  const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
-      const drawingMetadata = await Api.getDrawings();
-      setDrawings(drawingMetadata.map(metadata => ({
-        isOpened: false,
-        metadata
-      })));
+      const homeFolder = await MetadataApi.getFolder();
+      if (!homeFolder) return; // TODO - handle error
+      setFolder(homeFolder);
     })();
   }, []);
 
@@ -31,93 +23,110 @@ const DrawingPage = () =>  {
     // value here can be the id of the file or 'new' which would mean a new file
     // we could make this clearer
     if (value === 'new') {
-      // TODO - add loading state
-      const newDrawing = await Api.createNewDrawing();
-      // TODO - add error handling
-      if (!newDrawing) throw new Error();
-
-      setDrawings((items) => ([
-        ...items,
-        {
-          isOpened: true,
-          metadata: {
-            id: newDrawing.id,
-            name: newDrawing.name,
-            created_at: newDrawing.created_at
-          },
-        }
-      ]));
-
-      setSelectedDrawingId(newDrawing.id);
+      const createdFileId = await MetadataApi.createFile('New Drawing', 'Excalidraw');
+      const homeFolder = await MetadataApi.getFolder();
+      if (!homeFolder) return; // TODO - handle error
+      console.log(createdFileId, homeFolder);
+      setFolder(homeFolder);
+      const newFile = homeFolder.files.find(f => f.id === createdFileId);
+      if (!newFile) return;
+      setActiveFiles(prev => [...prev, newFile]);
+      setSelectedFileId(createdFileId);
       return;
     }
 
-    const drawing = drawings.find(item => item.metadata.id === value);
-    if (!drawing) {
-      setSelectedDrawingId(null);
+    const targetFile = activeFiles.find(item => item.id === value);
+    if (!targetFile) {
+      setSelectedFileId(null);
       return;
     }
-    setSelectedDrawingId(drawing.metadata.id);
+    setSelectedFileId(targetFile.id);
   };
 
   const onDrawingClick = async (id: string) => {
-    const foundItem = drawings.find((item) => item.metadata.id === id);
+    if (!folder) return;
+
+    const foundItem = folder.files.find((item) => item.id === id);
     if (!foundItem) throw new Error('Client data not up to date, reload please');
 
-    setSelectedDrawingId(foundItem.metadata.id);
-    if (!foundItem.isOpened) {
-      // if its not opened then we open it and load the data
-      setDrawings((items) => (items.map(item => item.metadata.id !== id ? item : {
-        ...item,
-        isOpened: true
-      })));
+    const alreadyInTabList = activeFiles.find(item => item.id === id);
+    if (!alreadyInTabList) {
+      setActiveFiles(prev => [...prev, foundItem]);
     }
+
+    setSelectedFileId(foundItem.id);
   };
 
   const onDrawingClose = (id: string) => {
-    setDrawings((items) => items.map((item) => item.metadata.id !== id ? item : {
-      ...item,
-      isOpened: false
+    setActiveFiles(prev => prev.filter(item => item.id !== id));
+    if (selectedFileId !== id) return;
+    setSelectedFileId(null);
+  };
+
+  const onDrawingNameChange = async (id: string, name: string) => {
+    var file = activeFiles.find(f => f.id === id);
+    if (!file) return;
+    await MetadataApi.updateFiles([{
+      id: id,
+      name,
+      // TODO - add parent folder id
+    }])
+
+    const homeFolder = await MetadataApi.getFolder();
+    if (!homeFolder) return; // TODO - handle error
+    setFolder(homeFolder);
+
+    setActiveFiles(prev => prev.map(f => f.id !== id ? f : {
+      ...f,
+      name
     }));
-    if (selectedDrawingId !== id) return;
-    setSelectedDrawingId(null);
   };
 
-  const onDrawingChange = (value: DrawingMetadata) => {
-    setDrawings(items => items.map(item => item.metadata.id !== value.id ? item : {
-      ...item,
-      metadata: value,
-    }));
-  };
+  const onDrawingDelete = async (id: string) => {
+    await MetadataApi.deleteFiles([id]);
+    if (selectedFileId === id)
+      setSelectedFileId(null);
+    setActiveFiles(prev => prev.filter(f => f.id !== id));
 
-  const onDrawingDelete = (id: string) => {
-    setDrawings((prev) => prev.filter(item => item.metadata.id !== id));
-    if (selectedDrawingId === id) {
-      setSelectedDrawingId(null);
-    }
+    const homeFolder = await MetadataApi.getFolder();
+    if (!homeFolder) return; // TODO - handle error
+    setFolder(homeFolder);
   };
-
-  const activeTabs = useMemo(() => (
-    drawings.filter(item => item.isOpened).map(item => item.metadata)
-  ), [drawings]);
 
   // z index is there to fix issues with excalidraw flickering when loading
   return (
-    <Tabs display="flex" sx={{
-      flexDirection: 'column',
-    }} h="100%" defaultValue="gallery" value={selectedDrawing?.metadata.id?.toString() ?? 'home'} onTabChange={onTabChange}>
-
+    <Tabs 
+      display="flex"
+      sx={{ flexDirection: 'column' }}
+      h="100%" 
+      defaultValue="gallery" 
+      value={selectedFileId ?? 'home'} 
+      onTabChange={onTabChange}
+    >
       <Tabs.List sx={{zIndex: 2}}>
-        <DrawingTabs activeDrawings={activeTabs} onDrawingClose={onDrawingClose} selectedDrawingId={selectedDrawingId} />
+        <DrawingTabs 
+          tabs={activeFiles}
+          selectedTabId={selectedFileId} 
+          onTabClose={onDrawingClose} 
+        />
       </Tabs.List>
 
       <Tabs.Panel h="100%" bg='#121212' value="home" pt="xs" sx={{ overflow: 'auto' }}>
-        <DrawingList files={drawings.map((item) => item.metadata)} onFileClick={onDrawingClick} />
+        { folder && (
+          <DrawingList 
+            onFileClick={onDrawingClick}
+            folder={folder}
+          />
+        )}
       </Tabs.Panel>
 
-      { drawings.filter(item => item.isOpened).map((file) => (
-        <Tabs.Panel sx={{ zIndex: 1 }} bg='#121212' key={file.metadata.id} h="100%" value={file.metadata.id.toString()} pt="xs">
-          <DrawingLoader id={file.metadata.id} onTitleChange={onDrawingChange} onDelete={onDrawingDelete} />
+      { activeFiles.map((file) => (
+        <Tabs.Panel sx={{ zIndex: 1 }} bg='#121212' key={file.id} h="100%" value={file.id.toString()} pt="xs">
+          <DrawingLoader 
+            id={file.id} 
+            onTitleChange={onDrawingNameChange} 
+            onDelete={onDrawingDelete}
+          />
         </Tabs.Panel>
       ))}
     </Tabs>
