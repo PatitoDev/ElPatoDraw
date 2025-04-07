@@ -12,6 +12,14 @@ public class PatoDrawDbContext: DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Entities.File>(x => {
+            x.ToTable("File");
+        });
+
+        modelBuilder.Entity<Folder>(x => {
+            x.ToTable("Folder");
+        });
+
         modelBuilder.Entity<Folder>()
             .HasKey(f => f.Id);
 

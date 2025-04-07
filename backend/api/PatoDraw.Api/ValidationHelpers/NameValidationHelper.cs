@@ -2,7 +2,7 @@
 
 public static class NameValidationHelper
 {
-    const int MaxNameLength = 50;
+    const int MaxNameLength = 200;
     const int MinNameLength = 1;
 
     public static ValidationResult IsValid(string Name)

@@ -8,7 +8,6 @@ using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services
     .AddControllers()
     .AddJsonOptions(o => {
@@ -21,8 +20,17 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services
-    .AddDbContext<PatoDrawDbContext>(c => 
-        c.UseInMemoryDatabase("ElPatoDraw.Table")
+    .AddDbContext<PatoDrawDbContext>(c =>
+    {
+        if (builder.Configuration.GetValue<bool>("UseInMemoryDb"))
+        {
+            c.UseInMemoryDatabase("ElPatoDraw.Table");
+        }
+        else
+        {
+            c.UseNpgsql(builder.Configuration.GetConnectionString("PatoDrawDbConnection"));
+        }
+    } 
     );
 
 
