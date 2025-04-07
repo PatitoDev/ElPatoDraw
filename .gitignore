@@ -1,3 +1,4 @@
+*.pubxml.user
 secrets.ts
 # Logs
 logs
