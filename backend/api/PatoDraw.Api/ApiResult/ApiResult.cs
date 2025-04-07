@@ -20,7 +20,6 @@ public record ApiResult<T>
         Error = error
     };
 
-    // Should this be an extension to avoid leaking mvc code into handlers?
     public IActionResult GetActionResult() {
         if (Error != null)
         {
