@@ -1,16 +1,16 @@
 import { Excalidraw, restoreAppState, restoreElements } from '@excalidraw/excalidraw';
 import { AppState, BinaryFiles, ExcalidrawInitialDataState } from '@excalidraw/excalidraw/types/types';
 import { useCallback, useEffect, useState } from 'react';
-import { Api } from '../../api';
 import { ExcalidrawElement } from '@excalidraw/excalidraw/types/element/types';
 import { useDebouncedValue, useDisclosure } from '@mantine/hooks';
 import { Button, Flex, Loader, Modal, TextInput } from '@mantine/core';
-import { Drawing, DrawingMetadata } from '../../types/Entity';
+import { Drawing } from '../../types/Entity';
+import { FileContentApi } from '../../api/FileContentApi';
 
 export interface DrawingViewProps {
   drawing: Drawing,
   onDelete: (id: string) => void,
-  onTitleChange: (drawing: DrawingMetadata) => void,
+  onTitleChange: (id:string, name: string) => void,
 }
 
 interface ExcalidrawDataState {
@@ -45,7 +45,7 @@ export const DrawingView = ({ drawing, onTitleChange, onDelete }: DrawingViewPro
       console.log('update db');
       // TODO - FIX THIS HACK
       const data = JSON.parse(JSON.stringify(debouncedValue));
-      Api.updateDrawing(drawing.id, {
+      FileContentApi.updateFileContent(drawing.id, {
         data,
       });
     })();
@@ -73,20 +73,14 @@ export const DrawingView = ({ drawing, onTitleChange, onDelete }: DrawingViewPro
     );
   }, []);
 
-  const onDrawingClientWhichHasBeenSelectedNameHasChangeAndTheUserHasClickedTheSaveButtonCallbackXD = useCallback(async () => {
+  const onSaveNameChangesBtnClick = useCallback(async () => {
     if (!drawing) return;
-    await Api.updateDrawing(drawing.id, { name: drawingName });
-    onTitleChange({
-      created_at: drawing.created_at,
-      id: drawing.id,
-      name: drawingName
-    });
+    onTitleChange(drawing.id, drawingName);
     close();
   }, [drawingName, onTitleChange, drawing]);
 
   const onDrawingDeleteClick = useCallback(async () => {
     if (!drawing) return;
-    await Api.deleteDrawing(drawing.id);
     onDelete(drawing.id);
   }, []);
 
@@ -103,7 +97,10 @@ export const DrawingView = ({ drawing, onTitleChange, onDelete }: DrawingViewPro
           <Flex justify="space-between" direction="row">
             <Button color="red" onClick={() => onDrawingDeleteClick()}>Delete</Button>
             <Flex direction="row" gap={10}>
-              <Button onClick={onDrawingClientWhichHasBeenSelectedNameHasChangeAndTheUserHasClickedTheSaveButtonCallbackXD}>Save</Button>
+              <Button 
+                disabled={drawingName.length < 1}
+                onClick={onSaveNameChangesBtnClick}
+              >Save</Button>
               <Button variant='outline' onClick={close}>Cancel</Button>
             </Flex>
           </Flex>

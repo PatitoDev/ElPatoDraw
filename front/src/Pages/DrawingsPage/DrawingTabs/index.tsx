@@ -1,29 +1,33 @@
 import { Button, Flex, Tabs } from "@mantine/core";
-import { DrawingMetadata } from "../../../types/Entity";
 
-interface DrawingTabsProps {
-  activeDrawings: Array<DrawingMetadata>,
-  selectedDrawingId: string | null,
-  onDrawingClose: (id:string) => void
+interface TabItem {
+  id: string,
+  name: string
 }
 
-const DrawingTabs = ({ activeDrawings, selectedDrawingId, onDrawingClose }: DrawingTabsProps) => (
+interface DrawingTabsProps {
+  tabs: Array<TabItem>,
+  selectedTabId: string | null,
+  onTabClose: (id:string) => void
+}
+
+const DrawingTabs = ({ onTabClose, selectedTabId, tabs }: DrawingTabsProps) => (
   <>
     <Tabs.Tab value="home">All Files</Tabs.Tab>
-    { activeDrawings.map((metadata) => (
-      <Flex align="center" key={metadata.id}>
-        <Tabs.Tab pr={5} key={metadata.id} value={metadata.id.toString()}>
-          {metadata.name}
+    { tabs.map(({ id, name }) => (
+      <Flex align="center" key={id}>
+        <Tabs.Tab pr={5} key={id} value={id.toString()}>
+          {name}
         </Tabs.Tab>
         <Flex 
-          sx={ metadata.id === selectedDrawingId ? {
+          sx={ id === selectedTabId ? {
             borderBottom: '0.125rem solid transparent',
             borderColor: '#1971c2',
           } : {
             borderBottom: '0.125rem solid transparent',
           }}
           direction="column" h="100%" align="center" justify="center">
-          <Button  px={10} variant='subtle' onClick={() => onDrawingClose(metadata.id)}>
+          <Button  px={10} variant='subtle' onClick={() => onTabClose(id)}>
             <img height='18' width='18' src='/img/close.svg'></img>
           </Button>
         </Flex>

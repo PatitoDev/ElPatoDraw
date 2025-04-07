@@ -2,29 +2,12 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { Text } from '@mantine/core';
 import DrawingsPage from './Pages/DrawingsPage';
 import { MantineProvider } from '@mantine/core';
-import { useEffect, useState } from 'react';
-import { client } from './api';
-import { Session } from '@supabase/supabase-js';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
+import { AuthenticationApi } from './api/AuthenticationApi';
 
 function App () {
-  const [session, setSession] = useState<Session | null>(null);
-
-  useEffect(() => {
-    client.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    const {
-      data: { subscription },
-    } = client.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-  
+  const session = AuthenticationApi.useSession();
 
   const router = createBrowserRouter([
     {
@@ -50,7 +33,7 @@ function App () {
         }} >
           <Auth 
             providers={[ 'twitch' ]} 
-            supabaseClient={client} 
+            supabaseClient={AuthenticationApi.supabaseClient} 
             appearance={{ 
               theme: ThemeSupa
             }}

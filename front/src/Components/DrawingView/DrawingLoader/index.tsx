@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { DrawingView, DrawingViewProps } from "..";
 import { Drawing } from "../../../types/Entity";
-import { Api } from "../../../api";
+import { FileContentApi } from "../../../api/FileContentApi";
 import { Flex, Loader } from "@mantine/core";
+import { MetadataApi } from "../../../api/MetadataApi";
 
 export interface DrawingLoaderProps extends Omit<DrawingViewProps, 'drawing'> {
   id: string
@@ -18,7 +19,11 @@ const DrawingLoader = ({ id, onTitleChange, onDelete  }: DrawingLoaderProps) => 
     (async () => {
       try {
         setResult({});
-        const data = await Api.getDrawing(id);
+        const data = await FileContentApi.getFileContent(id);
+        const metadata = await MetadataApi.getFile(id);
+        if (metadata == null)
+          throw new Error('Missing metadata');
+        data.name = metadata.name;
         setResult({ data, hasError: false });
       } catch {
         setResult({ hasError: true });
@@ -28,7 +33,11 @@ const DrawingLoader = ({ id, onTitleChange, onDelete  }: DrawingLoaderProps) => 
 
   if (result.data) {
     return (
-      <DrawingView drawing={result.data} onTitleChange={onTitleChange} onDelete={onDelete} />
+      <DrawingView 
+        drawing={result.data} 
+        onTitleChange={onTitleChange} 
+        onDelete={onDelete}
+      />
     )
   }
 

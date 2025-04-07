@@ -1,0 +1,12 @@
+name = "elpatodraw-exporter"
+main = "src/worker.js"
+compatibility_date = "2025-04-06"
+workers_dev = true
+preview_urls = false
+
+[observability]
+enabled = true
+
+[[r2_buckets]]
+binding = "ElPatoDrawBucket"
+bucket_name = "elpatodraw"
