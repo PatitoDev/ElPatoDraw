@@ -4,6 +4,6 @@ export const SUPABASE_CONFIG = {
 };
 
 export const API_URLS = {
-  worker: 'https://elpatodraw-worker.niv3k-business.workers.dev',
+  worker: 'https://fileworker.elpato.dev',
   metadataApi: 'https://api.elpato.dev/PatoDrawApi'
 }
