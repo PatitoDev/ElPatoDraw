@@ -128,7 +128,6 @@ const handleGet = async (request: Request, env: Env, ctx: ExecutionContext): Pro
 
 		const paths = request.url.split('/');
 		const id = paths[paths.length - 1];
-		console.log(id);
 
 		// if there is no id list all files
 		if (!id) {
