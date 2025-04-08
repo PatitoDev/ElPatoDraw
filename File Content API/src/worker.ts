@@ -5,13 +5,14 @@ import { Drawing, DrawingMetadata, NewDrawing, PatchDrawing } from '../types/ent
 
 export interface Env {
 	elpatodraw: R2Bucket;
+	ALLOWED_DOMAINS: string,
 }
 
-const corsHeaders = {
-	"Access-Control-Allow-Origin": "*",
+const corsHeaders = (env: Env) => ({
+	"Access-Control-Allow-Origin": env.ALLOWED_DOMAINS,
 	"Access-Control-Allow-Methods": "GET, OPTIONS, PATCH, DELETE, POST",
 	"Access-Control-Allow-Headers": "*",
-};
+});
 
 const authenticate = async (request: Request) => {
 	try {
@@ -36,7 +37,7 @@ const handlePost = async (request: Request, env: Env, ctx: ExecutionContext): Pr
 	try {
 		const userId = await authenticate(request);
 		if (!userId) {
-			return new Response('Unauthenticated', { status: 401, headers: corsHeaders });
+			return new Response('Unauthenticated', { status: 401, headers: corsHeaders(env) });
 		}
 
 		const id = uuid();
@@ -62,13 +63,14 @@ const handlePost = async (request: Request, env: Env, ctx: ExecutionContext): Pr
 			status: 201,
 			headers: {
 				'Content-Type': 'application/json',
-				...corsHeaders
+				...corsHeaders(env)
 			}
 		});
-	} catch {
+	} catch (er) {
+		console.error(er);
 		return new Response('', {
 			status: 500,
-			headers: corsHeaders
+			headers: corsHeaders(env)
 		});
 	}
 }
@@ -78,18 +80,18 @@ const handlePatch = async (request: Request, env: Env, ctx: ExecutionContext): P
 		const url = new URL(request.url);
 		const id = url.pathname.slice(1);
 		if (!id.length) {
-			return new Response('Invalid id', { status: 400, headers: corsHeaders });
+			return new Response('Invalid id', { status: 400, headers: corsHeaders(env) });
 		};
 
 		const userId = await authenticate(request);
 		if (!userId) {
-			return new Response('Unauthenticated', { status: 401, headers: corsHeaders });
+			return new Response('Unauthenticated', { status: 401, headers: corsHeaders(env) });
 		}
 
 		const key = `${userId}_${id}`; 
 		const metadata = (await env.elpatodraw.head(key));
 		if (!metadata) {
-			return new Response('Not found', { status: 404, headers: corsHeaders });
+			return new Response('Not found', { status: 404, headers: corsHeaders(env) });
 		}
 
 		const dataToPatch = await request.json() as PatchDrawing;
@@ -109,12 +111,13 @@ const handlePatch = async (request: Request, env: Env, ctx: ExecutionContext): P
 		});
 		return new Response(JSON.stringify(existingData), { headers: {
 				'Content-Type': 'application/json',
-			...corsHeaders,
+			...corsHeaders(env),
 		} });
-	} catch {
+	} catch (err) {
+		console.error(err);
 		return new Response('', {
 			status: 500,
-			headers: corsHeaders
+			headers: corsHeaders(env)
 		});
 	}
 }
@@ -123,7 +126,7 @@ const handleGet = async (request: Request, env: Env, ctx: ExecutionContext): Pro
 	try {
 		const userId = await authenticate(request);
 		if (!userId) {
-			return new Response('Unauthenticated', { status: 401, headers: corsHeaders });
+			return new Response('Unauthenticated', { status: 401, headers: corsHeaders(env) });
 		}
 
 		const paths = request.url.split('/');
@@ -148,7 +151,7 @@ const handleGet = async (request: Request, env: Env, ctx: ExecutionContext): Pro
 			}), {
 				headers: {
 					'Content-Type': 'application/json',
-					...corsHeaders
+					...corsHeaders(env)
 				}
 			})
 		}
@@ -157,7 +160,7 @@ const handleGet = async (request: Request, env: Env, ctx: ExecutionContext): Pro
 
 		const object = await env.elpatodraw.get(key);
 		if (!object) {
-			return new Response('Not found', { status: 404, headers: corsHeaders });
+			return new Response('Not found', { status: 404, headers: corsHeaders(env) });
 		}
 
 		const headers = new Headers();
@@ -167,40 +170,41 @@ const handleGet = async (request: Request, env: Env, ctx: ExecutionContext): Pro
 		return new Response(object.body, {
 			headers: {
 				...headers,
-				...corsHeaders
+				...corsHeaders(env)
 			},
 		}); 
-	} catch {
-		return new Response('Woops', { status: 500, headers: corsHeaders });
+	} catch(err) {
+		console.error(err);
+		return new Response('Woops', { status: 500, headers: corsHeaders(env) });
 	}
 };
 
 const handleDelete = async (request: Request, env: Env, ctx: ExecutionContext) => {
 		const userId = await authenticate(request);
 		if (!userId) {
-			return new Response('Unauthenticated', { status: 401, headers: corsHeaders });
+			return new Response('Unauthenticated', { status: 401, headers: corsHeaders(env) });
 		}
 
 		const url = new URL(request.url);
 		const id = url.pathname.slice(1);
 		if (!id.length) {
-			return new Response('Invalid id', { status: 400, headers: corsHeaders });
+			return new Response('Invalid id', { status: 400, headers: corsHeaders(env) });
 		};
 
 		const key = `${userId}_${id}`; 
 		const metadata = (await env.elpatodraw.head(key));
 		if (!metadata) {
-			return new Response('Not found', { status: 404, headers: corsHeaders });
+			return new Response('Not found', { status: 404, headers: corsHeaders(env) });
 		}
 
 		await env.elpatodraw.delete(key);
-		return new Response('', { status: 200, headers: corsHeaders });
+		return new Response('', { status: 200, headers: corsHeaders(env) });
 }
 
 
 const handleOptions = async (request: Request, env: Env, ctx: ExecutionContext) => {
 	return new Response("ok", {
-		headers: corsHeaders,
+		headers: corsHeaders(env),
 	});
 }
 
@@ -219,6 +223,6 @@ export default {
 				return await handleOptions(request, env, ctx);
 		}
 
-		return new Response('', { headers: corsHeaders });
+		return new Response('', { headers: corsHeaders(env) });
 	},
 };
