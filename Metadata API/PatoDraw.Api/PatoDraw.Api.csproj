@@ -23,4 +23,8 @@
     <ProjectReference Include="..\PatoDraw.WorkerClient\PatoDraw.Worker.csproj" />
   </ItemGroup>
 
+	<ItemGroup>
+		<Content Update="appsettings.json" Visible="false" />
+	</ItemGroup>
+
 </Project>
