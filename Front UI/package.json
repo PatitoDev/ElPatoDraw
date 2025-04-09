@@ -22,9 +22,12 @@
     "eslint": "^8.57.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.26.0"
+    "react-router-dom": "^6.26.0",
+    "styled-components": "^6.1.17",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
+    "@iconify/react": "^5.2.1",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react-swc": "^3.7.0",
