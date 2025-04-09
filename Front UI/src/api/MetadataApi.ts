@@ -78,6 +78,27 @@ const deleteFiles = async (fileIds: Array<string>) => {
   });
 }
 
+const createFolder = async (folderName: string, folderColor: string, parentFolderId?: string): Promise<string | null> => {
+  const url = `${baseUrl}/folder`;
+  const token = await AuthenticationApi.getToken();
+
+  const resp = await fetch(url, {
+    headers: {
+      'Authorization': token,
+      'Content-Type': 'application/json'
+    },
+    method: 'POST',
+    body: JSON.stringify({
+      name: folderName,
+      color: folderColor,
+      parentFolderId
+    })
+  });
+
+  if (resp.ok) return null;
+  return await resp.json();
+}
+
 const getFolder = async (folderId?: string | null): Promise<Folder | null> => {
   const url = `${baseUrl}/folder/${folderId ?? ""}`;
   const token = await AuthenticationApi.getToken();
@@ -99,6 +120,7 @@ export const MetadataApi = {
   getFolder,
   createFile,
   deleteFiles,
+  createFolder,
   updateFiles,
   getFile
 }
