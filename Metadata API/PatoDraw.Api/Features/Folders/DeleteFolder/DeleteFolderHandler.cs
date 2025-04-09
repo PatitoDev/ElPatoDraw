@@ -34,7 +34,7 @@ public class DeleteFolderHandler : IRequestHandler<DeleteFolderRequest, ApiResul
         foreach (var folder in folders)
         {
             // we mark as deleted the folder and later, in a clean up schedule we fully delete the folder and its children
-            folder.DeletedAt = DateTime.Now;
+            folder.DeletedAt = DateTime.UtcNow;
         }
 
         await _dbContext.SaveChangesAsync(cancellationToken);
