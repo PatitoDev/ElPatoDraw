@@ -1,17 +1,7 @@
 import styled from "styled-components";
 
-export const Container = styled.div`
-  top: 0;
-  left: 0;
-  position: absolute;
-  overflow: hidden;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 5;
-`;
-
 export const SelectionArea = styled.div`
+  z-index: 5;
   position: absolute;
 
   display: block;

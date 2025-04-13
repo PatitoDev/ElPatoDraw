@@ -15,7 +15,6 @@ const DrawingPage = () =>  {
   // z index is there to fix issues with excalidraw flickering when loading
   return (
     <S.Container>
-      <SelectionBox />
       <TabList />
       <TabContent />
     </S.Container>

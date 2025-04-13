@@ -16,7 +16,7 @@ export const ButtonIcon = styled.button`
   border: none;
   background-color: transparent;
 
-  transition: 
+  transition:
     opacity 0.2s ease-in-out,
     background-color 0.2s ease-in-out
   ;

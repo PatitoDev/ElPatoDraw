@@ -57,6 +57,7 @@ const getFileIdsInsideBox = (
     box: Box
   }> = [];
 
+  const containerBoundingBox = container.getBoundingClientRect();
   for (const child of container.children) {
     const id = (child as HTMLElement).dataset.id;
     if (!id) continue;
@@ -64,9 +65,15 @@ const getFileIdsInsideBox = (
     const rect = child.getBoundingClientRect();
     fileWithBox = [...fileWithBox, {
       fileId: id,
-      box: { 
-        start: { x: rect.left, y: rect.top },
-        end: { x: rect.right, y: rect.bottom }
+      box: {
+        start: {
+          x: rect.left,
+          y: rect.top + container.scrollTop - containerBoundingBox.top
+        },
+        end: {
+          x: rect.right,
+          y: rect.bottom + container.scrollTop - containerBoundingBox.top
+        }
       },
     }]
   }

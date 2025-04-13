@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const Container = styled.div`
   display: flex;
@@ -6,7 +6,7 @@ export const Container = styled.div`
   gap: 0.5em;
 `;
 
-export const PathButton = styled.button`
+export const PathButton = styled.button<{ $isDraggingOver: boolean }>`
   color: inherit;
   opacity: 0.8;
   font-size: inherit;
@@ -29,4 +29,9 @@ export const PathButton = styled.button`
     background-color: ${({ theme }) => theme.colors.backgroundLight};
     color: white;
   }
+
+  ${({ $isDraggingOver }) => $isDraggingOver && css`
+    border: dashed 2px;
+    padding: 0.4em 0.7em;
+  `}
 `;

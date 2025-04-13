@@ -6,17 +6,6 @@ import { createRef, RefObject } from 'react';
 export interface FileStorageStore {
   itemContainerRef: RefObject<HTMLDivElement>,
 
-  selectedItemIds: Array<string>,
-  getSelectedItems: () => ({
-    files: Array<FileChild>,
-    folders: Array<FolderChild>
-  }),
-  clearSelection: () => void,
-  addToSelection: (fileId: string) => void,
-  removeFromSelection: (fileId: string) => void,
-  toggleSelection: (fileId: string) => void,
-  setSelectedItemsIds: (fileIds: Array<string>) => void,
-
   fileIdCurrentlyEditing: string | null,
   setFileIdCurrentEditing: (fileId: string | null) => void,
 
@@ -26,6 +15,7 @@ export interface FileStorageStore {
   currentFolder: Folder | null,
   changeToFolder: (folderId: string | null) => Promise<void>,
   navigateToParentFolder: () => Promise<void>,
+  refreshCurrentFolder: () => Promise<void>,
 
   showExplorer: () => Promise<void>,
   openFile: (fileId : string) => void,
@@ -34,10 +24,25 @@ export interface FileStorageStore {
   createNewFile: () => Promise<void>,
   createNewFolder: () => Promise<void>
 
+  isDragging: boolean
+  setIsDragging: (value: boolean) => void,
   deleteSelection: () => Promise<void>,
   moveSelectionToFolder: (targetId: string | null) => Promise<void>,
-  setIsMovingItems: (value: boolean) => void,
-  isMovingItems: boolean
+  selectedItemIds: Array<string>,
+  getSelectedItems: () => ({
+    files: Array<FileChild>,
+    folders: Array<FolderChild>
+  }),
+  clearSelection: () => void,
+  addToSelection: (fileId: string) => void,
+  removeFromSelection: (fileId: string) => void,
+  setSelectedItemsIds: (fileIds: Array<string>) => void,
+
+  fileIdCurrentlyEditingName : string | null,
+  editSelectionName: () => void,
+  clearFileNameEditing: () => void,
+
+  updateColorToSelection: (color: string) => void,
 }
 
 export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
@@ -48,6 +53,11 @@ export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
 
   activeFiles: [],
   setActiveFiles: (files) => set({ activeFiles: files }),
+
+  refreshCurrentFolder: async () => {
+    const folderId = get().currentFolder?.metadata?.id;
+    await get().changeToFolder(folderId ?? null);
+  },
 
   currentFolder: null,
   changeToFolder: async (folderId) => {
@@ -92,15 +102,15 @@ export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
 
   createNewFolder: async () => {
     const currentFolderId = get().currentFolder?.metadata?.id;
-    await MetadataApi.createFolder('New folder', '#FFFB96', currentFolderId);
-    await get().changeToFolder(currentFolderId ?? null);
+    await MetadataApi.createFolder('New folder', currentFolderId);
+    get().refreshCurrentFolder();
   },
 
   createNewFile: async () => {
     const currentFolderId = get().currentFolder?.metadata?.id;
     const createdFileId = await MetadataApi.createFile('New Drawing', 'Excalidraw', currentFolderId);
+    get().refreshCurrentFolder();
 
-    await get().changeToFolder(currentFolderId ?? null);
     if (createdFileId)
       get().openFile(createdFileId);
   },
@@ -111,15 +121,6 @@ export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
 
   addToSelection: (fileId: string) => {
     set(state => ({ selectedItemIds: [...state.selectedItemIds, fileId]}));
-  },
-
-  toggleSelection: (fileId: string) => {
-    set(state => ({ 
-      selectedItemIds: 
-      state.selectedItemIds.includes(fileId) ? 
-        state.selectedItemIds.filter(id => id !== fileId) :
-        [...state.selectedItemIds, fileId]
-    }));
   },
 
   clearSelection: () => {
@@ -142,9 +143,6 @@ export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
     }
   },
 
-  isMovingItems: false,
-  setIsMovingItems: (value) => set({ isMovingItems: value }),
-
   deleteSelection: async () => {
     const selectedItemIds = get().selectedItemIds;
     if (selectedItemIds.length === 0) return;
@@ -154,6 +152,9 @@ export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
     const foldersTodelete = currentFolder.folders.filter(f => selectedItemIds.includes(f.id));
     const filesToDelete = currentFolder.files.filter(f => selectedItemIds.includes(f.id));
     await MetadataApi.deleteFiles(filesToDelete.map(f => f.id));
+    await MetadataApi.deleteFolders(foldersTodelete.map(f => f.id));
+    get().clearSelection();
+    await get().refreshCurrentFolder();
   },
 
   moveSelectionToFolder: async (targetFolderId) => {
@@ -181,8 +182,36 @@ export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
       parentFolderId: targetFolderId ?? undefined,
     })));
 
-    // TODO - move folders
-    await get().changeToFolder(get().currentFolder?.metadata?.id ?? null);
-  }
+    get().clearSelection();
+    await get().refreshCurrentFolder();
+  },
 
+  isDragging: false,
+  setIsDragging: (value) => set({ isDragging: value }),
+
+  fileIdCurrentlyEditingName : null,
+  editSelectionName: () => {
+    const itemIds = get().selectedItemIds;
+    if (itemIds.length !== 1) return;
+    const fileId = itemIds[0];
+    set({ fileIdCurrentlyEditingName: fileId });
+  },
+  clearFileNameEditing: () => {
+    set({ fileIdCurrentlyEditingName: null })
+  },
+
+  updateColorToSelection: (color: string) => {
+    const selectedItemIds = get().selectedItemIds;
+    const currentFolder = get().currentFolder;
+    if (!currentFolder) return;
+
+    const updatedFolders = currentFolder.folders.map(f => 
+      selectedItemIds.includes(f.id) ?
+      ({...f, color}) :
+      {...f}
+    );
+    const updatedCurrentFolder: Folder = {...currentFolder, folders: updatedFolders };
+
+    set(({ currentFolder: updatedCurrentFolder }));
+  },
 }));

@@ -1,124 +1,106 @@
-import { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import * as S from './styles';
 import { useFileStorageStore } from '../../Store/FileStorageStore';
 import { Point, utils } from './utils';
-
-const useEvent = <T extends EventTarget, E extends Event>(
-  elRef: MutableRefObject<T | null> | T,
-  event: keyof HTMLElementEventMap,
-  handler: (e: E) => void
-  ) => {
-
-  const callbackRef = useRef(handler);
-
-  useEffect(() => {
-    callbackRef.current = handler;
-  }, [handler])
-
-  useEffect(() => {
-    const isEl = (
-      elRef instanceof HTMLElement ||
-      elRef instanceof Window ||
-      elRef instanceof Document
-    );
-
-    const el = isEl ? elRef as T : (elRef as MutableRefObject<T | null>).current;
-
-    const action = (e: Event) => {
-      callbackRef.current(e as E);
-    }
-
-    el?.addEventListener(event, action);
-
-    return () => {
-      el?.removeEventListener(event, action);
-    }
-  }, [callbackRef, elRef, event])
-}
+import { useEvent } from '../../hooks/useEvent';
 
 export const SelectionBox = () => {
-  const draggedItemsSquareRef = useRef<HTMLDivElement>(null);
   const squareRef = useRef<HTMLDivElement>(null);
   const clearSelection = useFileStorageStore(state => state.clearSelection);
   const isOnHomeTab = useFileStorageStore(state => state.fileIdCurrentlyEditing === null);
   const itemContainerRef = useFileStorageStore(state => state.itemContainerRef);
   const setSelectedItemIds = useFileStorageStore(state => state.setSelectedItemsIds);
-  const getSelectedItems = useFileStorageStore(state => state.getSelectedItems);
-  const setIsMovingItems = useFileStorageStore(state => state.setIsMovingItems)
-  const moveSelectionToFolder = useFileStorageStore(state => state.moveSelectionToFolder);
-  const addToSelection = useFileStorageStore(state => state.addToSelection);
 
   const selectedItemIds = useFileStorageStore(state => state.selectedItemIds);
 
-  const [hasClickedOnFile, setHasClickedOnFile] = useState(false);
   const [clickedStartPosition, setClickedStartPosition] = useState<Point | null>(null);
+  const [clickedEndPosition, setClickedEndPosition] = useState<Point | null>(null);
+
   const [selectedItemsOnClick, setSelectedItemsOnClick] = useState<Array<string>>([]);
-  const [isMovingFiles, setIsMovingFiles] = useState(false);
-  const [isSelectingFiles, setIsSelectingFiles] = useState(false);
+  const [showSelectionArea, setShowSelectionArea] = useState(false);
+  const [isCtrlClicked, setIsCtrlClicked] = useState(false);
+  const [lastMousePosition, setLastMousePosition] = useState<Point | null>(null);
 
   useEvent(document, 'mousedown', useCallback((e: MouseEvent) => {
     if (!isOnHomeTab) return;
-    const fileUnderMouse = utils.getFileUnderMouse(itemContainerRef, e);
-    setHasClickedOnFile(!!fileUnderMouse);
-    setClickedStartPosition({ x: e.clientX, y: e.clientY });
+    if (e.target !== itemContainerRef.current) return;
+    if (!itemContainerRef.current) return;
+
+    const scrollTop = itemContainerRef.current.scrollTop;
+    const containerBoundingRect = itemContainerRef.current.getBoundingClientRect();
+    setClickedStartPosition({ 
+      x: e.clientX - containerBoundingRect.left,
+      y: e.clientY - containerBoundingRect.top + scrollTop
+    });
     setSelectedItemsOnClick([...selectedItemIds]);
+    setLastMousePosition({ x: e.clientX, y: e.clientY });
   }, [isOnHomeTab, selectedItemIds, itemContainerRef]));
 
   useEvent(document, 'mouseup', useCallback((e: MouseEvent) => {
+    setClickedStartPosition(null);
+    setClickedEndPosition(null);
+    setLastMousePosition(null);
+    setShowSelectionArea(false);
     if (!isOnHomeTab) return;
 
-    setHasClickedOnFile(false);
-    setClickedStartPosition(null);
-    if (squareRef.current) {
-      // move to state
-      squareRef.current.style.display = 'none';
-    }
-    if (draggedItemsSquareRef.current){
-      draggedItemsSquareRef.current.style.display = 'none';
-    }
-
-    if (isMovingFiles && (e.target as HTMLElement).dataset.droppable) {
-      const targetId = (e.target as HTMLElement).dataset.id;
-      console.log('Droppded to ', targetId);
-      moveSelectionToFolder(targetId ?? null);
+    // clear selectin on clicking outside
+    if (
+      clickedEndPosition === null &&
+      e.target === itemContainerRef.current && 
+      !e.ctrlKey
+    ) {
+      clearSelection()
       return;
     }
 
-    if (!isMovingFiles && !isSelectingFiles) {
-      // clear selectin on clicking outside
-      if (e.target === itemContainerRef.current && !e.ctrlKey) {
-        clearSelection()
-        return;
-      }
-      console.log('click');
-      const fileIdUnderMouse = utils.getFileUnderMouse(itemContainerRef, e);
-      if (fileIdUnderMouse) {
-        // check if its selected first
-        addToSelection(fileIdUnderMouse);
-      }
-    }
+  }, [isOnHomeTab, itemContainerRef, clearSelection, clickedEndPosition]));
 
-  }, [isOnHomeTab, itemContainerRef, isMovingFiles, draggedItemsSquareRef, squareRef, isSelectingFiles]));
-
-  useEvent(document, 'mousemove', useCallback((e: MouseEvent) => {
+  const onMouseMove = useCallback((e: MouseEvent) => {
     if (!isOnHomeTab) return;
     if (!clickedStartPosition) return;
+    if (!itemContainerRef.current) return;
 
-    setIsMovingFiles(hasClickedOnFile);
-    setIsSelectingFiles(!hasClickedOnFile);
-    if (hasClickedOnFile && draggedItemsSquareRef.current) {
-      // move to state
-      draggedItemsSquareRef.current.style.display = '';
-      draggedItemsSquareRef.current.dataset.left = e.clientX.toString();
-      draggedItemsSquareRef.current.dataset.top = e.clientY.toString();
-    }
+    setShowSelectionArea(true);
 
-    const endPosition = { x: e.clientX, y: e.clientY };
+    const scrollTop = itemContainerRef.current.scrollTop;
+    const containerBoundingRect = itemContainerRef.current.getBoundingClientRect();
 
-    const width = Math.abs(endPosition.x - clickedStartPosition.x);
-    const height = Math.abs(endPosition.y - clickedStartPosition.y);
-    const x = Math.min(clickedStartPosition.x, endPosition.x);
-    const y = Math.min(clickedStartPosition.y, endPosition.y);
+    setClickedEndPosition({ 
+      x: e.clientX - containerBoundingRect.left,
+      y: e.clientY - containerBoundingRect.top + scrollTop
+    });
+    setLastMousePosition({ x: e.clientX, y: e.clientY });
+
+  }, [isOnHomeTab, itemContainerRef, squareRef, clickedStartPosition]);
+
+  useEvent(document, 'keydown', (e: KeyboardEvent) => {
+    setIsCtrlClicked(e.ctrlKey)
+  });
+
+  useEvent(document, 'keyup', (e: KeyboardEvent) => {
+    setIsCtrlClicked(e.ctrlKey)
+  });
+
+  useEvent(document, 'mousemove', onMouseMove);
+  useEvent(itemContainerRef, 'scroll', () => {
+    if (!clickedStartPosition) return;
+    if (!itemContainerRef.current) return;
+    if (!lastMousePosition) return;
+
+    const containerBoundingRect = itemContainerRef.current.getBoundingClientRect();
+    setClickedEndPosition({
+      x: lastMousePosition.x - containerBoundingRect.left,
+      y: lastMousePosition.y - containerBoundingRect.top + itemContainerRef.current.scrollTop,
+    })
+  });
+
+  useEffect(() => {
+    if (!clickedEndPosition || !clickedStartPosition) return;
+
+    const width = Math.abs(clickedEndPosition.x - clickedStartPosition.x);
+    const height = Math.abs(clickedEndPosition.y - clickedStartPosition.y);
+    const x = Math.min(clickedStartPosition.x, clickedEndPosition.x);
+    const y = Math.min(clickedStartPosition.y, clickedEndPosition.y);
 
     if (squareRef.current) {
       squareRef.current.style.display = '';
@@ -130,7 +112,7 @@ export const SelectionBox = () => {
 
     const selectedFileIds = utils.getFileIdsInsideBox(x, y, width, height, itemContainerRef);
 
-    if (!e.ctrlKey) {
+    if (!isCtrlClicked) {
       setSelectedItemIds(selectedFileIds);
       return;
     }
@@ -146,12 +128,14 @@ export const SelectionBox = () => {
 
     setSelectedItemIds(finalSelection);
 
-  }, [isOnHomeTab, itemContainerRef, draggedItemsSquareRef, squareRef, clickedStartPosition]));
+  }, [clickedStartPosition, clickedEndPosition, isCtrlClicked])
 
   return (
-    <S.Container>
-      <S.SelectionArea style={{ display: 'none' }} ref={squareRef} />
-      <S.DraggedItems style={{ display: 'none' }} ref={draggedItemsSquareRef} />
-    </S.Container>
+    <>
+      <S.SelectionArea 
+        style={{ display: showSelectionArea ? '' : 'none' }} 
+        ref={squareRef}
+      />
+    </>
   )
 }
