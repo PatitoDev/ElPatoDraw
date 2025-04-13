@@ -7,6 +7,9 @@ export const Container = styled.div`
 `;
 
 export const FileGrid = styled.div`
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
   flex: 1 100%;
   display: grid;
   padding: 1rem;

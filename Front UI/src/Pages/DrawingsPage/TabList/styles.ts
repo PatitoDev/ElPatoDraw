@@ -32,13 +32,15 @@ export const HomeTab = styled.div<{ $selected: boolean }>`
     transform 0.15s cubic-bezier(0, 0.82, 0.165, 2),
     background-color 0.15s cubic-bezier(0, 0.82, 0.165, 2)
   ;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 0 0.5em 0 0;
-  padding: 0.5em 1em 0.5em 0.5em;
+  padding: 0.5em;
+  font-size: 1.8em;
   outline: none;
   border: none;
   cursor: pointer;
-  height: 4em;
-  width: 4em;
   &:hover {
     transform: translateY(0);
   }

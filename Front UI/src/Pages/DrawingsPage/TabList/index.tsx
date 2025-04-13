@@ -15,21 +15,17 @@ export const TabList = () => {
   const showExplorer  = useFileStorageStore(state => state.showExplorer);
   const fileIdCurrentlyEditing  = useFileStorageStore(state => state.fileIdCurrentlyEditing);
 
-  const onCloseFileClick = (fileId: string) => {
-    closeFile(fileId);
-  }
-
   return (
     <S.Container>
-      <S.HomeTab 
+      <S.HomeTab
         $selected={fileIdCurrentlyEditing === null}
       >
         <S.TabButton
-          title="open"
+          title="Open home folder"
           $selected={fileIdCurrentlyEditing === null}
           onClick={() => showExplorer() }
         />
-        <img width={40} height={40} src="/ElPatoDrawLogo.svg" />
+        <Icon aria-hidden icon="mingcute:folders-line" />
       </S.HomeTab>
 
       {
@@ -39,7 +35,7 @@ export const TabList = () => {
             $selected={f.id === fileIdCurrentlyEditing}
             $fileColor={theme.colors.defaultFileColor}
           >
-            <Icon icon="mingcute:file-fill" />
+            <Icon aria-hidden icon="mingcute:file-fill" />
             <span>{f.name}</span>
 
             <S.TabButton
@@ -48,7 +44,7 @@ export const TabList = () => {
               onClick={() => openFile(f.id)}
             />
 
-            <ButtonIcon title="close" onClick={() => onCloseFileClick(f.id)}>
+            <ButtonIcon title="close" onClick={() => closeFile(f.id)}>
               <Icon icon="mingcute:close-fill" />
             </ButtonIcon>
           </S.Tab>
@@ -56,5 +52,4 @@ export const TabList = () => {
       }
     </S.Container>
   )
-
 }
