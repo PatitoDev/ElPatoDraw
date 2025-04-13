@@ -1,51 +1,79 @@
+import { useRef } from 'react';
 import { useFileStorageStore } from '../../../Store/FileStorageStore.ts';
 import { ButtonIcon } from '../../ButtonIcon/index.tsx';
 import * as S from './styles.ts';
 import { Icon } from '@iconify/react';
 
 export const ActionToolbar = () => {
+  const colorPickerRef = useRef<HTMLInputElement>(null);
   const createNewFile = useFileStorageStore(state => state.createNewFile);
   const createNewFolder = useFileStorageStore(state => state.createNewFolder);
 
   const deleteSelection = useFileStorageStore(state => state.deleteSelection);
 
-  const hasSelection = useFileStorageStore(state => state.selectedItemIds.length > 0);
+  const selectionCount = useFileStorageStore(state => state.selectedItemIds.length);
+  const hasSelection = selectionCount > 0;
+
+  const onEditName = useFileStorageStore(state => state.editSelectionName);
+  const updateColorToSelection = useFileStorageStore(state => state.updateColorToSelection);
 
   const onDeleteClick:React.MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.stopPropagation();
     await deleteSelection();
   }
 
+  const onColorClick = () => {
+    if (!colorPickerRef.current) return;
+    colorPickerRef.current.click();
+  }
+
+  const onColorChange:React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    if (!colorPickerRef.current) return;
+    updateColorToSelection(e.target.value);
+  }
+
   return (
   <S.Container>
-    <ButtonIcon disabled={!hasSelection}>
+    <input
+      id="input-color-picker"
+      disabled={!hasSelection}
+      onChange={onColorChange}
+      style={{ visibility: 'hidden' }}
+      type='color'
+      ref={colorPickerRef}
+    />
+    <S.LabelButton htmlFor='input-color-picker' title="Change color" onClick={onColorClick}>
+      <Icon icon="mingcute:palette-line" />
+    </S.LabelButton>
+
+    <ButtonIcon title="Rename selected" disabled={selectionCount !== 1} onClick={onEditName}>
       <Icon icon="gg:rename" />
     </ButtonIcon>
 
-    <ButtonIcon disabled={!hasSelection} onClick={onDeleteClick}>
+    <ButtonIcon title="Delete selection" disabled={!hasSelection} onClick={onDeleteClick}>
       <Icon icon="mingcute:delete-2-line" />
     </ButtonIcon>
 
-    <S.DividerContainer>
+    <S.DividerContainer aria-hidden>
       <Icon icon="pepicons-pop:line-y" />
     </S.DividerContainer>
 
-    <ButtonIcon onClick={createNewFolder}>
+    <ButtonIcon title="New folder" onClick={createNewFolder}>
       <Icon icon="mingcute:new-folder-line" />
     </ButtonIcon>
-    <ButtonIcon onClick={createNewFile}>
+    <ButtonIcon title="New file" onClick={createNewFile}>
       <Icon icon="mingcute:file-new-line" />
     </ButtonIcon>
 
-    <S.DividerContainer>
+    <S.DividerContainer aria-hidden>
       <Icon icon="pepicons-pop:line-y" />
     </S.DividerContainer>
 
-    <S.LinkButton href='https://github.com'>
+    <S.LinkButton title="Support me :3" href='https://ko-fi.com/patitodev' target="_blank">
       <Icon icon="mingcute:hand-heart-line" />
     </S.LinkButton>
 
-    <S.LinkButton href='aaa'>
+    <S.LinkButton title="Source code" href='https://github.com/PatitoDev/ElPatoDraw' target="_blank">
       <Icon icon="mingcute:code-fill" />
     </S.LinkButton>
   </S.Container>
