@@ -64,6 +64,30 @@ const updateFiles = async (files: Array<FileUpdateDetails>) => {
   return await resp.json();
 }
 
+export interface FolderUpdateDetails {
+  id: string,
+  color: string,
+  name: string,
+  parentFolderId?: string
+}
+
+const updateFolders = async (files: Array<FolderUpdateDetails>) => {
+  const url = `${baseUrl}/folder/update`;
+  const token = await AuthenticationApi.getToken();
+
+  const resp = await fetch(url, {
+    headers: {
+      'Authorization': token,
+      'Content-Type': 'application/json'
+    },
+    method: 'PUT',
+    body: JSON.stringify(files)
+  });
+
+  if (!resp.ok) return null;
+  return await resp.json();
+}
+
 const deleteFiles = async (fileIds: Array<string>) => {
   const url = `${baseUrl}/file/`;
   const token = await AuthenticationApi.getToken();
@@ -122,5 +146,6 @@ export const MetadataApi = {
   deleteFiles,
   createFolder,
   updateFiles,
+  updateFolders,
   getFile
 }

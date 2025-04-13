@@ -29,6 +29,8 @@ export const ExplorerPath = () => {
           currentFolder.metadata?.parentFolder === null
         ) && (
           <S.PathButton 
+            data-id={null}
+            data-droppable={true}
             onClick={() => changeToFolder(null)}
           >
             Home

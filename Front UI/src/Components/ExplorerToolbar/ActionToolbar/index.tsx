@@ -7,7 +7,14 @@ export const ActionToolbar = () => {
   const createNewFile = useFileStorageStore(state => state.createNewFile);
   const createNewFolder = useFileStorageStore(state => state.createNewFolder);
 
+  const deleteSelection = useFileStorageStore(state => state.deleteSelection);
+
   const hasSelection = useFileStorageStore(state => state.selectedItemIds.length > 0);
+
+  const onDeleteClick:React.MouseEventHandler<HTMLButtonElement> = async (e) => {
+    e.stopPropagation();
+    await deleteSelection();
+  }
 
   return (
   <S.Container>
@@ -15,7 +22,7 @@ export const ActionToolbar = () => {
       <Icon icon="gg:rename" />
     </ButtonIcon>
 
-    <ButtonIcon disabled={!hasSelection}>
+    <ButtonIcon disabled={!hasSelection} onClick={onDeleteClick}>
       <Icon icon="mingcute:delete-2-line" />
     </ButtonIcon>
 
@@ -34,12 +41,13 @@ export const ActionToolbar = () => {
       <Icon icon="pepicons-pop:line-y" />
     </S.DividerContainer>
 
-    <ButtonIcon>
+    <S.LinkButton href='https://github.com'>
       <Icon icon="mingcute:hand-heart-line" />
-    </ButtonIcon>
-    <ButtonIcon>
+    </S.LinkButton>
+
+    <S.LinkButton href='aaa'>
       <Icon icon="mingcute:code-fill" />
-    </ButtonIcon>
+    </S.LinkButton>
   </S.Container>
   )
 }

@@ -1,8 +1,40 @@
-import { useEffect, useRef } from 'react';
+import { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import * as S from './styles';
 import { useFileStorageStore } from '../../Store/FileStorageStore';
-import { Box, Point, utils } from './utils';
+import { Point, utils } from './utils';
 
+const useEvent = <T extends EventTarget, E extends Event>(
+  elRef: MutableRefObject<T | null> | T,
+  event: keyof HTMLElementEventMap,
+  handler: (e: E) => void
+  ) => {
+
+  const callbackRef = useRef(handler);
+
+  useEffect(() => {
+    callbackRef.current = handler;
+  }, [handler])
+
+  useEffect(() => {
+    const isEl = (
+      elRef instanceof HTMLElement ||
+      elRef instanceof Window ||
+      elRef instanceof Document
+    );
+
+    const el = isEl ? elRef as T : (elRef as MutableRefObject<T | null>).current;
+
+    const action = (e: Event) => {
+      callbackRef.current(e as E);
+    }
+
+    el?.addEventListener(event, action);
+
+    return () => {
+      el?.removeEventListener(event, action);
+    }
+  }, [callbackRef, elRef, event])
+}
 
 export const SelectionBox = () => {
   const draggedItemsSquareRef = useRef<HTMLDivElement>(null);
@@ -12,97 +44,109 @@ export const SelectionBox = () => {
   const itemContainerRef = useFileStorageStore(state => state.itemContainerRef);
   const setSelectedItemIds = useFileStorageStore(state => state.setSelectedItemsIds);
   const getSelectedItems = useFileStorageStore(state => state.getSelectedItems);
-  const setIsMovingItesm = useFileStorageStore(state => state.setIsMovingItems)
+  const setIsMovingItems = useFileStorageStore(state => state.setIsMovingItems)
+  const moveSelectionToFolder = useFileStorageStore(state => state.moveSelectionToFolder);
+  const addToSelection = useFileStorageStore(state => state.addToSelection);
 
-  useEffect(() => {
-    // selection box logic
-    let startPosition: Point | null = null;
-    let endPosition: Point | null = null;
-    let selectedItemsCached: Array<string> = [];
+  const selectedItemIds = useFileStorageStore(state => state.selectedItemIds);
 
-    let hasClickedOnFile: boolean = false;
+  const [hasClickedOnFile, setHasClickedOnFile] = useState(false);
+  const [clickedStartPosition, setClickedStartPosition] = useState<Point | null>(null);
+  const [selectedItemsOnClick, setSelectedItemsOnClick] = useState<Array<string>>([]);
+  const [isMovingFiles, setIsMovingFiles] = useState(false);
+  const [isSelectingFiles, setIsSelectingFiles] = useState(false);
 
-    const onDocumentMouseDown = (e: MouseEvent) => {
-      if (!isOnHomeTab) return;
-      hasClickedOnFile = !!utils.getFileUnderMouse(itemContainerRef, e);
-      startPosition = { x: e.clientX, y: e.clientY };
-      const selectedItems = getSelectedItems();
-      selectedItemsCached = [
-        ...selectedItems.files.map(f => f.id),
-        ...selectedItems.folders.map(f => f.id)
-      ];
-    };
+  useEvent(document, 'mousedown', useCallback((e: MouseEvent) => {
+    if (!isOnHomeTab) return;
+    const fileUnderMouse = utils.getFileUnderMouse(itemContainerRef, e);
+    setHasClickedOnFile(!!fileUnderMouse);
+    setClickedStartPosition({ x: e.clientX, y: e.clientY });
+    setSelectedItemsOnClick([...selectedItemIds]);
+  }, [isOnHomeTab, selectedItemIds, itemContainerRef]));
 
-    const onDocumentMouseUp = (e: MouseEvent) => {
-      setIsMovingItesm(hasClickedOnFile);
-      if (!e.ctrlKey && endPosition === null && !hasClickedOnFile) {
-        clearSelection();
-      }
+  useEvent(document, 'mouseup', useCallback((e: MouseEvent) => {
+    if (!isOnHomeTab) return;
 
-      startPosition = null;
-      endPosition = null;
-      if (!isOnHomeTab) return;
-      if (!squareRef.current) return;
+    setHasClickedOnFile(false);
+    setClickedStartPosition(null);
+    if (squareRef.current) {
+      // move to state
       squareRef.current.style.display = 'none';
-      if (!draggedItemsSquareRef.current) return;
+    }
+    if (draggedItemsSquareRef.current){
       draggedItemsSquareRef.current.style.display = 'none';
-    };
+    }
 
-    const onDocumentMouseMove = (e: MouseEvent) => {
-      if (!isOnHomeTab) return;
-      if (!squareRef.current) return;
-      if (startPosition === null) return;
-      if (!squareRef.current) return;
+    if (isMovingFiles && (e.target as HTMLElement).dataset.droppable) {
+      const targetId = (e.target as HTMLElement).dataset.id;
+      console.log('Droppded to ', targetId);
+      moveSelectionToFolder(targetId ?? null);
+      return;
+    }
 
-      if (hasClickedOnFile && draggedItemsSquareRef.current) {
-        draggedItemsSquareRef.current.style.display = '';
-        draggedItemsSquareRef.current.dataset.left = e.clientX.toString();
-        draggedItemsSquareRef.current.dataset.top = e.clientY.toString();
+    if (!isMovingFiles && !isSelectingFiles) {
+      // clear selectin on clicking outside
+      if (e.target === itemContainerRef.current && !e.ctrlKey) {
+        clearSelection()
         return;
       }
+      console.log('click');
+      const fileIdUnderMouse = utils.getFileUnderMouse(itemContainerRef, e);
+      if (fileIdUnderMouse) {
+        // check if its selected first
+        addToSelection(fileIdUnderMouse);
+      }
+    }
 
+  }, [isOnHomeTab, itemContainerRef, isMovingFiles, draggedItemsSquareRef, squareRef, isSelectingFiles]));
+
+  useEvent(document, 'mousemove', useCallback((e: MouseEvent) => {
+    if (!isOnHomeTab) return;
+    if (!clickedStartPosition) return;
+
+    setIsMovingFiles(hasClickedOnFile);
+    setIsSelectingFiles(!hasClickedOnFile);
+    if (hasClickedOnFile && draggedItemsSquareRef.current) {
+      // move to state
+      draggedItemsSquareRef.current.style.display = '';
+      draggedItemsSquareRef.current.dataset.left = e.clientX.toString();
+      draggedItemsSquareRef.current.dataset.top = e.clientY.toString();
+    }
+
+    const endPosition = { x: e.clientX, y: e.clientY };
+
+    const width = Math.abs(endPosition.x - clickedStartPosition.x);
+    const height = Math.abs(endPosition.y - clickedStartPosition.y);
+    const x = Math.min(clickedStartPosition.x, endPosition.x);
+    const y = Math.min(clickedStartPosition.y, endPosition.y);
+
+    if (squareRef.current) {
       squareRef.current.style.display = '';
-
-      endPosition = { x: e.clientX, y: e.clientY };
-
-      const width = Math.abs(endPosition.x - startPosition.x);
-      const height = Math.abs(endPosition.y - startPosition.y);
-      const x = Math.min(startPosition.x, endPosition.x);
-      const y = Math.min(startPosition.y, endPosition.y);
-
       squareRef.current.dataset.left = x.toString();
       squareRef.current.dataset.top = y.toString();
       squareRef.current.dataset.width = width.toString();
       squareRef.current.dataset.height = height.toString();
+    }
 
-      const selectedFileIds = utils.getFileIdsInsideBox(x, y, width, height, itemContainerRef);
+    const selectedFileIds = utils.getFileIdsInsideBox(x, y, width, height, itemContainerRef);
 
-      if (!e.ctrlKey) {
-        setSelectedItemIds(selectedFileIds);
+    if (!e.ctrlKey) {
+      setSelectedItemIds(selectedFileIds);
+      return;
+    }
+
+    let finalSelection = [...selectedItemsOnClick];
+    selectedFileIds.forEach((selectedId) => {
+      if (finalSelection.includes(selectedId)) {
+        finalSelection = finalSelection.filter(id => id !== selectedId);
         return;
       }
+      finalSelection = [...finalSelection, selectedId];
+    })
 
-      let finalSelection = [...selectedItemsCached];
-      selectedFileIds.forEach((selectedId) => {
-        if (finalSelection.includes(selectedId)) {
-          finalSelection = finalSelection.filter(id => id !== selectedId);
-          return;
-        }
-        finalSelection = [...finalSelection, selectedId];
-      })
+    setSelectedItemIds(finalSelection);
 
-      setSelectedItemIds(finalSelection);
-    };
-
-    document.addEventListener('mousedown', onDocumentMouseDown);
-    document.addEventListener('mousemove', onDocumentMouseMove);
-    document.addEventListener('mouseup', onDocumentMouseUp);
-    return () => {
-      document.removeEventListener('mousedown', onDocumentMouseDown);
-      document.removeEventListener('mousemove', onDocumentMouseMove);
-      document.removeEventListener('mouseup', onDocumentMouseUp);
-    }
-  }, [clearSelection, isOnHomeTab, itemContainerRef])
+  }, [isOnHomeTab, itemContainerRef, draggedItemsSquareRef, squareRef, clickedStartPosition]));
 
   return (
     <S.Container>

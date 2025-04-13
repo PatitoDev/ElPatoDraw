@@ -8,6 +8,9 @@ export const Container = styled.div<{ $folderColor: string, $isSelected: boolean
   gap: 0.5em;
   font-size: 1em;
   padding: 1em;
+  
+  width: 9em;
+  height: 9em;
 
   > svg {
     font-size: 3em;

@@ -30,6 +30,8 @@ export const Item = ({
   }
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    return;
+    console.log('clicked');
     e.stopPropagation();
     if (!e.ctrlKey)
       clearSelection();
@@ -40,6 +42,7 @@ export const Item = ({
   return (
     <S.Container
       data-id={id}
+      data-droppable={type === 'Folder'}
       onDoubleClick={handleOpen}
       onClick={handleClick}
       $folderColor={color}

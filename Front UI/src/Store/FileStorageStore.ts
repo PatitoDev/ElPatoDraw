@@ -34,6 +34,7 @@ export interface FileStorageStore {
   createNewFile: () => Promise<void>,
   createNewFolder: () => Promise<void>
 
+  deleteSelection: () => Promise<void>,
   moveSelectionToFolder: (targetId: string | null) => Promise<void>,
   setIsMovingItems: (value: boolean) => void,
   isMovingItems: boolean
@@ -143,14 +144,29 @@ export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
 
   isMovingItems: false,
   setIsMovingItems: (value) => set({ isMovingItems: value }),
+
+  deleteSelection: async () => {
+    const selectedItemIds = get().selectedItemIds;
+    if (selectedItemIds.length === 0) return;
+    const currentFolder = get().currentFolder;
+    if (!currentFolder) return;
+
+    const foldersTodelete = currentFolder.folders.filter(f => selectedItemIds.includes(f.id));
+    const filesToDelete = currentFolder.files.filter(f => selectedItemIds.includes(f.id));
+    await MetadataApi.deleteFiles(filesToDelete.map(f => f.id));
+  },
+
   moveSelectionToFolder: async (targetFolderId) => {
     const selectedItemIds = get().selectedItemIds;
     if (selectedItemIds.length === 0) return;
     const currentFolder = get().currentFolder;
     if (!currentFolder) return;
 
-    const foldersToMove = currentFolder.folders.filter(f => selectedItemIds.includes(f.id));
-    const filesToMove = currentFolder.files.filter(f => selectedItemIds.includes(f.id));
+    // remove target to avoid move folder into itself and creating a black hole
+    const itemIdsToMove = selectedItemIds.filter(id => id !== targetFolderId);
+
+    const foldersToMove = currentFolder.folders.filter(f => itemIdsToMove.includes(f.id));
+    const filesToMove = currentFolder.files.filter(f => itemIdsToMove.includes(f.id));
 
     await MetadataApi.updateFiles(filesToMove.map((file) => ({
       name: file.name,
@@ -158,9 +174,14 @@ export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
       parentFolderId: targetFolderId ?? undefined
     })));
 
+    await MetadataApi.updateFolders(foldersToMove.map((folder) => ({
+      name: folder.name,
+      id: folder.id,
+      color: folder.color,
+      parentFolderId: targetFolderId ?? undefined,
+    })));
 
     // TODO - move folders
-
     await get().changeToFolder(get().currentFolder?.metadata?.id ?? null);
   }
 
