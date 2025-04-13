@@ -27,8 +27,6 @@ export const TabContent = () => {
           <DrawingLoader
             key={file.id}
             id={file.id}
-            onDelete={() => {}}
-            onTitleChange={() => {}}
           />
         </S.DrawingContainer>
       ))}

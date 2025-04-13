@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { TabList } from './TabList';
 import { useFileStorageStore } from '../../Store/FileStorageStore';
 import { TabContent } from './TabContent';
-import { SelectionBox } from '../../Components/SelectionBox';
 
 const DrawingPage = () =>  {
   const changeToFolder = useFileStorageStore(state => state.changeToFolder);
