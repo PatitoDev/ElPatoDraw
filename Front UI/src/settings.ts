@@ -1,4 +1,4 @@
-const isProd = process.env.NODE_ENV === 'production';
+export const isProd = process.env.NODE_ENV === 'production';
 
 export const SUPABASE_CONFIG = {
   url: 'https://qvvzhuuxhdxpkbeaasqp.supabase.co',

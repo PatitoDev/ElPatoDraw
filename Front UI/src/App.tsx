@@ -7,6 +7,7 @@ import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { AuthenticationApi } from './api/AuthenticationApi';
 import { ThemeProvider } from 'styled-components';
 import { mainTheme } from './theme';
+import { isProd } from './settings';
 
 function App () {
   const session = AuthenticationApi.useSession();
@@ -34,7 +35,7 @@ function App () {
           margin: 'auto' 
         }} >
           <Auth 
-            redirectTo='http://localhost:5173'
+            redirectTo={isProd ? undefined : 'http://localhost:5173'}
             providers={[ 'twitch' ]} 
             supabaseClient={AuthenticationApi.supabaseClient} 
             appearance={{ 
