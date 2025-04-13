@@ -44,6 +44,7 @@ const createFile = async (fileName: string, fileType: FileType, parentFolderId?:
 export interface FileUpdateDetails {
   id: string,
   name: string,
+  color?: string,
   parentFolderId?: string
 }
 
@@ -66,7 +67,7 @@ const updateFiles = async (files: Array<FileUpdateDetails>) => {
 
 export interface FolderUpdateDetails {
   id: string,
-  color: string,
+  color?: string,
   name: string,
   parentFolderId?: string
 }
@@ -102,7 +103,21 @@ const deleteFiles = async (fileIds: Array<string>) => {
   });
 }
 
-const createFolder = async (folderName: string, folderColor: string, parentFolderId?: string): Promise<string | null> => {
+const deleteFolders = async (folderIds: Array<string>) => {
+  const url = `${baseUrl}/folder/`;
+  const token = await AuthenticationApi.getToken();
+
+  await fetch(url, {
+    headers: {
+      'Authorization': token,
+      'Content-Type': 'application/json'
+    },
+    method: 'DELETE',
+    body: JSON.stringify(folderIds)
+  });
+}
+
+const createFolder = async (folderName: string, parentFolderId?: string): Promise<string | null> => {
   const url = `${baseUrl}/folder`;
   const token = await AuthenticationApi.getToken();
 
@@ -114,7 +129,6 @@ const createFolder = async (folderName: string, folderColor: string, parentFolde
     method: 'POST',
     body: JSON.stringify({
       name: folderName,
-      color: folderColor,
       parentFolderId
     })
   });
@@ -144,6 +158,7 @@ export const MetadataApi = {
   getFolder,
   createFile,
   deleteFiles,
+  deleteFolders,
   createFolder,
   updateFiles,
   updateFolders,

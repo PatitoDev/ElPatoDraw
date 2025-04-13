@@ -64,11 +64,15 @@ public class UpdateFolderHandler : IRequestHandler<UpdateFolderRequest, ApiResul
                     return new ApiResult<bool>() { Status = StatusCodes.Status403Forbidden };
                 }
 
-
                 folderEntity.ParentFolderId = newFolderData.ParentFolderId;
                 folderEntity.Depth = parent.Depth + 1;
-                await UpdateDepthRecursively(folderEntity, cancellationToken);
+            } else
+            {
+                folderEntity.ParentFolderId = null;
+                folderEntity.Depth = 0;
             }
+
+            await UpdateDepthRecursively(folderEntity, cancellationToken);
         }
 
         await _context.SaveChangesAsync(cancellationToken);

@@ -40,6 +40,7 @@ public class UpdateFileHandler : IRequestHandler<UpdateFileRequest, ApiResult<bo
         {
             var newFileDetails = request.FilesToUpdate.First(f => f.Id.Equals(file.Id));
             file.Name = newFileDetails.Name;
+            file.Color = newFileDetails.Color;
 
             if (
                 newFileDetails.ParentFolderId != null && 

@@ -7,6 +7,7 @@ export interface DuckFolderProps {
 
 export const DuckFolder = ({color}: DuckFolderProps) => (
   <svg
+    style={{ paddingBottom: '0.2em'}}
     shapeRendering='geometricPrecison'
     textRendering='geometricPrecision'
     imageRendering='optimizeQuality'

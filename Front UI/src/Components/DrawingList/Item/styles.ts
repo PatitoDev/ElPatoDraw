@@ -32,7 +32,7 @@ export const Container = styled.div<{
 
   > svg {
     font-size: 3em;
-    color: attr(data-color);
+    color: attr(data-color type(<color>));
   }
 
   cursor: pointer;

@@ -40,6 +40,10 @@ public class PatoDrawDbContext: DbContext
             .IsRequired();
 
         modelBuilder.Entity<Entities.File>()
+            .Property(f => f.Color)
+            .IsRequired(false);
+
+        modelBuilder.Entity<Entities.File>()
             .Property(f => f.Type)
             .IsRequired();
 
@@ -69,7 +73,7 @@ public class PatoDrawDbContext: DbContext
 
         modelBuilder.Entity<Folder>()
             .Property(f => f.Color)
-            .IsRequired();
+            .IsRequired(false);
 
         modelBuilder.Entity<Folder>()
             .Property(f => f.CreatedAt)

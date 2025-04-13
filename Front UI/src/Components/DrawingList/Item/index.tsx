@@ -112,6 +112,7 @@ export const Item = ({
     e.stopPropagation();
   }
 
+  console.log(color);
   return (
     <S.Container
       $index={index}
@@ -135,7 +136,7 @@ export const Item = ({
     >
       <DraggedItem ref={draggedItemRef} />
       { type === 'Folder' && <DuckFolder color={color} /> }
-      { type === 'File' && <Icon icon="mingcute:file-fill" /> }
+      { type === 'File' && <Icon data-color={color} icon="mingcute:file-fill" /> }
       {
       isEditingName ?
         <input 

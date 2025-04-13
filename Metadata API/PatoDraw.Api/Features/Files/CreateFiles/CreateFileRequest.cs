@@ -13,6 +13,7 @@ public record CreateFileRequest : IRequest<ApiResult<Guid?>>
 public record FileCreatePayload
 {
     public required string Name { get; init; }
+    public string? Color { get; init; }
     public required FileTypeEnum Type { get; init; }
     public Guid? ParentFolderId { get; init; }
 }

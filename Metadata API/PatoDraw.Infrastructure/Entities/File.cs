@@ -6,6 +6,8 @@ public class File
 
     public required string Name;
 
+    public string? Color;
+
     public required FileTypeEnum Type;
 
     public required Guid OwnerId;

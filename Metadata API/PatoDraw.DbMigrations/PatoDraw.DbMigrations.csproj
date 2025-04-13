@@ -14,6 +14,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Migrations\02\02-Set-Folder-Color-Optional-DOWN.sql" />
+    <None Remove="Migrations\02\02-Set-Folder-Color-Optional-UP.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

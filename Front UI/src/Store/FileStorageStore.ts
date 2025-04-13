@@ -103,16 +103,17 @@ export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
   createNewFolder: async () => {
     const currentFolderId = get().currentFolder?.metadata?.id;
     await MetadataApi.createFolder('New folder', currentFolderId);
-    get().refreshCurrentFolder();
+    await get().refreshCurrentFolder();
   },
 
   createNewFile: async () => {
     const currentFolderId = get().currentFolder?.metadata?.id;
     const createdFileId = await MetadataApi.createFile('New Drawing', 'Excalidraw', currentFolderId);
-    get().refreshCurrentFolder();
+    await get().refreshCurrentFolder();
 
-    if (createdFileId)
+    if (createdFileId) {
       get().openFile(createdFileId);
+    }
   },
 
   selectedItemIds: [],
@@ -210,7 +211,13 @@ export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
       ({...f, color}) :
       {...f}
     );
-    const updatedCurrentFolder: Folder = {...currentFolder, folders: updatedFolders };
+
+    const updatedFiles = currentFolder.files.map(f => 
+      selectedItemIds.includes(f.id) ?
+      ({...f, color}) :
+      {...f}
+    );
+    const updatedCurrentFolder: Folder = {...currentFolder, folders: updatedFolders, files: updatedFiles };
 
     set(({ currentFolder: updatedCurrentFolder }));
   },

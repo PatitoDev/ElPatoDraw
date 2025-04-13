@@ -5,6 +5,7 @@ import { useFileStorageStore } from '../../Store/FileStorageStore';
 import { useTheme } from 'styled-components';
 import { SelectionBox } from '../SelectionBox';
 import { useEffect, useRef } from 'react';
+import { Icon } from '@iconify/react';
 
 export const DrawingList = () => {
   const gridRef = useFileStorageStore(state => state.itemContainerRef);
@@ -24,12 +25,15 @@ export const DrawingList = () => {
     <S.Container>
 
       <ExplorerToolbar />
+      { (!folder || (folder.files.length === 0 && folder.folders.length === 0)) && (
+        <S.NoContent>
+          <Icon fontSize="3em" icon="mingcute:folder-open-2-line" />
+          <span>This folder is empty</span>
+        </S.NoContent>
+      )}
       <S.FileGrid ref={gridRef}>
         <SelectionBox />
-        { (!folder || (folder.files.length === 0 && folder.folders.length === 0)) && (
-          <div>No items</div>
-        )
-        }
+
         {folder && folder.folders.map((f, index) => (
           <Item
             index={loadCounter.current < 1 ? index : 0}
@@ -48,7 +52,7 @@ export const DrawingList = () => {
             key={f.id}
             name={f.name}
             type='File'
-            color={theme.colors.defaultFileColor}
+            color={f.color ?? theme.colors.defaultFileColor}
           />
         ))}
       </S.FileGrid>
