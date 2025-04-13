@@ -40,9 +40,12 @@ export interface FileStorageStore {
 
   fileIdCurrentlyEditingName : string | null,
   editSelectionName: () => void,
+  updateFileName: (fileId: string, fileName: string) => Promise<void>,
   clearFileNameEditing: () => void,
 
-  updateColorToSelection: (color: string) => void,
+  selectedColor: string | null,
+  setSelectedColor: (color: string) => void,
+  updateColorToSelection: () => Promise<void>,
 }
 
 export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
@@ -102,8 +105,13 @@ export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
 
   createNewFolder: async () => {
     const currentFolderId = get().currentFolder?.metadata?.id;
-    await MetadataApi.createFolder('New folder', currentFolderId);
+    const createdFolderId = await MetadataApi.createFolder('New Folder', currentFolderId);
     await get().refreshCurrentFolder();
+    if (!createdFolderId) return;
+    set({
+      fileIdCurrentlyEditingName: createdFolderId,
+      selectedItemIds: [createdFolderId]
+    })
   },
 
   createNewFile: async () => {
@@ -111,9 +119,11 @@ export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
     const createdFileId = await MetadataApi.createFile('New Drawing', 'Excalidraw', currentFolderId);
     await get().refreshCurrentFolder();
 
-    if (createdFileId) {
-      get().openFile(createdFileId);
-    }
+    if (!createdFileId) return;
+    set({
+      fileIdCurrentlyEditingName: createdFileId,
+      selectedItemIds: [createdFileId]
+    })
   },
 
   selectedItemIds: [],
@@ -201,7 +211,34 @@ export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
     set({ fileIdCurrentlyEditingName: null })
   },
 
-  updateColorToSelection: (color: string) => {
+  updateFileName: async (fileId: string, fileName: string) => {
+    const file = get().currentFolder?.files.find(f => f.id === fileId);
+    if (file) {
+      await MetadataApi.updateFiles([{
+        ...file,
+        name: fileName
+      }]);
+    }
+
+    const folder = get().currentFolder?.folders.find(f => f.id === fileId);
+    if (folder) {
+      await MetadataApi.updateFolders([{
+        ...folder,
+        name: fileName
+      }]);
+    }
+  
+    await get().refreshCurrentFolder();
+  },
+
+  selectedColor: null,
+  setSelectedColor: (color) => {
+    set({ selectedColor: color });
+    return;
+  },
+  updateColorToSelection: async () => {
+    const color = get().selectedColor;
+    if (color === null) return;
     const selectedItemIds = get().selectedItemIds;
     const currentFolder = get().currentFolder;
     if (!currentFolder) return;
@@ -217,8 +254,10 @@ export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
       ({...f, color}) :
       {...f}
     );
-    const updatedCurrentFolder: Folder = {...currentFolder, folders: updatedFolders, files: updatedFiles };
 
-    set(({ currentFolder: updatedCurrentFolder }));
+    await MetadataApi.updateFiles(updatedFiles);
+    await MetadataApi.updateFolders(updatedFolders);
+    set({ selectedColor: null });
+    get().refreshCurrentFolder();
   },
 }));

@@ -20,12 +20,21 @@ export const Item = ({
   type,
   index
 }: ItemProps) => {
+  const inputNameRef = useRef<HTMLInputElement>(null);
   const [inputNameValue, setInputNameValue] = useState<string>(name);
 
   const isSelected = useFileStorageStore(state => 
     !!state.selectedItemIds.find(selectedId => selectedId === id)
   );
+  const overrideColor = useFileStorageStore(state => 
+    state.selectedItemIds.includes(id) ?
+    state.selectedColor :
+    color
+  );
   const isEditingName = useFileStorageStore(state => state.fileIdCurrentlyEditingName === id);
+  const clearNameEditingId = useFileStorageStore(state => state.clearFileNameEditing);
+  const updateFileName = useFileStorageStore(state => state.updateFileName);
+
   const clearSelection = useFileStorageStore(state => state.clearSelection);
   const addToSelection = useFileStorageStore(state => state.addToSelection);
   const removeFromSelection = useFileStorageStore(state => state.removeFromSelection);
@@ -60,6 +69,8 @@ export const Item = ({
   }
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+    if (isEditingName) return;
+
     e.stopPropagation();
     e.dataTransfer.dropEffect = 'move';
     if (draggedItemRef.current) {
@@ -106,13 +117,56 @@ export const Item = ({
     setIsHoveringItem(false);
   }
 
-
   const onInputClick = (e: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
     e.preventDefault();
     e.stopPropagation();
   }
 
-  console.log(color);
+  useEffect(() => {
+    if (!isEditingName || !inputNameRef.current) return;
+    inputNameRef.current.focus();
+    inputNameRef.current.select();
+  }, [isEditingName])
+
+  useEffect(() => {
+    if (!isEditingName || !inputNameRef.current) return;
+    let state = { handled: false };
+
+    let valueCleanedUp = inputNameValue.trim();
+    valueCleanedUp = valueCleanedUp.length > 1 ? valueCleanedUp : name;
+
+    const onKeyDown = async (e: KeyboardEvent) => {
+      if (state.handled) return;
+      if (e.key === 'Escape') {
+        state.handled = true;
+        setInputNameValue(name);
+        clearNameEditingId();
+      }
+
+      if (e.key === 'Enter') {
+        state.handled = true;
+        clearNameEditingId();
+        await updateFileName(id, valueCleanedUp);
+      }
+    }
+
+    const onBlur = async () => {
+      if (state.handled) return;
+      if (!isEditingName) return;
+      state.handled = true;
+      clearNameEditingId();
+      await updateFileName(id, valueCleanedUp);
+    }
+
+    inputNameRef.current.addEventListener('keydown', onKeyDown);
+    inputNameRef.current.addEventListener('blur', onBlur);
+    return () => {
+      if (!inputNameRef.current) return;
+      inputNameRef.current.removeEventListener('keydown', onKeyDown);
+      inputNameRef.current.removeEventListener('blur', onBlur);
+    }
+  }, [isEditingName, clearNameEditingId, name, inputNameValue])
+
   return (
     <S.Container
       $index={index}
@@ -129,22 +183,24 @@ export const Item = ({
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       draggable
-      data-color={color}
+      data-color={overrideColor ?? color}
       $isSelected={isSelected}
       $isHovering={isHoveringItem}
       $isDragging={isDragging}
     >
       <DraggedItem ref={draggedItemRef} />
-      { type === 'Folder' && <DuckFolder color={color} /> }
-      { type === 'File' && <Icon data-color={color} icon="mingcute:file-fill" /> }
-      {
-      isEditingName ?
+      { type === 'Folder' && <DuckFolder color={overrideColor ?? color} /> }
+      { type === 'File' && <Icon data-color={overrideColor ?? color} icon="mingcute:file-fill" /> }
+      { isEditingName ?
         <input 
+          minLength={1}
+          maxLength={200}
+          ref={inputNameRef}
           onDoubleClick={onInputClick}
           value={inputNameValue} 
           onChange={e => setInputNameValue(e.target.value)}
         /> :
-        name
+        <S.Name>{name}</S.Name>
       }
     </S.Container>
   )

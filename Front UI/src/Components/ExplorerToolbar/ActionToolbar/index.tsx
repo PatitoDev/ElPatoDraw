@@ -1,8 +1,24 @@
-import { useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFileStorageStore } from '../../../Store/FileStorageStore.ts';
 import { ButtonIcon } from '../../ButtonIcon/index.tsx';
 import * as S from './styles.ts';
 import { Icon } from '@iconify/react';
+
+const useDebounce = <T extends any>(value: T, delay: number = 500) => {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const timeoutRef = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay)
+
+    return () => {
+      clearTimeout(timeoutRef);
+    }
+  }, [value, delay]);
+
+  return debouncedValue;
+}
 
 export const ActionToolbar = () => {
   const colorPickerRef = useRef<HTMLInputElement>(null);
@@ -16,6 +32,15 @@ export const ActionToolbar = () => {
 
   const onEditName = useFileStorageStore(state => state.editSelectionName);
   const updateColorToSelection = useFileStorageStore(state => state.updateColorToSelection);
+  const setSelectedColor = useFileStorageStore(state => state.setSelectedColor);
+  const selectedColor = useFileStorageStore(state => state.selectedColor);
+
+  const debouncedValue = useDebounce(selectedColor, 500);
+
+  useEffect(() => {
+    if (!debouncedValue) return;
+    updateColorToSelection();
+  }, [debouncedValue]);
 
   const onDeleteClick:React.MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.stopPropagation();
@@ -29,7 +54,7 @@ export const ActionToolbar = () => {
 
   const onColorChange:React.ChangeEventHandler<HTMLInputElement> = (e) => {
     if (!colorPickerRef.current) return;
-    updateColorToSelection(e.target.value);
+    setSelectedColor(e.target.value);
   }
 
   return (
@@ -42,7 +67,7 @@ export const ActionToolbar = () => {
       type='color'
       ref={colorPickerRef}
     />
-    <S.LabelButton htmlFor='input-color-picker' title="Change color" onClick={onColorClick}>
+    <S.LabelButton $disabled={!hasSelection} htmlFor='input-color-picker' title="Change color" onClick={onColorClick}>
       <Icon icon="mingcute:palette-line" />
     </S.LabelButton>
 

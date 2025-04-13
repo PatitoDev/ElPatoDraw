@@ -1,5 +1,4 @@
-import styled from 'styled-components';
-import { ButtonIcon } from '../../ButtonIcon';
+import styled, { css } from 'styled-components';
 
 export const Container = styled.div`
   display: flex;
@@ -47,7 +46,7 @@ export const LinkButton = styled.a`
   }
 `;
 
-export const LabelButton = styled.label`
+export const LabelButton = styled.label<{ $disabled: boolean }>`
   display: inline-flex;
   font-size: 2.4rem;
   padding: 0.5rem;
@@ -69,10 +68,15 @@ export const LabelButton = styled.label`
     opacity 0.2s ease-in-out,
     background-color 0.2s ease-in-out
   ;
+  ${({ $disabled }) => $disabled && css`
+    opacity: 0.4;
+  `}
 
-  &:hover:not(:disabled) {
-    cursor: pointer;
-    opacity: 1;
-    background-color: ${({ theme }) => theme.colors.backgroundLight};
-  }
+  ${({ $disabled }) => !$disabled && css`
+    &:hover {
+      cursor: pointer;
+      opacity: 1;
+      background-color: ${({ theme }) => theme.colors.backgroundLight};
+    }
+  `}
 `;

@@ -22,13 +22,13 @@ export const Container = styled.div<{
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: baseline;
+  text-align: center;
   gap: 0.5em;
   font-size: 1em;
   padding: 1em;
 
-  width: 9em;
-  height: 9em;
+  width: 10em;
 
   > svg {
     font-size: 3em;
@@ -60,14 +60,28 @@ export const Container = styled.div<{
 
   > input {
     padding: 0.5em;
-    width: 8em;
+    width: 100%;
     text-align: center;
     font-family: inherit;
     font-size: inherit;
     color: inherit;
     background-color: inherit;
-    outline: solid 1px white;
     border: none;
     border-radius: 0.3em;
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.foreground };
+    background: ${({ theme }) => theme.colors.background };
+    height: 2em;
   }
+`;
+
+export const Name = styled.span`
+  width: 100%;
+  text-overflow: ellipsis;
+  text-align: center;
+  word-wrap: break-word;
+
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 `;

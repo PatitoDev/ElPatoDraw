@@ -133,7 +133,7 @@ const createFolder = async (folderName: string, parentFolderId?: string): Promis
     })
   });
 
-  if (resp.ok) return null;
+  if (!resp.ok) return null;
   return await resp.json();
 }
 

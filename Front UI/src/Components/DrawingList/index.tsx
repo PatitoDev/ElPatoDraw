@@ -36,7 +36,7 @@ export const DrawingList = () => {
 
         {folder && folder.folders.map((f, index) => (
           <Item
-            index={loadCounter.current < 1 ? index : 0}
+            index={loadCounter.current < 2 ? index : 0}
             id={f.id}
             key={f.id}
             color={f.color ?? theme.colors.defaultFolderColor}
@@ -47,7 +47,7 @@ export const DrawingList = () => {
 
         {folder && folder.files.map((f, index) => (
           <Item
-            index={loadCounter.current < 1 ? index + folder.folders.length : 0}
+            index={loadCounter.current < 2 ? index + folder.folders.length : 0}
             id={f.id}
             key={f.id}
             name={f.name}

@@ -72,9 +72,12 @@ export const ExplorerPath = () => {
 
   return (
     <S.Container>
+      {/*
+      TODO
       <ButtonIcon title='Search'>
         <Icon icon="mingcute:search-2-fill" />
       </ButtonIcon>
+      */}
 
       <ButtonIcon 
         title='Back'
