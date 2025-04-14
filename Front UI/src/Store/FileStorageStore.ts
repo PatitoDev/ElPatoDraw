@@ -73,6 +73,9 @@ export const useFileStorageStore = create<FileStorageStore>()((set, get) => ({
     const folder = await MetadataApi.getFolder(folderId);
     if (folder === null) return;
     set({ currentFolder: folder });
+    set(prev => ({ activeFiles: [
+      ...prev.activeFiles.map(f => folder.files.find(file => file.id === f.id) ?? f)
+    ]}));
   },
 
   navigateToParentFolder: async () => {

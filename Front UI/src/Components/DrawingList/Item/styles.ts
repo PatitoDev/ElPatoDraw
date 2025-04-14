@@ -58,6 +58,10 @@ export const Container = styled.div<{
     }
   `}
 
+  > :not(input) {
+    pointer-events: none;
+  }
+
   > input {
     padding: 0.5em;
     width: 100%;
