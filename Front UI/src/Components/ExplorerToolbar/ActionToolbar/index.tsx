@@ -4,13 +4,12 @@ import { ButtonIcon } from '../../ButtonIcon/index.tsx';
 import * as S from './styles.ts';
 import { Icon } from '@iconify/react';
 import { useDebounce } from '../../../hooks/useDebounce.ts';
+import { useModalStore } from '../../../Store/ModalStore.ts';
 
 export const ActionToolbar = () => {
   const colorPickerRef = useRef<HTMLInputElement>(null);
   const createNewFile = useFileStorageStore(state => state.createNewFile);
   const createNewFolder = useFileStorageStore(state => state.createNewFolder);
-
-  const deleteSelection = useFileStorageStore(state => state.deleteSelection);
 
   const selectionCount = useFileStorageStore(state => state.selectedItemIds.length);
   const hasSelection = selectionCount > 0;
@@ -19,6 +18,8 @@ export const ActionToolbar = () => {
   const updateColorToSelection = useFileStorageStore(state => state.updateColorToSelection);
   const setSelectedColor = useFileStorageStore(state => state.setSelectedColor);
   const selectedColor = useFileStorageStore(state => state.selectedColor);
+
+  const openModal = useModalStore(state => state.openModal);
 
   const debouncedValue = useDebounce(selectedColor, 500);
 
@@ -29,7 +30,7 @@ export const ActionToolbar = () => {
 
   const onDeleteClick: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.stopPropagation();
-    await deleteSelection();
+    openModal();
   };
 
   const onColorClick = () => {
