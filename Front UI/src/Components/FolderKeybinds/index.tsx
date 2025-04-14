@@ -3,6 +3,7 @@ import { useFileStorageStore } from '../../Store/FileStorageStore';
 import { useModalStore } from '../../Store/ModalStore';
 
 export const FolderKeybinds = () => {
+  const isOnHomeTab = useFileStorageStore(state => state.fileIdCurrentlyEditing === null);
   const isEditingName = useFileStorageStore(store => !!store.fileIdCurrentlyEditingName);
   const selectedItemIds = useFileStorageStore(store => store.selectedItemIds);
   const openModal = useModalStore(store => store.openModal);
@@ -14,6 +15,7 @@ export const FolderKeybinds = () => {
   const editSelectionName = useFileStorageStore(store => store.editSelectionName);
 
   useEvent(document, 'keyup', (e: KeyboardEvent) => {
+    if (!isOnHomeTab) return;
     if (isEditingName) return;
     if (selectedItemIds.length === 0) return;
 
@@ -43,7 +45,6 @@ export const FolderKeybinds = () => {
       return;
     }
   });
-
 
   return null;
 }
