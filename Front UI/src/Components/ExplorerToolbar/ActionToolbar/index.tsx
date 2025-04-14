@@ -62,11 +62,19 @@ export const ActionToolbar = () => {
         <Icon icon="mingcute:palette-line" />
       </S.LabelButton>
 
-      <ButtonIcon title="Rename selected" disabled={selectionCount !== 1} onClick={onEditName}>
+      <ButtonIcon
+        title="Rename selected"
+        disabled={selectionCount !== 1}
+        onClick={onEditName}
+      >
         <Icon icon="gg:rename" />
       </ButtonIcon>
 
-      <ButtonIcon title="Delete selection" disabled={!hasSelection} onClick={onDeleteClick}>
+      <ButtonIcon
+        title="Delete selection"
+        disabled={!hasSelection}
+        onClick={onDeleteClick}
+      >
         <Icon icon="mingcute:delete-2-line" />
       </ButtonIcon>
 

@@ -49,6 +49,9 @@ export interface FileStorageStore {
   } | null,
   setSelectedColor: (color: string) => void,
   updateColorToSelection: () => Promise<void>,
+
+  filteredValue: string,
+  setFilteredValue: (value: string) => void,
 }
 
 export const useFileStorageStore = create<FileStorageStore>()((set, get) => ({
@@ -276,4 +279,9 @@ export const useFileStorageStore = create<FileStorageStore>()((set, get) => ({
     set({ selectedColor: null });
     get().refreshCurrentFolder();
   },
+
+  filteredValue: '',
+  setFilteredValue: (value) => {
+    set({ filteredValue: value })
+  }
 }));

@@ -13,7 +13,7 @@ export const DividerContainer = styled.div`
 
   font-size: 2.2em;
   width: 0.5em;
-  height: 1em; 
+  height: 1em;
 `;
 
 export const LinkButton = styled.a`
@@ -34,7 +34,7 @@ export const LinkButton = styled.a`
   border: none;
   background-color: transparent;
 
-  transition: 
+  transition:
     opacity 0.2s ease-in-out,
     background-color 0.2s ease-in-out
   ;
@@ -64,7 +64,7 @@ export const LabelButton = styled.label<{ $disabled: boolean }>`
   border: none;
   background-color: transparent;
 
-  transition: 
+  transition:
     opacity 0.2s ease-in-out,
     background-color 0.2s ease-in-out
   ;

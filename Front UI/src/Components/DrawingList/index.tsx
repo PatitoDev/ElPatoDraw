@@ -4,10 +4,11 @@ import { Item } from './Item';
 import { useFileStorageStore } from '../../Store/FileStorageStore';
 import { useTheme } from 'styled-components';
 import { SelectionBox } from '../SelectionBox';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Icon } from '@iconify/react';
 
 export const DrawingList = () => {
+  const filteredValue = useFileStorageStore(state => state.filteredValue);
   const gridRef = useFileStorageStore(state => state.itemContainerRef);
   const folder = useFileStorageStore(state => state.currentFolder);
   const theme = useTheme();
@@ -20,6 +21,19 @@ export const DrawingList = () => {
   loadCounter.current += 1;
   // item index sets the animation delay, but we only want to have some animation delay on the 'first' folder load
   // so after that we disable the delay so that when the user adds a file/folder there is no animation delay
+
+  const filteredFolder = useMemo(() => {
+    const valueToSearch = filteredValue.trim().toLocaleLowerCase();
+    const files = (folder?.files ?? []).filter(f =>
+      f.name.toLocaleLowerCase().includes(valueToSearch)
+    );
+
+    const folders = (folder?.folders ?? []).filter(f =>
+      f.name.toLocaleLowerCase().includes(valueToSearch)
+    );
+
+    return { files, folders };
+  }, [filteredValue, folder]);
 
   return (
     <S.Container>
@@ -34,7 +48,7 @@ export const DrawingList = () => {
       <S.FileGrid ref={gridRef}>
         <SelectionBox />
 
-        {folder && folder.folders.map((f, index) => (
+        {filteredFolder.folders.map((f, index) => (
           <Item
             index={loadCounter.current < 2 ? index : 0}
             id={f.id}
@@ -45,9 +59,9 @@ export const DrawingList = () => {
           />
         ))}
 
-        {folder && folder.files.map((f, index) => (
+        {filteredFolder.files.map((f, index) => (
           <Item
-            index={loadCounter.current < 2 ? index + folder.folders.length : 0}
+            index={loadCounter.current < 2 ? index + filteredFolder.folders.length : 0}
             id={f.id}
             key={f.id}
             name={f.name}

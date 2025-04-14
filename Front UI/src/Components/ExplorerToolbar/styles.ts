@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const Container = styled.div`
   display: flex;
@@ -6,4 +6,5 @@ export const Container = styled.div`
   align-items: center;
   padding: 0.5em 1em;
   flex-wrap: wrap;
+  position: relative;
 `;
