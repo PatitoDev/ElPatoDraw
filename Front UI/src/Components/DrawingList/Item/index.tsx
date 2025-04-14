@@ -135,7 +135,8 @@ export const Item = ({
     let valueCleanedUp = inputNameValue.trim();
     valueCleanedUp = valueCleanedUp.length > 1 ? valueCleanedUp : name;
 
-    const onKeyDown = async (e: KeyboardEvent) => {
+    const onKeyUp = async (e: KeyboardEvent) => {
+      e.stopPropagation();
       if (state.handled) return;
       if (e.key === 'Escape') {
         state.handled = true;
@@ -148,7 +149,7 @@ export const Item = ({
         clearNameEditingId();
         await updateFileName(id, valueCleanedUp);
       }
-    }
+    };
 
     const onBlur = async () => {
       if (state.handled) return;
@@ -156,15 +157,15 @@ export const Item = ({
       state.handled = true;
       clearNameEditingId();
       await updateFileName(id, valueCleanedUp);
-    }
+    };
 
-    inputNameRef.current.addEventListener('keydown', onKeyDown);
+    inputNameRef.current.addEventListener('keyup', onKeyUp);
     inputNameRef.current.addEventListener('blur', onBlur);
     return () => {
       if (!inputNameRef.current) return;
-      inputNameRef.current.removeEventListener('keydown', onKeyDown);
+      inputNameRef.current.removeEventListener('keyup', onKeyUp);
       inputNameRef.current.removeEventListener('blur', onBlur);
-    }
+    };
   }, [isEditingName, clearNameEditingId, name, inputNameValue])
 
   return (
