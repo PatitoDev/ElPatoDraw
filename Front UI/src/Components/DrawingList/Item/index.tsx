@@ -86,7 +86,7 @@ export const Item = ({
     (e.ctrlKey && isSelected) ? removeFromSelection(id) : addToSelection(id);
   }
 
-  const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDragEnd = () => {
     setIsDragging(false);
   }
 
@@ -108,8 +108,7 @@ export const Item = ({
     setIsHoveringItem(false);
   }
 
-  const handleDrag = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-  }
+  const handleDrag = () => {}
 
   const handleDrop = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.preventDefault();

@@ -78,7 +78,7 @@ const getFileIdsInsideBox = (
     }]
   }
 
-  const collidedWith = fileWithBox.filter(({ box, fileId }) => 
+  const collidedWith = fileWithBox.filter(({ box }) => 
     (selectionStartPoint.x < box.end.x) && (selectionEndPoint.x > box.start.x) &&
     (selectionStartPoint.y < box.end.y) && (selectionEndPoint.y > box.start.y) 
   );
