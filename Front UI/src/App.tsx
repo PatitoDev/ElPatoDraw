@@ -21,24 +21,24 @@ function App () {
 
   if (!session) {
     return (
-      <MantineProvider theme={{ 
+      <MantineProvider theme={{
         fontFamily: 'Poppins',
         colorScheme: 'dark',
       }} withGlobalStyles withNormalizeCSS>
         <Text size="3em" weight="bold" align="center" m="1em">
           El Pato Draw
         </Text>
-        <div style={{ 
+        <div style={{
           height: '50vh',
           maxWidth: '30em',
           width: '100%',
-          margin: 'auto' 
+          margin: 'auto'
         }} >
-          <Auth 
+          <Auth
             redirectTo={isProd ? undefined : 'http://localhost:5173'}
-            providers={[ 'twitch' ]} 
-            supabaseClient={AuthenticationApi.supabaseClient} 
-            appearance={{ 
+            providers={[ 'twitch' ]}
+            supabaseClient={AuthenticationApi.supabaseClient}
+            appearance={{
               theme: ThemeSupa
             }}
             theme='dark'
@@ -52,7 +52,7 @@ function App () {
 
   return (
     <ThemeProvider theme={mainTheme}>
-      <MantineProvider theme={{ 
+      <MantineProvider theme={{
         fontFamily: 'Poppins',
         colorScheme: 'dark',
         colors: {

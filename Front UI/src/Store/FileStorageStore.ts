@@ -18,7 +18,7 @@ export interface FileStorageStore {
   refreshCurrentFolder: () => Promise<void>,
 
   showExplorer: () => Promise<void>,
-  openFile: (fileId : string) => void,
+  openFile: (fileId: string) => void,
   closeFile: (fileId: string) => void,
 
   createNewFile: () => Promise<void>,
@@ -38,17 +38,20 @@ export interface FileStorageStore {
   removeFromSelection: (fileId: string) => void,
   setSelectedItemsIds: (fileIds: Array<string>) => void,
 
-  fileIdCurrentlyEditingName : string | null,
+  fileIdCurrentlyEditingName: string | null,
   editSelectionName: () => void,
   updateFileName: (fileId: string, fileName: string) => Promise<void>,
   clearFileNameEditing: () => void,
 
-  selectedColor: string | null,
+  selectedColor: {
+    selectedIds: Array<string>,
+    color: string
+  } | null,
   setSelectedColor: (color: string) => void,
   updateColorToSelection: () => Promise<void>,
 }
 
-export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
+export const useFileStorageStore = create<FileStorageStore>()((set, get) => ({
   itemContainerRef: createRef<HTMLDivElement>(),
 
   fileIdCurrentlyEditing: null,
@@ -88,7 +91,7 @@ export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
     const file = get().currentFolder?.files.find(f => f.id === fileId);
     if (!file) return;
 
-    set({ 
+    set({
       fileIdCurrentlyEditing: file.id,
       activeFiles: [...activeFiles, file]
     });
@@ -111,7 +114,7 @@ export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
     set({
       fileIdCurrentlyEditingName: createdFolderId,
       selectedItemIds: [createdFolderId]
-    })
+    });
   },
 
   createNewFile: async () => {
@@ -123,15 +126,15 @@ export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
     set({
       fileIdCurrentlyEditingName: createdFileId,
       selectedItemIds: [createdFileId]
-    })
+    });
   },
 
   selectedItemIds: [],
 
-  setSelectedItemsIds: (itemIds) => {set({ selectedItemIds: itemIds })},
+  setSelectedItemsIds: (itemIds) => { set({ selectedItemIds: itemIds }) },
 
   addToSelection: (fileId: string) => {
-    set(state => ({ selectedItemIds: [...state.selectedItemIds, fileId]}));
+    set(state => ({ selectedItemIds: [...state.selectedItemIds, fileId] }));
   },
 
   clearSelection: () => {
@@ -140,7 +143,8 @@ export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
 
   removeFromSelection: (fileId: string) => {
     set(state => ({
-      selectedItemIds: state.selectedItemIds.filter(id => id !== fileId)}
+      selectedItemIds: state.selectedItemIds.filter(id => id !== fileId)
+    }
     ));
   },
 
@@ -200,7 +204,7 @@ export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
   isDragging: false,
   setIsDragging: (value) => set({ isDragging: value }),
 
-  fileIdCurrentlyEditingName : null,
+  fileIdCurrentlyEditingName: null,
   editSelectionName: () => {
     const itemIds = get().selectedItemIds;
     if (itemIds.length !== 1) return;
@@ -227,32 +231,38 @@ export const useFileStorageStore = create<FileStorageStore>()((set,get) => ({
         name: fileName
       }]);
     }
-  
+
     await get().refreshCurrentFolder();
   },
 
+  // Folder/file color picker
   selectedColor: null,
   setSelectedColor: (color) => {
-    set({ selectedColor: color });
+    set({
+      selectedColor: {
+        color,
+        selectedIds: [...get().selectedItemIds]
+      }
+    });
     return;
   },
   updateColorToSelection: async () => {
-    const color = get().selectedColor;
-    if (color === null) return;
-    const selectedItemIds = get().selectedItemIds;
+    const colorData = get().selectedColor;
+    if (colorData === null) return;
+    const { color, selectedIds } = colorData;
     const currentFolder = get().currentFolder;
     if (!currentFolder) return;
 
-    const updatedFolders = currentFolder.folders.map(f => 
-      selectedItemIds.includes(f.id) ?
-      ({...f, color}) :
-      {...f}
+    const updatedFolders = currentFolder.folders.map(f =>
+      selectedIds.includes(f.id) ?
+        ({ ...f, color }) :
+        { ...f }
     );
 
-    const updatedFiles = currentFolder.files.map(f => 
-      selectedItemIds.includes(f.id) ?
-      ({...f, color}) :
-      {...f}
+    const updatedFiles = currentFolder.files.map(f =>
+      selectedIds.includes(f.id) ?
+        ({ ...f, color }) :
+        { ...f }
     );
 
     await MetadataApi.updateFiles(updatedFiles);

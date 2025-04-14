@@ -23,13 +23,13 @@ export const Item = ({
   const inputNameRef = useRef<HTMLInputElement>(null);
   const [inputNameValue, setInputNameValue] = useState<string>(name);
 
-  const isSelected = useFileStorageStore(state => 
+  const isSelected = useFileStorageStore(state =>
     !!state.selectedItemIds.find(selectedId => selectedId === id)
   );
-  const overrideColor = useFileStorageStore(state => 
+  const overrideColor = useFileStorageStore(state =>
     state.selectedItemIds.includes(id) ?
-    state.selectedColor :
-    color
+      state.selectedColor?.color :
+      color
   );
   const isEditingName = useFileStorageStore(state => state.fileIdCurrentlyEditingName === id);
   const clearNameEditingId = useFileStorageStore(state => state.clearFileNameEditing);
@@ -130,7 +130,7 @@ export const Item = ({
 
   useEffect(() => {
     if (!isEditingName || !inputNameRef.current) return;
-    let state = { handled: false };
+    const state = { handled: false };
 
     let valueCleanedUp = inputNameValue.trim();
     valueCleanedUp = valueCleanedUp.length > 1 ? valueCleanedUp : name;
@@ -189,15 +189,15 @@ export const Item = ({
       $isDragging={isDragging}
     >
       <DraggedItem ref={draggedItemRef} />
-      { type === 'Folder' && <DuckFolder color={overrideColor ?? color} /> }
-      { type === 'File' && <Icon data-color={overrideColor ?? color} icon="mingcute:file-fill" /> }
-      { isEditingName ?
-        <input 
+      {type === 'Folder' && <DuckFolder color={overrideColor ?? color} />}
+      {type === 'File' && <Icon data-color={overrideColor ?? color} icon="mingcute:file-fill" />}
+      {isEditingName ?
+        <input
           minLength={1}
           maxLength={200}
           ref={inputNameRef}
           onDoubleClick={onInputClick}
-          value={inputNameValue} 
+          value={inputNameValue}
           onChange={e => setInputNameValue(e.target.value)}
         /> :
         <S.Name>{name}</S.Name>
