@@ -44,11 +44,36 @@ const createFile = async (fileName: string, fileType: FileType, parentFolderId?:
 export interface FileUpdateDetails {
   id: string,
   name: string,
+  color?: string,
   parentFolderId?: string
 }
 
 const updateFiles = async (files: Array<FileUpdateDetails>) => {
   const url = `${baseUrl}/file`;
+  const token = await AuthenticationApi.getToken();
+
+  const resp = await fetch(url, {
+    headers: {
+      'Authorization': token,
+      'Content-Type': 'application/json'
+    },
+    method: 'PUT',
+    body: JSON.stringify(files)
+  });
+
+  if (!resp.ok) return null;
+  return await resp.json();
+};
+
+export interface FolderUpdateDetails {
+  id: string,
+  color?: string,
+  name: string,
+  parentFolderId?: string
+}
+
+const updateFolders = async (files: Array<FolderUpdateDetails>) => {
+  const url = `${baseUrl}/folder/update`;
   const token = await AuthenticationApi.getToken();
 
   const resp = await fetch(url, {
@@ -78,6 +103,40 @@ const deleteFiles = async (fileIds: Array<string>) => {
   });
 }
 
+const deleteFolders = async (folderIds: Array<string>) => {
+  const url = `${baseUrl}/folder/`;
+  const token = await AuthenticationApi.getToken();
+
+  await fetch(url, {
+    headers: {
+      'Authorization': token,
+      'Content-Type': 'application/json'
+    },
+    method: 'DELETE',
+    body: JSON.stringify(folderIds)
+  });
+}
+
+const createFolder = async (folderName: string, parentFolderId?: string): Promise<string | null> => {
+  const url = `${baseUrl}/folder`;
+  const token = await AuthenticationApi.getToken();
+
+  const resp = await fetch(url, {
+    headers: {
+      'Authorization': token,
+      'Content-Type': 'application/json'
+    },
+    method: 'POST',
+    body: JSON.stringify({
+      name: folderName,
+      parentFolderId
+    })
+  });
+
+  if (!resp.ok) return null;
+  return await resp.json();
+}
+
 const getFolder = async (folderId?: string | null): Promise<Folder | null> => {
   const url = `${baseUrl}/folder/${folderId ?? ""}`;
   const token = await AuthenticationApi.getToken();
@@ -99,6 +158,9 @@ export const MetadataApi = {
   getFolder,
   createFile,
   deleteFiles,
+  deleteFolders,
+  createFolder,
   updateFiles,
+  updateFolders,
   getFile
 }

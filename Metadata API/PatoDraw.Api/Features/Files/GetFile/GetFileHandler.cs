@@ -39,6 +39,7 @@ public class GetFileHandler : IRequestHandler<GetFileRequest, ApiResult<FileResu
             ModifiedAt = file.ModifiedAt,
             DeletedAt = file.DeletedAt,
             Name = file.Name,
+            Color = file.Color,
             Type = file.Type,
         };
 

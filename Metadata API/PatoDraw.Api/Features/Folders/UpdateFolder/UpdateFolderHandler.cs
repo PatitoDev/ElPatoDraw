@@ -16,7 +16,7 @@ public class UpdateFolderHandler : IRequestHandler<UpdateFolderRequest, ApiResul
 
     public async Task<ApiResult<bool>> Handle(UpdateFolderRequest request, CancellationToken cancellationToken)
     {
-        var folderIds = request.FoldersToUpdate.Select(f => f.FolderId).ToList();
+        var folderIds = request.FoldersToUpdate.Select(f => f.Id).ToList();
 
         var folderEntities = await _context
             .Folders
@@ -25,13 +25,13 @@ public class UpdateFolderHandler : IRequestHandler<UpdateFolderRequest, ApiResul
 
         foreach (var newFolderData in request.FoldersToUpdate)
         {
-            var folderEntity = folderEntities.GetValueOrDefault(newFolderData.FolderId);
+            var folderEntity = folderEntities.GetValueOrDefault(newFolderData.Id);
             if (folderEntity == null)
             {
                 return new ApiResult<bool>() { 
                     Payload = true,
                     Status = StatusCodes.Status404NotFound,
-                    Error = $"Folder with id {newFolderData.FolderId} not found"
+                    Error = $"Folder with id {newFolderData.Id} not found"
                 };
             }
 
@@ -55,7 +55,7 @@ public class UpdateFolderHandler : IRequestHandler<UpdateFolderRequest, ApiResul
                     return new ApiResult<bool>() { 
                         Payload = true,
                         Status = StatusCodes.Status404NotFound,
-                        Error = $"Folder with id {newFolderData.FolderId} not found"
+                        Error = $"Folder with id {newFolderData.Id} not found"
                     };
                 }
 
@@ -64,11 +64,15 @@ public class UpdateFolderHandler : IRequestHandler<UpdateFolderRequest, ApiResul
                     return new ApiResult<bool>() { Status = StatusCodes.Status403Forbidden };
                 }
 
-
                 folderEntity.ParentFolderId = newFolderData.ParentFolderId;
                 folderEntity.Depth = parent.Depth + 1;
-                await UpdateDepthRecursively(folderEntity, cancellationToken);
+            } else
+            {
+                folderEntity.ParentFolderId = null;
+                folderEntity.Depth = 0;
             }
+
+            await UpdateDepthRecursively(folderEntity, cancellationToken);
         }
 
         await _context.SaveChangesAsync(cancellationToken);

@@ -12,5 +12,6 @@ public record UpdateFileData
 {
     public required Guid Id { get; init; }
     public required string Name { get; init; }
+    public string? Color { get; init; }
     public Guid? ParentFolderId { get; init; }
 }

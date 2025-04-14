@@ -61,11 +61,11 @@ public class CreateFolderHandler : IRequestHandler<CreateFolderRequest, ApiResul
         {
             Id = Guid.NewGuid(),
             Color = request.Payload.Color,
-            CreatedAt = DateTime.Now,
+            CreatedAt = DateTime.UtcNow,
             OwnerId = request.OwnerId,
             Name = request.Payload.Name,
             ParentFolderId = request.Payload.ParentFolderId,
-            ModifiedAt = DateTime.Now,
+            ModifiedAt = DateTime.UtcNow,
             Depth = depth,
         };
 

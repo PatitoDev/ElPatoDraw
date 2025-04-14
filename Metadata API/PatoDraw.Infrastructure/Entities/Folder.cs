@@ -6,7 +6,7 @@ public class Folder
 
     public required string Name;
 
-    public required string Color;
+    public string? Color;
 
     public required Guid OwnerId;
 

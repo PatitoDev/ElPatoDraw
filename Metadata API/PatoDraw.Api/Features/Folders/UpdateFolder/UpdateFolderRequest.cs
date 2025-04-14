@@ -10,8 +10,8 @@ public record UpdateFolderRequest: IRequest<ApiResult<bool>>
 
 public record UpdateFolderData
 {
-    public required Guid FolderId { get; init; }
-    public required string Color { get; init; }
+    public required Guid Id { get; init; }
+    public string? Color { get; init; }
     public required string Name { get; init; }
-    public required Guid? ParentFolderId { get; init; }
+    public Guid? ParentFolderId { get; init; }
 }

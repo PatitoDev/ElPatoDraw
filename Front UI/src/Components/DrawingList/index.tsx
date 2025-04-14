@@ -1,71 +1,75 @@
-import {
-  Card,
-  SimpleGrid,
-  Text
-} from '@mantine/core';
-import { useMemo, useState } from 'react';
-import { Toolbar } from './Toolbar';
-import { Folder } from '../../types/File';
+import * as S from './styles';
+import { ExplorerToolbar } from '../ExplorerToolbar';
+import { Item } from './Item';
+import { useFileStorageStore } from '../../Store/FileStorageStore';
+import { useTheme } from 'styled-components';
+import { SelectionBox } from '../SelectionBox';
+import { useEffect, useMemo, useRef } from 'react';
+import { Icon } from '@iconify/react';
 
-export interface DrawingListProps {
-  onFileClick: (id: string) => void,
-  folder: Folder,
-}
+export const DrawingList = () => {
+  const filteredValue = useFileStorageStore(state => state.filteredValue);
+  const gridRef = useFileStorageStore(state => state.itemContainerRef);
+  const folder = useFileStorageStore(state => state.currentFolder);
+  const theme = useTheme();
+  const loadCounter = useRef<number>(0);
 
-const dateAsTimestamp = (date: string) => (
-  new Date(date).valueOf()
-);
+  useEffect(() => {
+    loadCounter.current = 0;
+  }, [folder?.metadata?.id]);
 
-const parseDate = (date: string) => (
-  new Date(date).toLocaleDateString()
-);
+  loadCounter.current += 1;
+  // item index sets the animation delay, but we only want to have some animation delay on the 'first' folder load
+  // so after that we disable the delay so that when the user adds a file/folder there is no animation delay
 
-export const DrawingList = ({ folder, onFileClick }: DrawingListProps) => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const filteredFolder = useMemo(() => {
+    const valueToSearch = filteredValue.trim().toLocaleLowerCase();
+    const files = (folder?.files ?? []).filter(f =>
+      f.name.toLocaleLowerCase().includes(valueToSearch)
+    );
 
-  const sortedFiles = useMemo(() => {
-    const searchValue = searchQuery.trim().toLocaleLowerCase();
+    const folders = (folder?.folders ?? []).filter(f =>
+      f.name.toLocaleLowerCase().includes(valueToSearch)
+    );
 
-    const filteredResult = folder.files
-      .filter(f => f.name.toLocaleLowerCase().indexOf(searchValue) >= 0);
-
-    return filteredResult.sort((a, b) => {
-      const tsA = dateAsTimestamp(a.createdAt);
-      const tsB = dateAsTimestamp(b.createdAt);
-      return tsB - tsA;
-    });
-
-  }, [folder, searchQuery]);
+    return { files, folders };
+  }, [filteredValue, folder]);
 
   return (
-    <>
-      <Toolbar currentSearch={searchQuery} onChangeSearch={setSearchQuery} />
-      <SimpleGrid
-        sx={{
-          padding: '1rem',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(15em, 1fr))',
-        }}
-        spacing="0.75rem"
-      >
-        {sortedFiles.map((file) => (
-          <Card
-            sx={{
-              transition: 'transform 0.3s, box-shadow 0.3s',
-              boxShadow: 'inset 0 0 0 0px rgb(193 194 197 / 0%)',
-              ':hover': {
-                cursor: 'pointer',
-                boxShadow: 'inset 0 0 0 3px rgb(193 194 197 / 100%)',
-                transform: 'scale(1.03)',
-              },
-            }}
-            key={file.id}
-            onClick={() => onFileClick(file.id)}
-          >
-            <Text weight="bold">{file.name}</Text>
-            <Text size="sm">{parseDate(file.createdAt)}</Text>
-          </Card>
+    <S.Container>
+
+      <ExplorerToolbar />
+      { (!folder || (folder.files.length === 0 && folder.folders.length === 0)) && (
+        <S.NoContent>
+          <Icon fontSize="3em" icon="mingcute:folder-open-2-line" />
+          <span>This folder is empty</span>
+        </S.NoContent>
+      )}
+      <S.FileGrid ref={gridRef}>
+        <SelectionBox />
+
+        {filteredFolder.folders.map((f, index) => (
+          <Item
+            index={loadCounter.current < 2 ? index : 0}
+            id={f.id}
+            key={f.id}
+            color={f.color ?? theme.colors.defaultFolderColor}
+            name={f.name}
+            type='Folder'
+          />
         ))}
-      </SimpleGrid>
-    </>
+
+        {filteredFolder.files.map((f, index) => (
+          <Item
+            index={loadCounter.current < 2 ? index + filteredFolder.folders.length : 0}
+            id={f.id}
+            key={f.id}
+            name={f.name}
+            type='File'
+            color={f.color ?? theme.colors.defaultFileColor}
+          />
+        ))}
+      </S.FileGrid>
+    </S.Container>
   );
 };

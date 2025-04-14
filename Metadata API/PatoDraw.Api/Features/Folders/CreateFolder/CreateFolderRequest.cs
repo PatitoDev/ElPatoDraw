@@ -12,7 +12,7 @@ public record FolderPayload
 {
     public required string Name { get; init; }
 
-    public required string Color { get; init; }
+    public string? Color { get; init; }
 
     public Guid? ParentFolderId { get; init; }
 }

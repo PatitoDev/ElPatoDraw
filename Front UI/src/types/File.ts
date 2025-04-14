@@ -3,7 +3,7 @@ export type FileType = 'Excalidraw' | 'TODO';
 export interface FolderMetadata {
   id: string,
   name: string,
-  color: string,
+  color?: string,
   createdAt: string,
   modifiedAt: string,
   deletedAt?: string,
@@ -16,6 +16,7 @@ export interface FileChild {
   id: string,
   name: string,
   type: FileType,
+  color?: string,
   createdAt: string,
   modifiedAt: string,
   deletedAt?: string,
@@ -27,8 +28,6 @@ export interface Folder {
   folders: Array<FolderChild>,
   isHomeDirectory: boolean
 }
-
-//
 
 export type File = FolderChild & {
   parentFolder?: ParentFolder

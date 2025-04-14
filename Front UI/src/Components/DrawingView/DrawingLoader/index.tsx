@@ -9,7 +9,7 @@ export interface DrawingLoaderProps extends Omit<DrawingViewProps, 'drawing'> {
   id: string
 }
 
-const DrawingLoader = ({ id, onTitleChange, onDelete  }: DrawingLoaderProps) => {
+const DrawingLoader = ({ id }: DrawingLoaderProps) => {
   const [result, setResult] = useState<{
     data?: Drawing,
     hasError?: boolean
@@ -35,8 +35,6 @@ const DrawingLoader = ({ id, onTitleChange, onDelete  }: DrawingLoaderProps) => 
     return (
       <DrawingView 
         drawing={result.data} 
-        onTitleChange={onTitleChange} 
-        onDelete={onDelete}
       />
     )
   }

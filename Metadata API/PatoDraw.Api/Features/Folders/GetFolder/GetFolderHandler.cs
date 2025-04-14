@@ -63,8 +63,10 @@ public class GetFolderHandler : IRequestHandler<GetFolderRequest, ApiResult<Fold
                 ModifiedAt = f.ModifiedAt,
                 DeletedAt = f.DeletedAt,
                 Name = f.Name,
+                Color = f.Color,
                 Type = f.Type
             })
+            .OrderBy(f => f.CreatedAt)
             .ToListAsync(cancellationToken);
 
         var folderChilds = await _dbContext
@@ -80,6 +82,7 @@ public class GetFolderHandler : IRequestHandler<GetFolderRequest, ApiResult<Fold
                 DeletedAt = f.DeletedAt,
                 Name = f.Name,
             })
+            .OrderBy(f => f.CreatedAt)
             .ToListAsync(cancellationToken);
 
         var folderResult = new FolderResult() {

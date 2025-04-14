@@ -2,7 +2,7 @@
   "name": "El Pato Draw",
   "icons": [
     {
-      "src": "512.png",
+      "src": "ElPatoDrawLogo.svg",
       "type": "image/png",
       "sizes": "512x512"
     }

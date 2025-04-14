@@ -27,7 +27,7 @@ var runner = services.GetRequiredService<IMigrationRunner>();
 
 if (args.FirstOrDefault() == "-r")
 {
-    runner.MigrateDown(-1);
+    runner.Rollback(1);
 } else
 {
     runner.ListMigrations();

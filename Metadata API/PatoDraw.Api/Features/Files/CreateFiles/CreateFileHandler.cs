@@ -66,6 +66,7 @@ public class CreateFileHandler : IRequestHandler<CreateFileRequest, ApiResult<Gu
             CreatedAt = DateTime.UtcNow,
             ModifiedAt = DateTime.UtcNow,
             Name = request.FilePayload.Name,
+            Color = request.FilePayload.Color,
             OwnerId = request.OwnerId,
             ParentFolderId = request.FilePayload.ParentFolderId,
             Type = request.FilePayload.Type,
