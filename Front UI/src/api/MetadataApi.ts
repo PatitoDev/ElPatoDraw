@@ -63,7 +63,7 @@ const updateFiles = async (files: Array<FileUpdateDetails>) => {
 
   if (!resp.ok) return null;
   return await resp.json();
-}
+};
 
 export interface FolderUpdateDetails {
   id: string,

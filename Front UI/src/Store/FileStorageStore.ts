@@ -212,14 +212,18 @@ export const useFileStorageStore = create<FileStorageStore>()((set, get) => ({
     set({ fileIdCurrentlyEditingName: fileId });
   },
   clearFileNameEditing: () => {
-    set({ fileIdCurrentlyEditingName: null })
+    set({ fileIdCurrentlyEditingName: null });
   },
 
   updateFileName: async (fileId: string, fileName: string) => {
     const file = get().currentFolder?.files.find(f => f.id === fileId);
+    const currentFolderId = get().currentFolder?.metadata?.id;
+
     if (file) {
       await MetadataApi.updateFiles([{
-        ...file,
+        id: file.id,
+        color: file.color,
+        parentFolderId: currentFolderId,
         name: fileName
       }]);
     }
@@ -227,8 +231,10 @@ export const useFileStorageStore = create<FileStorageStore>()((set, get) => ({
     const folder = get().currentFolder?.folders.find(f => f.id === fileId);
     if (folder) {
       await MetadataApi.updateFolders([{
-        ...folder,
-        name: fileName
+        id: folder.id,
+        name: fileName,
+        color: folder.color,
+        parentFolderId: currentFolderId
       }]);
     }
 

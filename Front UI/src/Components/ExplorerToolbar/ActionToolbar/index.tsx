@@ -52,7 +52,12 @@ export const ActionToolbar = () => {
         type='color'
         ref={colorPickerRef}
       />
-      <S.LabelButton $disabled={!hasSelection} htmlFor='input-color-picker' title="Change color" onClick={onColorClick}>
+      <S.LabelButton
+        $disabled={!hasSelection}
+        htmlFor='input-color-picker'
+        title="Change color"
+        onClick={onColorClick}
+      >
         <Icon icon="mingcute:palette-line" />
       </S.LabelButton>
 
@@ -79,13 +84,21 @@ export const ActionToolbar = () => {
         <Icon icon="pepicons-pop:line-y" />
       </S.DividerContainer>
 
-      <S.LinkButton title="Support me :3" href='https://ko-fi.com/patitodev' target="_blank">
+      <S.LinkButton
+        title="Support me :3"
+        href='https://ko-fi.com/patitodev'
+        target="_blank"
+      >
         <Icon icon="mingcute:hand-heart-line" />
       </S.LinkButton>
 
-      <S.LinkButton title="Source code" href='https://github.com/PatitoDev/ElPatoDraw' target="_blank">
+      <S.LinkButton
+        title="Source code"
+        href='https://github.com/PatitoDev/ElPatoDraw'
+        target="_blank"
+      >
         <Icon icon="mingcute:code-fill" />
       </S.LinkButton>
     </S.Container>
-  )
-}
+  );
+};
