@@ -26,7 +26,7 @@ export const ActionToolbar = () => {
   useEffect(() => {
     if (!debouncedValue) return;
     updateColorToSelection();
-  }, [debouncedValue]);
+  }, [debouncedValue, updateColorToSelection]);
 
   const onDeleteClick: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.stopPropagation();
@@ -46,7 +46,7 @@ export const ActionToolbar = () => {
   return (
     <S.Container>
       <input
-        id="input-color-picker"
+        id='input-color-picker'
         disabled={!hasSelection}
         onChange={onColorChange}
         style={{ visibility: 'hidden' }}
@@ -56,57 +56,59 @@ export const ActionToolbar = () => {
       <S.LabelButton
         $disabled={!hasSelection}
         htmlFor='input-color-picker'
-        title="Change color"
+        title='Change color'
         onClick={onColorClick}
       >
-        <Icon icon="mingcute:palette-line" />
+        <Icon icon='mingcute:palette-line' />
       </S.LabelButton>
 
       <ButtonIcon
-        title="Rename selected"
+        title='Rename selected'
         disabled={selectionCount !== 1}
         onClick={onEditName}
+        type='button'
       >
-        <Icon icon="gg:rename" />
+        <Icon icon='gg:rename' />
       </ButtonIcon>
 
       <ButtonIcon
-        title="Delete selection"
+        title='Delete selection'
         disabled={!hasSelection}
         onClick={onDeleteClick}
+        type='button'
       >
-        <Icon icon="mingcute:delete-2-line" />
+        <Icon icon='mingcute:delete-2-line' />
       </ButtonIcon>
 
       <S.DividerContainer aria-hidden>
-        <Icon icon="pepicons-pop:line-y" />
+        <Icon icon='pepicons-pop:line-y' />
       </S.DividerContainer>
 
-      <ButtonIcon title="New folder" onClick={createNewFolder}>
-        <Icon icon="mingcute:new-folder-line" />
+      <ButtonIcon type='button' title='New folder' onClick={createNewFolder}>
+        <Icon icon='mingcute:new-folder-line' />
       </ButtonIcon>
-      <ButtonIcon title="New file" onClick={createNewFile}>
-        <Icon icon="mingcute:file-new-line" />
+      <ButtonIcon type='button' title='New file' onClick={createNewFile}>
+        <Icon icon='mingcute:file-new-line' />
       </ButtonIcon>
 
       <S.DividerContainer aria-hidden>
-        <Icon icon="pepicons-pop:line-y" />
+        <Icon icon='pepicons-pop:line-y' />
       </S.DividerContainer>
 
       <S.LinkButton
-        title="Support me :3"
+        title='Support me :3'
         href='https://ko-fi.com/patitodev'
-        target="_blank"
+        target='_blank'
       >
-        <Icon icon="mingcute:hand-heart-line" />
+        <Icon icon='mingcute:hand-heart-line' />
       </S.LinkButton>
 
       <S.LinkButton
-        title="Source code"
+        title='Source code'
         href='https://github.com/PatitoDev/ElPatoDraw'
-        target="_blank"
+        target='_blank'
       >
-        <Icon icon="mingcute:code-fill" />
+        <Icon icon='mingcute:code-line' />
       </S.LinkButton>
     </S.Container>
   );

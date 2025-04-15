@@ -1,4 +1,4 @@
-import { RefObject } from "react";
+import { RefObject } from 'react';
 
 export type Point = { x: number, y: number };
 export type Box = {
@@ -6,7 +6,7 @@ export type Box = {
   end: Point
 }
 
-const getFileUnderMouse = (containerRef: RefObject<HTMLDivElement>, e: MouseEvent) => {
+const getFileUnderMouse = (containerRef: RefObject<HTMLDivElement | null>, e: MouseEvent) => {
   const container = containerRef.current;
   if (container === null) return;
 
@@ -22,11 +22,11 @@ const getFileUnderMouse = (containerRef: RefObject<HTMLDivElement>, e: MouseEven
     const rect = child.getBoundingClientRect();
     fileWithBox = [...fileWithBox, {
       fileId: id,
-      box: { 
+      box: {
         start: { x: rect.left, y: rect.top },
         end: { x: rect.right, y: rect.bottom }
       },
-    }]
+    }];
   }
 
   const mousePosition = { x: e.clientX, y: e.clientY };
@@ -37,14 +37,14 @@ const getFileUnderMouse = (containerRef: RefObject<HTMLDivElement>, e: MouseEven
       (mousePosition.y > box.start.y && mousePosition.y < box.end.y)
     ) return fileId;
   }
-}
+};
 
 const getFileIdsInsideBox = (
   x: number,
   y: number,
   width: number,
   height: number,
-  itemContainerRef: RefObject<HTMLDivElement>
+  itemContainerRef: RefObject<HTMLDivElement | null>
 ) => {
   const container = itemContainerRef.current;
   if (!container) return [];
@@ -75,19 +75,19 @@ const getFileIdsInsideBox = (
           y: rect.bottom + container.scrollTop - containerBoundingBox.top
         }
       },
-    }]
+    }];
   }
 
-  const collidedWith = fileWithBox.filter(({ box }) => 
+  const collidedWith = fileWithBox.filter(({ box }) =>
     (selectionStartPoint.x < box.end.x) && (selectionEndPoint.x > box.start.x) &&
-    (selectionStartPoint.y < box.end.y) && (selectionEndPoint.y > box.start.y) 
+    (selectionStartPoint.y < box.end.y) && (selectionEndPoint.y > box.start.y)
   );
 
   const selectedIds = collidedWith.map(item => item.fileId);
   return selectedIds;
-}
+};
 
 export const utils = {
   getFileUnderMouse,
   getFileIdsInsideBox
-}
+};

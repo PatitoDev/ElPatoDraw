@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const Container = styled.div`
   height: 100%;
@@ -7,4 +7,4 @@ export const Container = styled.div`
   color: ${({ theme }) => theme.colors.foreground };
   background-color: ${({ theme }) => theme.colors.background };
   user-select: none;
-`
+`;

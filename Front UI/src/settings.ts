@@ -9,4 +9,4 @@ export const SUPABASE_CONFIG = {
 export const API_URLS = {
   worker: isProd ? 'https://fileworker.elpato.dev' : 'https://fileworker-dev.elpato.dev',
   metadataApi: isProd ? 'https://api.elpato.dev/PatoDrawApi' : 'http://localhost:9356'
-}
+};

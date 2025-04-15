@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled, { css } from 'styled-components';
 
 export const Container = styled.div`
   background-color: ${({ theme }) => theme.colors.accent};
@@ -26,7 +26,7 @@ export const HomeTab = styled.div<{ $selected: boolean }>`
       background-color: ${({ theme }) => theme.colors.notSelectedTabBackground};
       box-shadow: 0 10px 0 ${({ theme }) => theme.colors.notSelectedTabBackground};
     `
-  }
+}
   transition:
     opacity 0.15s cubic-bezier(0, 0.82, 0.165, 2),
     transform 0.15s cubic-bezier(0, 0.82, 0.165, 2),
@@ -60,7 +60,7 @@ export const Tab = styled.div<{ $selected: boolean, $fileColor: string }>`
       background-color: ${({ theme }) => theme.colors.notSelectedTabBackground};
       box-shadow: 0 10px 0 ${({ theme }) => theme.colors.notSelectedTabBackground};
     `
-  }
+}
 
   align-self: flex-end;
   display: flex;

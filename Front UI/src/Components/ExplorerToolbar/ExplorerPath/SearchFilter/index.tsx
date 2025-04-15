@@ -18,4 +18,4 @@ export const SearchFilter = ({ isActive }: SearchFilterProps) => {
       onKeyUp={(e) => e.stopPropagation()}
     />
   );
-}
+};

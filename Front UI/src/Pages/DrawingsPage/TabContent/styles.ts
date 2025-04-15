@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const Container = styled.div`
   flex: 1;
@@ -11,7 +11,7 @@ export const Container = styled.div`
 
 export const ListContainer = styled.div`
   height: 100%;
-`
+`;
 
 export const DrawingContainer = styled.div`
   height: 100%;

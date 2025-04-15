@@ -1,6 +1,6 @@
 import * as S from './styles';
-import { ActionToolbar } from "./ActionToolbar"
-import { ExplorerPath } from "./ExplorerPath"
+import { ActionToolbar } from './ActionToolbar';
+import { ExplorerPath } from './ExplorerPath';
 
 export const ExplorerToolbar = () => {
 
@@ -9,5 +9,5 @@ export const ExplorerToolbar = () => {
       <ExplorerPath />
       <ActionToolbar />
     </S.Container>
-  )
-}
+  );
+};

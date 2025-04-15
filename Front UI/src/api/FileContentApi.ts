@@ -11,7 +11,7 @@ const getFileContent = async (id: string) => {
     headers: {
       'Authorization': token
     }
-  })
+  });
   const data = await resp.json() as Drawing;
   return data;
 };

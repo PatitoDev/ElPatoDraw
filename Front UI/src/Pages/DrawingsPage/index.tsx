@@ -11,7 +11,7 @@ const DrawingPage = () =>  {
 
   useEffect(() => {
     changeToFolder(null);
-  }, []);
+  }, [changeToFolder]);
 
   // z index is there to fix issues with excalidraw flickering when loading
   return (

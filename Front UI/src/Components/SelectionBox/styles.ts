@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const SelectionArea = styled.div`
   z-index: 5;

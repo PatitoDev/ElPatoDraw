@@ -8,8 +8,8 @@ export const PathButton = styled.button<{ $isDraggingOver: boolean }>`
   font-family: inherit;
   outline: none;
   border-radius: 0.3em;
-  padding: 0.5em 0.8em;
-  margin: 0 -0.8em;
+  padding: 0.5em 0.5em;
+  margin: 0 -0.4em;
   background-color: inherit;
   border: none;
 
@@ -26,7 +26,7 @@ export const PathButton = styled.button<{ $isDraggingOver: boolean }>`
   }
 
   ${({ $isDraggingOver }) => $isDraggingOver && css`
+    margin: -2px calc(-0.4em - 2px);
     border: dashed 2px;
-    padding: 0.4em 0.7em;
   `}
 `;

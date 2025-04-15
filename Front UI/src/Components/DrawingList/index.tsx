@@ -41,7 +41,7 @@ export const DrawingList = () => {
       <ExplorerToolbar />
       { (!folder || (folder.files.length === 0 && folder.folders.length === 0)) && (
         <S.NoContent>
-          <Icon fontSize="3em" icon="mingcute:folder-open-2-line" />
+          <Icon fontSize='3em' icon='mingcute:folder-open-2-line' />
           <span>This folder is empty</span>
         </S.NoContent>
       )}

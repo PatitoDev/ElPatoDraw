@@ -84,7 +84,7 @@ export const useFileStorageStore = create<FileStorageStore>()((set, get) => ({
   },
 
   showExplorer: async () => {
-    set({ fileIdCurrentlyEditing: null })
+    set({ fileIdCurrentlyEditing: null });
   },
 
   openFile: (fileId) => {
@@ -137,14 +137,14 @@ export const useFileStorageStore = create<FileStorageStore>()((set, get) => ({
 
   selectedItemIds: [],
 
-  setSelectedItemsIds: (itemIds) => { set({ selectedItemIds: itemIds }) },
+  setSelectedItemsIds: (itemIds) => { set({ selectedItemIds: itemIds }); },
 
   addToSelection: (fileId: string) => {
     set(state => ({ selectedItemIds: [...state.selectedItemIds, fileId] }));
   },
 
   clearSelection: () => {
-    set({ selectedItemIds: [] })
+    set({ selectedItemIds: [] });
   },
 
   removeFromSelection: (fileId: string) => {
@@ -161,7 +161,7 @@ export const useFileStorageStore = create<FileStorageStore>()((set, get) => ({
     return {
       files: folder.files.filter(f => selectedIds.includes(f.id)),
       folders: folder.folders.filter(f => selectedIds.includes(f.id)),
-    }
+    };
   },
 
   deleteSelection: async () => {
@@ -285,6 +285,6 @@ export const useFileStorageStore = create<FileStorageStore>()((set, get) => ({
 
   filteredValue: '',
   setFilteredValue: (value) => {
-    set({ filteredValue: value })
+    set({ filteredValue: value });
   }
 }));
