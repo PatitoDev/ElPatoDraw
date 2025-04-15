@@ -24,27 +24,33 @@ export const ExplorerPath = () => {
 
   return (
     <S.Container>
-      <ButtonIcon onClick={() => setIsFilterActive(v => !v)} title='Search'>
-        <Icon icon="mingcute:search-2-fill" />
+      <ButtonIcon 
+        type='button'
+        title='Search'
+        onClick={() => setIsFilterActive(v => !v)}
+      >
+        <Icon icon='mingcute:search-2-fill' />
       </ButtonIcon>
 
       <SearchFilter isActive={isFilterActive} />
 
       <ButtonIcon
         title='Back'
+        type='button'
         disabled={currentFolder?.isHomeDirectory}
         onClick={navigateToParentFolder}
       >
-        <Icon icon="mingcute:arrow-up-fill" />
+        <Icon icon='mingcute:arrow-up-fill' />
       </ButtonIcon>
 
       <ButtonIcon
         title='Home'
+        type='button'
         onDragOver={onDragOver}
         onDrop={onDrop}
         onClick={() => changeToFolder(null)}
       >
-        <Icon icon="mingcute:home-3-line" />
+        <Icon icon='mingcute:home-3-line' />
       </ButtonIcon>
 
       {
@@ -72,7 +78,7 @@ export const ExplorerPath = () => {
         // if metadate then its not home folder
         currentFolder && currentFolder.metadata && (
           <>
-            <Icon icon="mingcute:right-fill" />
+            <Icon icon='mingcute:right-fill' style={{ marginTop: '3px' }} />
             <PathActionButton folderId={currentFolder.metadata?.id ?? null}
             >
               {currentFolder.metadata.name}
@@ -82,5 +88,5 @@ export const ExplorerPath = () => {
       }
 
     </S.Container>
-  )
-}
+  );
+};

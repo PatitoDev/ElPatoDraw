@@ -29,5 +29,5 @@ export const Modals = () => {
     <S.ModalContainer ref={containerRef}>
       <DeleteSelectionModal />
     </S.ModalContainer>
-  )
-}
+  );
+};

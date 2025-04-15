@@ -27,9 +27,9 @@ export const DeleteSelectionModal = () => {
       </S.LabelContainers>
 
       <S.ButtonContainer>
-        <button onClick={onYesClicked} type="button">Delete</button>
-        <button onClick={onNoClicked} type="button">Cancel</button>
+        <button onClick={onYesClicked} type='button'>Delete</button>
+        <button onClick={onNoClicked} type='button'>Cancel</button>
       </S.ButtonContainer>
     </S.Container>
-  )
-}
+  );
+};

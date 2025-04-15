@@ -28,7 +28,7 @@ export const SelectionBox = () => {
 
     const scrollTop = itemContainerRef.current.scrollTop;
     const containerBoundingRect = itemContainerRef.current.getBoundingClientRect();
-    setClickedStartPosition({ 
+    setClickedStartPosition({
       x: e.clientX - containerBoundingRect.left,
       y: e.clientY - containerBoundingRect.top + scrollTop
     });
@@ -46,10 +46,10 @@ export const SelectionBox = () => {
     // clear selectin on clicking outside
     if (
       clickedEndPosition === null &&
-      e.target === itemContainerRef.current && 
+      e.target === itemContainerRef.current &&
       !e.ctrlKey
     ) {
-      clearSelection()
+      clearSelection();
       return;
     }
 
@@ -65,20 +65,20 @@ export const SelectionBox = () => {
     const scrollTop = itemContainerRef.current.scrollTop;
     const containerBoundingRect = itemContainerRef.current.getBoundingClientRect();
 
-    setClickedEndPosition({ 
+    setClickedEndPosition({
       x: e.clientX - containerBoundingRect.left,
       y: e.clientY - containerBoundingRect.top + scrollTop
     });
     setLastMousePosition({ x: e.clientX, y: e.clientY });
 
-  }, [isOnHomeTab, itemContainerRef, squareRef, clickedStartPosition]);
+  }, [isOnHomeTab, itemContainerRef, clickedStartPosition]);
 
   useEvent(document, 'keydown', (e: KeyboardEvent) => {
-    setIsCtrlClicked(e.ctrlKey)
+    setIsCtrlClicked(e.ctrlKey);
   });
 
   useEvent(document, 'keyup', (e: KeyboardEvent) => {
-    setIsCtrlClicked(e.ctrlKey)
+    setIsCtrlClicked(e.ctrlKey);
   });
 
   useEvent(document, 'mousemove', onMouseMove);
@@ -91,7 +91,7 @@ export const SelectionBox = () => {
     setClickedEndPosition({
       x: lastMousePosition.x - containerBoundingRect.left,
       y: lastMousePosition.y - containerBoundingRect.top + itemContainerRef.current.scrollTop,
-    })
+    });
   });
 
   useEffect(() => {
@@ -124,18 +124,18 @@ export const SelectionBox = () => {
         return;
       }
       finalSelection = [...finalSelection, selectedId];
-    })
+    });
 
     setSelectedItemIds(finalSelection);
 
-  }, [clickedStartPosition, clickedEndPosition, isCtrlClicked])
+  }, [clickedStartPosition, clickedEndPosition, isCtrlClicked, itemContainerRef, selectedItemsOnClick, setSelectedItemIds]);
 
   return (
     <>
-      <S.SelectionArea 
-        style={{ display: showSelectionArea ? '' : 'none' }} 
+      <S.SelectionArea
+        style={{ display: showSelectionArea ? '' : 'none' }}
         ref={squareRef}
       />
     </>
-  )
-}
+  );
+};

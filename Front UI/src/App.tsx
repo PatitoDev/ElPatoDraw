@@ -1,7 +1,4 @@
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import { Text } from '@mantine/core';
 import DrawingsPage from './Pages/DrawingsPage';
-import { MantineProvider } from '@mantine/core';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { AuthenticationApi } from './api/AuthenticationApi';
@@ -9,25 +6,15 @@ import { ThemeProvider } from 'styled-components';
 import { mainTheme } from './theme';
 import { isProd } from './settings';
 
-function App () {
+function App() {
   const session = AuthenticationApi.useSession();
-
-  const router = createBrowserRouter([
-    {
-      path: '/',
-      element: <DrawingsPage />
-    },
-  ]);
 
   if (!session) {
     return (
-      <MantineProvider theme={{
-        fontFamily: 'Poppins',
-        colorScheme: 'dark',
-      }} withGlobalStyles withNormalizeCSS>
-        <Text size="3em" weight="bold" align="center" m="1em">
+      <ThemeProvider theme={mainTheme} >
+        <h1 style={{ fontSize: '3em', fontWeight: 'bold', textAlign: 'center', margin: '1em' }}>
           El Pato Draw
-        </Text>
+        </h1>
         <div style={{
           height: '50vh',
           maxWidth: '30em',
@@ -36,32 +23,24 @@ function App () {
         }} >
           <Auth
             redirectTo={isProd ? undefined : 'http://localhost:5173'}
-            providers={[ 'twitch' ]}
+            providers={['twitch']}
             supabaseClient={AuthenticationApi.supabaseClient}
             appearance={{
               theme: ThemeSupa
             }}
             theme='dark'
           >
-
           </Auth>
         </div>
-      </MantineProvider>
+      </ThemeProvider>
     );
   }
 
   return (
     <ThemeProvider theme={mainTheme}>
-      <MantineProvider theme={{
-        fontFamily: 'Poppins',
-        colorScheme: 'dark',
-        colors: {
-        }
-      }} withGlobalStyles withNormalizeCSS>
-        <div style={{ height: '100vh', width: '100vw' }}>
-          <RouterProvider router={router} />
-        </div>
-      </MantineProvider>
+      <div style={{ height: '100vh', width: '100vw' }}>
+        <DrawingsPage />
+      </div>
     </ThemeProvider>
   );
 }

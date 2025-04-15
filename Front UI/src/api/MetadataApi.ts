@@ -1,6 +1,6 @@
-import { API_URLS } from "../settings";
-import { File, FileType, Folder } from "../types/File";
-import { AuthenticationApi } from "./AuthenticationApi";
+import { API_URLS } from '../settings';
+import { File, FileType, Folder } from '../types/File';
+import { AuthenticationApi } from './AuthenticationApi';
 
 const baseUrl = API_URLS.metadataApi;
 
@@ -18,7 +18,7 @@ const getFile = async (fileId: string): Promise<File | null> => {
 
   if (!resp.ok) return null;
   return await resp.json();
-}
+};
 
 const createFile = async (fileName: string, fileType: FileType, parentFolderId?: string): Promise<string | null> => {
   const url = `${baseUrl}/file`;
@@ -39,7 +39,7 @@ const createFile = async (fileName: string, fileType: FileType, parentFolderId?:
 
   if (!resp.ok) return null;
   return await resp.json();
-}
+};
 
 export interface FileUpdateDetails {
   id: string,
@@ -87,7 +87,7 @@ const updateFolders = async (files: Array<FolderUpdateDetails>) => {
 
   if (!resp.ok) return null;
   return await resp.json();
-}
+};
 
 const deleteFiles = async (fileIds: Array<string>) => {
   const url = `${baseUrl}/file/`;
@@ -101,7 +101,7 @@ const deleteFiles = async (fileIds: Array<string>) => {
     method: 'DELETE',
     body: JSON.stringify(fileIds)
   });
-}
+};
 
 const deleteFolders = async (folderIds: Array<string>) => {
   const url = `${baseUrl}/folder/`;
@@ -115,7 +115,7 @@ const deleteFolders = async (folderIds: Array<string>) => {
     method: 'DELETE',
     body: JSON.stringify(folderIds)
   });
-}
+};
 
 const createFolder = async (folderName: string, parentFolderId?: string): Promise<string | null> => {
   const url = `${baseUrl}/folder`;
@@ -135,10 +135,10 @@ const createFolder = async (folderName: string, parentFolderId?: string): Promis
 
   if (!resp.ok) return null;
   return await resp.json();
-}
+};
 
 const getFolder = async (folderId?: string | null): Promise<Folder | null> => {
-  const url = `${baseUrl}/folder/${folderId ?? ""}`;
+  const url = `${baseUrl}/folder/${folderId ?? ''}`;
   const token = await AuthenticationApi.getToken();
 
   const resp = await fetch(url, {
@@ -152,7 +152,7 @@ const getFolder = async (folderId?: string | null): Promise<Folder | null> => {
   }
 
   return null;
-}
+};
 
 export const MetadataApi = {
   getFolder,
@@ -163,4 +163,4 @@ export const MetadataApi = {
   updateFiles,
   updateFolders,
   getFile
-}
+};

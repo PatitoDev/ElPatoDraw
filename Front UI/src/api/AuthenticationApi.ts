@@ -11,18 +11,20 @@ const getToken = async () => {
     throw new Error('not authenticated');
   }
   return sessionData.access_token;
-}
+};
 
 const getUser = async () => {
   return client.auth.getUser();
-}
+};
 
 const useSession = () => {
   const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line promise/catch-or-return
     client.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      return;
     });
 
     const {
@@ -35,11 +37,11 @@ const useSession = () => {
   }, []);
 
   return session;
-}
+};
 
 export const AuthenticationApi = {
   getToken,
   getUser,
   useSession,
   supabaseClient: client
-}
+};

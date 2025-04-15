@@ -1,13 +1,19 @@
-import { useEffect, useState } from "react";
-import { DrawingView, DrawingViewProps } from "..";
-import { Drawing } from "../../../types/Entity";
-import { FileContentApi } from "../../../api/FileContentApi";
-import { Flex, Loader } from "@mantine/core";
-import { MetadataApi } from "../../../api/MetadataApi";
+import { useEffect, useState } from 'react';
+import { DrawingView } from '..';
+import { Drawing } from '../../../types/Entity';
+import { FileContentApi } from '../../../api/FileContentApi';
+import styled from 'styled-components';
 
-export interface DrawingLoaderProps extends Omit<DrawingViewProps, 'drawing'> {
+export interface DrawingLoaderProps {
   id: string
 }
+
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1 100%;
+`;
 
 const DrawingLoader = ({ id }: DrawingLoaderProps) => {
   const [result, setResult] = useState<{
@@ -20,10 +26,6 @@ const DrawingLoader = ({ id }: DrawingLoaderProps) => {
       try {
         setResult({});
         const data = await FileContentApi.getFileContent(id);
-        const metadata = await MetadataApi.getFile(id);
-        if (metadata == null)
-          throw new Error('Missing metadata');
-        data.name = metadata.name;
         setResult({ data, hasError: false });
       } catch {
         setResult({ hasError: true });
@@ -33,10 +35,10 @@ const DrawingLoader = ({ id }: DrawingLoaderProps) => {
 
   if (result.data) {
     return (
-      <DrawingView 
-        drawing={result.data} 
+      <DrawingView
+        drawing={result.data}
       />
-    )
+    );
   }
 
   if (result.hasError) {
@@ -46,10 +48,10 @@ const DrawingLoader = ({ id }: DrawingLoaderProps) => {
   }
 
   return (
-    <Flex justify='center' align='center' sx={{flex: '1 100%'}}>
-      <Loader mt={50} size='xl'/>
-    </Flex>
-  )
+    <Container>
+      Loading...
+    </Container>
+  );
 };
 
 export default DrawingLoader;

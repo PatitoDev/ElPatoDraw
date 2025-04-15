@@ -11,23 +11,22 @@ export const DividerContainer = styled.div`
   align-items: center;
   justify-content: center;
 
-  font-size: 2.2em;
-  width: 0.5em;
-  height: 1em;
+  font-size: 25px;
+  width: 20px;
+  height: 35px;
 `;
 
 export const LinkButton = styled.a`
   display: inline-flex;
-  font-size: 2.4rem;
-  padding: 0.5rem;
+  font-size: 25px;
 
   align-items: center;
   justify-content: center;
   color: inherit;
   opacity: 0.8;
 
-  width: 1em;
-  height: 1em;
+  width: 35px;
+  height: 35px;
 
   border-radius: 0.1em;
   outline: none;
@@ -48,16 +47,15 @@ export const LinkButton = styled.a`
 
 export const LabelButton = styled.label<{ $disabled: boolean }>`
   display: inline-flex;
-  font-size: 2.4rem;
-  padding: 0.5rem;
+  font-size: 20px;
 
   align-items: center;
   justify-content: center;
   color: inherit;
   opacity: 0.8;
 
-  width: 1em;
-  height: 1em;
+  width: 35px;
+  height: 35px;
 
   border-radius: 0.1em;
   outline: none;

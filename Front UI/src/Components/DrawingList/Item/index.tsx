@@ -57,8 +57,8 @@ export const Item = ({
   }, [name]);
 
   const handleOpen = () => {
-    type === 'Folder' ? openFolder(id) : openFile(id)
-  }
+    type === 'Folder' ? openFolder(id) : openFile(id);
+  };
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.stopPropagation();
@@ -66,7 +66,7 @@ export const Item = ({
       clearSelection();
 
     (e.ctrlKey && isSelected) ? removeFromSelection(id) : addToSelection(id);
-  }
+  };
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
     if (isEditingName) return;
@@ -84,51 +84,52 @@ export const Item = ({
       clearSelection();
 
     (e.ctrlKey && isSelected) ? removeFromSelection(id) : addToSelection(id);
-  }
+  };
 
   const handleDragEnd = () => {
     setIsDragging(false);
-  }
+  };
 
   const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
     if (type === 'File') return;
 
     e.preventDefault();
     setIsHoveringItem(true);
-  }
+  };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     if (type === 'File') return;
     e.preventDefault();
-  }
+  };
 
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setIsHoveringItem(false);
-  }
+  };
 
-  const handleDrag = () => {}
+  const handleDrag = () => {};
 
   const handleDrop = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.preventDefault();
     moveSelectionToFolder(id);
     setIsHoveringItem(false);
-  }
+  };
 
   const onInputClick = (e: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
     e.preventDefault();
     e.stopPropagation();
-  }
+  };
 
   useEffect(() => {
     if (!isEditingName || !inputNameRef.current) return;
     inputNameRef.current.focus();
     inputNameRef.current.select();
-  }, [isEditingName])
+  }, [isEditingName]);
 
   useEffect(() => {
-    if (!isEditingName || !inputNameRef.current) return;
+    const input = inputNameRef.current;
+    if (!isEditingName || !input) return;
     const state = { handled: false };
 
     let valueCleanedUp = inputNameValue.trim();
@@ -158,14 +159,13 @@ export const Item = ({
       await updateFileName(id, valueCleanedUp);
     };
 
-    inputNameRef.current.addEventListener('keyup', onKeyUp);
-    inputNameRef.current.addEventListener('blur', onBlur);
+    input.addEventListener('keyup', onKeyUp);
+    input.addEventListener('blur', onBlur);
     return () => {
-      if (!inputNameRef.current) return;
-      inputNameRef.current.removeEventListener('keyup', onKeyUp);
-      inputNameRef.current.removeEventListener('blur', onBlur);
+      input.removeEventListener('keyup', onKeyUp);
+      input.removeEventListener('blur', onBlur);
     };
-  }, [isEditingName, clearNameEditingId, name, inputNameValue])
+  }, [isEditingName, clearNameEditingId, name, inputNameValue, id, updateFileName]);
 
   return (
     <S.Container
@@ -190,7 +190,7 @@ export const Item = ({
     >
       <DraggedItem ref={draggedItemRef} />
       {type === 'Folder' && <DuckFolder color={overrideColor ?? color} />}
-      {type === 'File' && <Icon data-color={overrideColor ?? color} icon="mingcute:file-fill" />}
+      {type === 'File' && <Icon data-color={overrideColor ?? color} icon='mingcute:file-fill' />}
       {isEditingName ?
         <input
           minLength={1}
@@ -203,5 +203,5 @@ export const Item = ({
         <S.Name>{name}</S.Name>
       }
     </S.Container>
-  )
-}
+  );
+};

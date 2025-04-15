@@ -1,11 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Excalidraw, restoreAppState, restoreElements } from '@excalidraw/excalidraw';
 import { AppState, BinaryFiles, ExcalidrawInitialDataState } from '@excalidraw/excalidraw/types/types';
 import { useCallback, useEffect, useState } from 'react';
 import { ExcalidrawElement } from '@excalidraw/excalidraw/types/element/types';
-import { useDebouncedValue } from '@mantine/hooks';
-import { Loader } from '@mantine/core';
 import { Drawing } from '../../types/Entity';
 import { FileContentApi } from '../../api/FileContentApi';
+import { useDebounce } from '../../hooks/useDebounce';
 
 export interface DrawingViewProps {
   drawing: Drawing,
@@ -20,7 +20,8 @@ interface ExcalidrawDataState {
 export const DrawingView = ({ drawing }: DrawingViewProps) => {
   const [initalState, setInitalState] = useState<ExcalidrawInitialDataState | null>(null);
   const [changedState, setChangedState] = useState<ExcalidrawDataState | null>(null);
-  const [debouncedValue] = useDebouncedValue(changedState, 1 * 1000);
+  const debouncedValue = useDebounce(changedState, 1 * 1000);
+  const id = drawing.id;
 
   useEffect(() => {
     const data = drawing.data as { appState: unknown, files: Array<unknown>, elements: Array<unknown>};
@@ -36,15 +37,15 @@ export const DrawingView = ({ drawing }: DrawingViewProps) => {
 
   useEffect(() => {
     (async () => {
-      if (!drawing || !debouncedValue) return;
+      if (!debouncedValue) return;
       console.log('update db');
       // TODO - FIX THIS HACK
       const data = JSON.parse(JSON.stringify(debouncedValue));
-      FileContentApi.updateFileContent(drawing.id, {
+      FileContentApi.updateFileContent(id, {
         data,
       });
     })();
-  }, [debouncedValue]);
+  }, [debouncedValue, id]);
 
   const onDrawingChange = useCallback((elements: readonly ExcalidrawElement[], appState: AppState, files: BinaryFiles) => {
     console.log('changed state');
@@ -62,7 +63,7 @@ export const DrawingView = ({ drawing }: DrawingViewProps) => {
   if (initalState) return (
     <>
       <Excalidraw
-        theme="dark"
+        theme='dark'
         initialData={initalState}
         onChange={onDrawingChange}
       />
@@ -70,6 +71,6 @@ export const DrawingView = ({ drawing }: DrawingViewProps) => {
   );
 
   return (
-    <Loader size="md" />
+    <div>Loading...</div>
   );
 };

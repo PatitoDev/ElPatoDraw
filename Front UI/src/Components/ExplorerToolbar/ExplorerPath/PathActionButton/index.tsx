@@ -28,7 +28,7 @@ export const PathActionButton = ({
   const onDragOver: React.DragEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
 
-  }
+  };
 
   const onDrop: React.DragEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
@@ -38,6 +38,7 @@ export const PathActionButton = ({
 
   return (
     <S.PathButton
+      type='button'
       $isDraggingOver={isDraggingOver}
       onDragEnter={onDragEnter}
       onDragLeave={onDragLeave}
