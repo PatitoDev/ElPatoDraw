@@ -193,6 +193,7 @@ export const useFileStorageStore = create<FileStorageStore>()((set, get) => ({
     await MetadataApi.updateFiles(filesToMove.map((file) => ({
       name: file.name,
       id: file.id,
+      color: file.color,
       parentFolderId: targetFolderId ?? undefined
     })));
 
@@ -265,17 +266,23 @@ export const useFileStorageStore = create<FileStorageStore>()((set, get) => ({
     const currentFolder = get().currentFolder;
     if (!currentFolder) return;
 
-    const updatedFolders = currentFolder.folders.map(f =>
-      selectedIds.includes(f.id) ?
-        ({ ...f, color }) :
-        { ...f }
-    );
+    const updatedFolders = currentFolder
+    .folders
+    .filter(f => selectedIds.includes(f.id))
+    .map(f => ({
+      ...f,
+      parentFolderId: currentFolder.metadata?.id,
+      color
+    }));
 
-    const updatedFiles = currentFolder.files.map(f =>
-      selectedIds.includes(f.id) ?
-        ({ ...f, color }) :
-        { ...f }
-    );
+    const updatedFiles = currentFolder
+    .files
+    .filter(f => selectedIds.includes(f.id))
+    .map(f => ({
+      ...f,
+      parentFolderId: currentFolder.metadata?.id,
+      color
+    }));
 
     await MetadataApi.updateFiles(updatedFiles);
     await MetadataApi.updateFolders(updatedFolders);
