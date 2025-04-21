@@ -3,6 +3,7 @@ import * as S from './styles';
 import { useFileStorageStore } from '../../Store/FileStorageStore';
 import { Point, utils } from './utils';
 import { useEvent } from '../../hooks/useEvent';
+import { LEFT_MOUSE_BTN } from '../../buttons';
 
 export const SelectionBox = () => {
   const squareRef = useRef<HTMLDivElement>(null);
@@ -22,6 +23,7 @@ export const SelectionBox = () => {
   const [lastMousePosition, setLastMousePosition] = useState<Point | null>(null);
 
   useEvent(document, 'mousedown', useCallback((e: MouseEvent) => {
+    if (e.button !== LEFT_MOUSE_BTN) return;
     if (!isOnHomeTab) return;
     if (e.target !== itemContainerRef.current) return;
     if (!itemContainerRef.current) return;

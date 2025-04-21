@@ -3,6 +3,8 @@ import { Icon } from '@iconify/react';
 import { ButtonIcon } from '../../../Components/ButtonIcon';
 import { useFileStorageStore } from '../../../Store/FileStorageStore';
 import { useTheme } from 'styled-components';
+import { useCallback } from 'react';
+import { MIDDLE_MOUSE_BTN } from '../../../buttons';
 
 export const TabList = () => {
   const theme = useTheme();
@@ -11,6 +13,12 @@ export const TabList = () => {
   const openFile  = useFileStorageStore(state => state.openFile);
   const showExplorer  = useFileStorageStore(state => state.showExplorer);
   const fileIdCurrentlyEditing  = useFileStorageStore(state => state.fileIdCurrentlyEditing);
+
+  const onMouseDown = useCallback((e: React.MouseEvent<HTMLButtonElement>, fileId: string) => {
+    if (e.button !== MIDDLE_MOUSE_BTN) return;
+    e.preventDefault();
+    closeFile(fileId);
+  }, [closeFile]);
 
   return (
     <S.Container>
@@ -39,6 +47,7 @@ export const TabList = () => {
               title='open'
               $selected={fileIdCurrentlyEditing === null}
               onClick={() => openFile(f.id)}
+              onMouseDown={(e) => onMouseDown(e, f.id)}
             />
 
             <ButtonIcon title='close' onClick={async () => await closeFile(f.id)}>

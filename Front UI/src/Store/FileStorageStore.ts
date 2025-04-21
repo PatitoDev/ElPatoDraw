@@ -19,7 +19,7 @@ export interface FileStorageStore {
   refreshCurrentFolder: () => Promise<void>,
 
   showExplorer: () => Promise<void>,
-  openFile: (fileId: string) => void,
+  openFile: (fileId: string, shouldFocus?: boolean) => void,
   closeFile: (fileId: string) => Promise<void>,
 
   createNewFile: () => Promise<void>,
@@ -88,20 +88,22 @@ export const useFileStorageStore = create<FileStorageStore>()((set, get) => ({
     set({ fileIdCurrentlyEditing: null });
   },
 
-  openFile: (fileId) => {
+  openFile: (fileId, shouldFocus = true) => {
     const activeFiles = get().activeFiles;
     if (activeFiles.find(f => f.id === fileId)) {
-      set({ fileIdCurrentlyEditing: fileId });
+      if (shouldFocus) {
+        set({ fileIdCurrentlyEditing: fileId });
+      }
       return;
     }
 
     const file = get().currentFolder?.files.find(f => f.id === fileId);
     if (!file) return;
 
-    set({
-      fileIdCurrentlyEditing: file.id,
+    set(prev => ({
+      fileIdCurrentlyEditing: shouldFocus ? file.id : prev.fileIdCurrentlyEditing,
       activeFiles: [...activeFiles, file]
-    });
+    }));
   },
 
   closeFile: async (fileId) => {

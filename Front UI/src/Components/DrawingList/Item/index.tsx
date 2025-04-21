@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useFileStorageStore } from '../../../Store/FileStorageStore';
 import { DuckFolder } from './DuckFolder';
 import * as S from './styles';
 import { Icon } from '@iconify/react';
 import { DraggedItem } from '../../DraggedItem';
+import { MIDDLE_MOUSE_BTN, RIGHT_MOUSE_BTN } from '../../../buttons';
 
 export interface ItemProps {
   id: string,
@@ -167,11 +168,28 @@ export const Item = ({
     };
   }, [isEditingName, clearNameEditingId, name, inputNameValue, id, updateFileName]);
 
+
+  const onMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.button === MIDDLE_MOUSE_BTN){
+      e.preventDefault();
+      openFile(id, false);
+    }
+
+    if (e.button === RIGHT_MOUSE_BTN) {
+      e.preventDefault();
+      if (!isSelected) {
+        clearSelection();
+        addToSelection(id);
+      }
+    }
+  }, [openFile, id, isSelected, clearSelection]);
+
   return (
     <S.Container
       $index={index}
       data-id={id}
       data-droppable={type === 'Folder'}
+      onMouseDown={onMouseDown}
       onDoubleClick={handleOpen}
       onTouchEnd={handleOpen}
       onClick={handleClick}
