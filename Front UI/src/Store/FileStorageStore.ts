@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { FileChild, Folder, FolderChild } from '../types/File';
 import { MetadataApi } from '../api/MetadataApi';
 import { createRef, RefObject } from 'react';
+import { useDrawingStore } from './useDrawingStore';
 
 export interface FileStorageStore {
   itemContainerRef: RefObject<HTMLDivElement>,
@@ -19,7 +20,7 @@ export interface FileStorageStore {
 
   showExplorer: () => Promise<void>,
   openFile: (fileId: string) => void,
-  closeFile: (fileId: string) => void,
+  closeFile: (fileId: string) => Promise<void>,
 
   createNewFile: () => Promise<void>,
   createNewFolder: () => Promise<void>
@@ -103,13 +104,14 @@ export const useFileStorageStore = create<FileStorageStore>()((set, get) => ({
     });
   },
 
-  closeFile: (fileId) => {
+  closeFile: async (fileId) => {
     set({
       fileIdCurrentlyEditing: null,
       activeFiles: get()
         .activeFiles
         .filter(f => f.id !== fileId)
     });
+    await useDrawingStore.getState().closeAndSave(fileId);
   },
 
   createNewFolder: async () => {
@@ -267,22 +269,22 @@ export const useFileStorageStore = create<FileStorageStore>()((set, get) => ({
     if (!currentFolder) return;
 
     const updatedFolders = currentFolder
-    .folders
-    .filter(f => selectedIds.includes(f.id))
-    .map(f => ({
-      ...f,
-      parentFolderId: currentFolder.metadata?.id,
-      color
-    }));
+      .folders
+      .filter(f => selectedIds.includes(f.id))
+      .map(f => ({
+        ...f,
+        parentFolderId: currentFolder.metadata?.id,
+        color
+      }));
 
     const updatedFiles = currentFolder
-    .files
-    .filter(f => selectedIds.includes(f.id))
-    .map(f => ({
-      ...f,
-      parentFolderId: currentFolder.metadata?.id,
-      color
-    }));
+      .files
+      .filter(f => selectedIds.includes(f.id))
+      .map(f => ({
+        ...f,
+        parentFolderId: currentFolder.metadata?.id,
+        color
+      }));
 
     await MetadataApi.updateFiles(updatedFiles);
     await MetadataApi.updateFolders(updatedFolders);

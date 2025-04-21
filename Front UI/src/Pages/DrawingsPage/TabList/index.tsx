@@ -30,7 +30,7 @@ export const TabList = () => {
           <S.Tab
             key={f.id}
             $selected={f.id === fileIdCurrentlyEditing}
-            $fileColor={theme.colors.defaultFileColor}
+            $fileColor={f.color ?? theme.colors.defaultFileColor}
           >
             <Icon aria-hidden icon='mingcute:file-fill' />
             <span>{f.name}</span>
@@ -41,7 +41,7 @@ export const TabList = () => {
               onClick={() => openFile(f.id)}
             />
 
-            <ButtonIcon title='close' onClick={() => closeFile(f.id)}>
+            <ButtonIcon title='close' onClick={async () => await closeFile(f.id)}>
               <Icon icon='mingcute:close-fill' />
             </ButtonIcon>
           </S.Tab>

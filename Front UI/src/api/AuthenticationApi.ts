@@ -18,22 +18,19 @@ const getUser = async () => {
 };
 
 const useSession = () => {
-  const [session, setSession] = useState<Session | null>(null);
+  const [session, setSession] = useState<{
+    isLoading: boolean,
+    session: Session | null
+  }>({ isLoading: true, session: null });
 
   useEffect(() => {
-    // eslint-disable-next-line promise/catch-or-return
-    client.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      return;
-    });
+    const authStateChangeSubscription = client
+      .auth
+      .onAuthStateChange((_event, session) => {
+        setSession({ isLoading: false, session });
+      });
 
-    const {
-      data: { subscription },
-    } = client.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
+    return () => authStateChangeSubscription.data.subscription.unsubscribe();
   }, []);
 
   return session;
