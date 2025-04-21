@@ -6,6 +6,7 @@ export const MenuContainer = styled.div<{ $isOpen: boolean }>`
   ${({ $isOpen }) => !$isOpen && css`
     opacity: 0;
     transform: scale(0.5);
+    pointer-events: none;
   `}
 
   ${({ $isOpen }) => $isOpen && css`
