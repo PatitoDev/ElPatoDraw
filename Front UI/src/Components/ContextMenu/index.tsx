@@ -12,8 +12,9 @@ export const ContextMenu = () => {
   const isMenuEnabled = isOnHomeTab && !isDeleteModalOpen;
 
   const createNewFile = useFileStorageStore(state => state.createNewFile);
-  const createNewFolder = useFileStorageStore(state => state.createNewFolder)
+  const createNewFolder = useFileStorageStore(state => state.createNewFolder);
   const openFile = useFileStorageStore(store => store.openFile);
+  const openFolder = useFileStorageStore(store => store.changeToFolder);
   const editSelectionName = useFileStorageStore(store => store.editSelectionName);
   const openDeleteModal = useModalStore(store => store.openModal);
 
@@ -62,6 +63,24 @@ export const ContextMenu = () => {
     setIsOpen(false);
   }, [openFile, selectedItemIds]);
 
+  const onSingleItemOpenClick = useCallback(() => {
+    const itemId = selectedItemIds[0];
+    if (!itemId) return;
+    setIsOpen(false);
+    const file = currentFolder?.files.find(f => f.id === itemId);
+
+    if (file) {
+      openFile(itemId);
+      return;
+    }
+
+    const folder = currentFolder?.folders.find(f => f.id === itemId);
+    if (folder) {
+      openFolder(itemId);
+    }
+
+  }, [openFolder, currentFolder, openFile, selectedItemIds]);
+
   const onRenameClick = useCallback(() => {
     editSelectionName();
     setIsOpen(false);
@@ -86,7 +105,7 @@ export const ContextMenu = () => {
     <S.MenuContainer ref={containerRef} $isOpen={isOpen} >
       {selectedItemIds.length === 1 && (
         <>
-          <button type='button' onClick={onOpenClick}>
+          <button type='button' onClick={onSingleItemOpenClick}>
             <Icon icon='mingcute:cursor-2-line' />
             Open
           </button>
