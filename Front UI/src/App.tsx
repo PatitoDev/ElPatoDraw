@@ -7,7 +7,9 @@ import { mainTheme } from './theme';
 import { isProd } from './settings';
 
 function App() {
-  const session = AuthenticationApi.useSession();
+  const { isLoading, session } = AuthenticationApi.useSession();
+
+  if (isLoading) return null;
 
   if (!session) {
     return (

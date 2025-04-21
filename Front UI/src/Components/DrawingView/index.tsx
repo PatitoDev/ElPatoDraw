@@ -4,24 +4,20 @@ import { AppState, BinaryFiles, ExcalidrawInitialDataState } from '@excalidraw/e
 import { useCallback, useEffect, useState } from 'react';
 import { ExcalidrawElement } from '@excalidraw/excalidraw/types/element/types';
 import { Drawing } from '../../types/Entity';
-import { FileContentApi } from '../../api/FileContentApi';
 import { useDebounce } from '../../hooks/useDebounce';
+import { useDrawingStore } from '../../Store/useDrawingStore';
 
 export interface DrawingViewProps {
   drawing: Drawing,
 }
 
-interface ExcalidrawDataState {
-  elements: readonly ExcalidrawElement[],
-  appState: AppState,
-  files: BinaryFiles
-}
-
 export const DrawingView = ({ drawing }: DrawingViewProps) => {
+  const drawingData = useDrawingStore(store => store.drawingData[drawing.id]);
+  const save = useDrawingStore(store => store.save);
+  const updateState = useDrawingStore(store => store.updateState);
+
   const [initalState, setInitalState] = useState<ExcalidrawInitialDataState | null>(null);
-  const [changedState, setChangedState] = useState<ExcalidrawDataState | null>(null);
-  const debouncedValue = useDebounce(changedState, 1 * 1000);
-  const id = drawing.id;
+  const debouncedValue = useDebounce(drawingData, 1 * 1000);
 
   useEffect(() => {
     const data = drawing.data as { appState: unknown, files: Array<unknown>, elements: Array<unknown>};
@@ -38,36 +34,28 @@ export const DrawingView = ({ drawing }: DrawingViewProps) => {
   useEffect(() => {
     (async () => {
       if (!debouncedValue) return;
-      console.log('update db');
-      // TODO - FIX THIS HACK
-      const data = JSON.parse(JSON.stringify(debouncedValue));
-      FileContentApi.updateFileContent(id, {
-        data,
-      });
+      await save(drawing.id);
     })();
-  }, [debouncedValue, id]);
+  }, [debouncedValue, drawing, save]);
 
   const onDrawingChange = useCallback((elements: readonly ExcalidrawElement[], appState: AppState, files: BinaryFiles) => {
-    console.log('changed state');
     const appStateModified = {
       ...appState,
       collaborators: []
     };
-    setChangedState({
+    updateState(drawing.id, {
       elements,
       appState: appStateModified as any,
       files
     });
-  }, []);
+  }, [updateState, drawing]);
 
   if (initalState) return (
-    <>
-      <Excalidraw
-        theme='dark'
-        initialData={initalState}
-        onChange={onDrawingChange}
-      />
-    </>
+    <Excalidraw
+      theme='dark'
+      initialData={initalState}
+      onChange={onDrawingChange}
+    />
   );
 
   return (
