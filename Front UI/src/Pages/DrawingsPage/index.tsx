@@ -5,6 +5,7 @@ import { useFileStorageStore } from '../../Store/FileStorageStore';
 import { TabContent } from './TabContent';
 import { Modals } from '../../Components/Modals';
 import { FolderKeybinds } from '../../Components/FolderKeybinds';
+import { ContextMenu } from '../../Components/ContextMenu';
 
 const DrawingPage = () =>  {
   const changeToFolder = useFileStorageStore(state => state.changeToFolder);
@@ -17,6 +18,7 @@ const DrawingPage = () =>  {
   return (
     <S.Container>
       <FolderKeybinds />
+      <ContextMenu />
       <Modals />
       <TabList />
       <TabContent />
