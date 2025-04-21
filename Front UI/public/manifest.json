@@ -2,11 +2,10 @@
   "name": "El Pato Draw",
   "icons": [
     {
-      "src": "ElPatoDrawLogo.svg",
-      "type": "image/png",
-      "sizes": "512x512"
-    }
+      "src": "ElPatoDrawLogo.svg"
+   }
   ],
-  "start_url": "https://elpatodraw.com",
-  "display": "standalone"
+  "start_url": "/",
+  "display": "standalone",
+  "background-color": "#242B30"
 }
