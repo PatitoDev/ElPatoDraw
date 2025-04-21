@@ -11,7 +11,7 @@ const appear = keyframes`
   }
 `;
 
-export const Container = styled.div<{ 
+export const Container = styled.div<{
   $isSelected: boolean,
   $isHovering: boolean,
   $isDragging: boolean,
@@ -32,7 +32,6 @@ export const Container = styled.div<{
 
   > svg {
     font-size: 3em;
-    color: attr(data-color type(<color>));
   }
 
   cursor: pointer;

@@ -182,7 +182,7 @@ export const Item = ({
         addToSelection(id);
       }
     }
-  }, [openFile, id, isSelected, clearSelection]);
+  }, [openFile, id, isSelected, clearSelection, addToSelection]);
 
   return (
     <S.Container
@@ -208,7 +208,12 @@ export const Item = ({
     >
       <DraggedItem ref={draggedItemRef} />
       {type === 'Folder' && <DuckFolder color={overrideColor ?? color} />}
-      {type === 'File' && <Icon data-color={overrideColor ?? color} icon='mingcute:file-fill' />}
+      {type === 'File' &&
+        <Icon
+          color={overrideColor ?? color}
+          icon='mingcute:file-fill'
+        />
+      }
       {isEditingName ?
         <input
           minLength={1}

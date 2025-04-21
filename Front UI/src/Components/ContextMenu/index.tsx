@@ -36,8 +36,8 @@ export const ContextMenu = () => {
       setIsOpen(true);
       const x = Math.min(e.pageX, window.innerWidth - 200);
       const y = Math.min(e.pageY, window.innerHeight - 150);
-      containerRef.current.dataset.top = y.toString();
-      containerRef.current.dataset.left = x.toString();
+      containerRef.current.style.top = `${y}px`;
+      containerRef.current.style.left = `${x}px`;
     };
 
     const onClick = (e:MouseEvent) => {

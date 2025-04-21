@@ -21,8 +21,6 @@ export const MenuContainer = styled.div<{ $isOpen: boolean }>`
   ;
 
   position: absolute;
-  top: attr(data-top px);
-  left: attr(data-left px);
 
   backdrop-filter: blur(5px);
   background-color: #37373f99;

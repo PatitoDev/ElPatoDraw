@@ -106,10 +106,10 @@ export const SelectionBox = () => {
 
     if (squareRef.current) {
       squareRef.current.style.display = '';
-      squareRef.current.dataset.left = x.toString();
-      squareRef.current.dataset.top = y.toString();
-      squareRef.current.dataset.width = width.toString();
-      squareRef.current.dataset.height = height.toString();
+      squareRef.current.style.left = `${x}px`;
+      squareRef.current.style.top = `${y}px`;
+      squareRef.current.style.width = `${width}px`;
+      squareRef.current.style.height = `${height}px`;
     }
 
     const selectedFileIds = utils.getFileIdsInsideBox(x, y, width, height, itemContainerRef);
