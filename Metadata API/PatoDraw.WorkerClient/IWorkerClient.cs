@@ -2,5 +2,5 @@
 
 public interface IWorkerClient
 {
-    Task<BucketFile> CreateFile(string token, CancellationToken cancellationToken);
+    Task<Guid> CreateFile(string token, CancellationToken cancellationToken);
 }

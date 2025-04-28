@@ -58,11 +58,11 @@ public class CreateFileHandler : IRequestHandler<CreateFileRequest, ApiResult<Gu
             );
         }
 
-        var storageFile = await _workerClient.CreateFile(request.Token, cancellationToken);
+        var storageFileId = await _workerClient.CreateFile(request.Token, cancellationToken);
 
         var createdFile = new Infrastructure.Entities.File()
         {
-            Id = storageFile.Id,
+            Id = storageFileId,
             CreatedAt = DateTime.UtcNow,
             ModifiedAt = DateTime.UtcNow,
             Name = request.FilePayload.Name,
@@ -76,6 +76,6 @@ public class CreateFileHandler : IRequestHandler<CreateFileRequest, ApiResult<Gu
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return ApiResult<Guid?>.Success(storageFile.Id, StatusCodes.Status201Created);
+        return ApiResult<Guid?>.Success(storageFileId, StatusCodes.Status201Created);
     }
 }

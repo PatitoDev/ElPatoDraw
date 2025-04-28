@@ -8,11 +8,12 @@ import { useDebounce } from '../../hooks/useDebounce';
 import { useDrawingStore } from '../../Store/useDrawingStore';
 
 export interface DrawingViewProps {
+  id: string,
   drawing: Drawing,
 }
 
-export const DrawingView = ({ drawing }: DrawingViewProps) => {
-  const drawingData = useDrawingStore(store => store.drawingData[drawing.id]);
+export const DrawingView = ({ id, drawing }: DrawingViewProps) => {
+  const drawingData = useDrawingStore(store => store.drawingData[id]);
   const save = useDrawingStore(store => store.save);
   const updateState = useDrawingStore(store => store.updateState);
 
@@ -34,21 +35,21 @@ export const DrawingView = ({ drawing }: DrawingViewProps) => {
   useEffect(() => {
     (async () => {
       if (!debouncedValue) return;
-      await save(drawing.id);
+      await save(id);
     })();
-  }, [debouncedValue, drawing, save]);
+  }, [debouncedValue, drawing, id, save]);
 
   const onDrawingChange = useCallback((elements: readonly ExcalidrawElement[], appState: AppState, files: BinaryFiles) => {
     const appStateModified = {
       ...appState,
       collaborators: []
     };
-    updateState(drawing.id, {
+    updateState(id, {
       elements,
       appState: appStateModified as any,
       files
     });
-  }, [updateState, drawing]);
+  }, [updateState, id]);
 
   if (initalState) return (
     <Excalidraw
