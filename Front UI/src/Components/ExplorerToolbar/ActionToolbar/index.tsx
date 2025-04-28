@@ -45,20 +45,19 @@ export const ActionToolbar = () => {
 
   return (
     <S.Container>
-      <input
-        id='input-color-picker'
-        disabled={!hasSelection}
-        onChange={onColorChange}
-        style={{ visibility: 'hidden' }}
-        type='color'
-        ref={colorPickerRef}
-      />
       <S.LabelButton
         $disabled={!hasSelection}
         htmlFor='input-color-picker'
         title='Change color'
         onClick={onColorClick}
       >
+        <S.ColorPicker
+          id='input-color-picker'
+          disabled={!hasSelection}
+          onChange={onColorChange}
+          type='color'
+          ref={colorPickerRef}
+        />
         <Icon icon='mingcute:palette-line' />
       </S.LabelButton>
 

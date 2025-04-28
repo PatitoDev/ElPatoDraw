@@ -1,8 +1,9 @@
 import styled, { css } from 'styled-components';
 
 export const Container = styled.div`
+  justify-content: flex-end;
+  flex: 1;
   display: flex;
-  margin: 0 0.5em;
   gap: 0.5em;
 `;
 
@@ -14,6 +15,13 @@ export const DividerContainer = styled.div`
   font-size: 25px;
   width: 20px;
   height: 35px;
+`;
+
+export const ColorPicker = styled.input`
+  width: 0;
+  height: 0;
+  visibility: hidden;
+  position: absolute;
 `;
 
 export const LinkButton = styled.a`
