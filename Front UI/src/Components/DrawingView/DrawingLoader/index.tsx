@@ -40,7 +40,14 @@ const DrawingLoader = ({ id }: DrawingLoaderProps) => {
     (async () => {
       try {
         setResult({});
-        const data = await FileContentApi.getFileContent(id);
+        const resp = await FileContentApi.getFileContent(id);
+        if (!resp.ok){
+          setResult({ hasError: true });
+          return;
+        }
+        const content = await resp.text();
+        const data: Drawing = content ? JSON.parse(content) : { data: {} };
+
         setResult({ data, hasError: false });
       } catch {
         setResult({ hasError: true });
@@ -51,6 +58,7 @@ const DrawingLoader = ({ id }: DrawingLoaderProps) => {
   if (result.data) {
     return (
       <DrawingView
+        id={id}
         drawing={result.data}
       />
     );

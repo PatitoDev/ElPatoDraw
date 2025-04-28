@@ -13,14 +13,13 @@ public class WorkerClient: IWorkerClient
         _baseUrl = baseUrl;
     }
 
-    public async Task<BucketFile> CreateFile(string token, CancellationToken cancellationToken)
+    public async Task<Guid> CreateFile(string token, CancellationToken cancellationToken)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, _baseUrl);
         request.Headers.Add("Authorization", token);
-        request.Content = JsonContent.Create(new { Data = new { } });
         var response = await _httpClient.SendAsync(request, cancellationToken);
         response.EnsureSuccessStatusCode();
-        var createdFile = await response.Content.ReadFromJsonAsync<BucketFile>(cancellationToken);
-        return createdFile!;
+        var createdFileId = await response.Content.ReadAsStringAsync(cancellationToken);
+        return Guid.Parse(createdFileId);
     }
 }
