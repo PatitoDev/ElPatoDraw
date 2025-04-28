@@ -102,6 +102,7 @@ export const ContextMenu = () => {
   }, [createNewFolder]);
 
   return (
+    <S.Container>
     <S.MenuContainer ref={containerRef} $isOpen={isOpen} >
       {selectedItemIds.length === 1 && (
         <>
@@ -149,5 +150,6 @@ export const ContextMenu = () => {
         </>
       )}
     </S.MenuContainer>
+    </S.Container>
   );
 };

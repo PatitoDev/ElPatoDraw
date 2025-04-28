@@ -1,5 +1,14 @@
 import styled, { css } from 'styled-components';
 
+export const Container = styled.div`
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+`;
+
 export const MenuContainer = styled.div<{ $isOpen: boolean }>`
   z-index: 99999;
 
