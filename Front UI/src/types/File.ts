@@ -1,4 +1,4 @@
-export type FileType = 'Excalidraw' | 'TODO';
+export type FileType = 'Excalidraw' | 'TlDraw';
 
 export interface FolderMetadata {
   id: string,

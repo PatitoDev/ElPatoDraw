@@ -29,7 +29,7 @@ export const ContextMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    const onContextMenu = (e:MouseEvent) => {
+    const onContextMenu = (e: MouseEvent) => {
       if (!isMenuEnabled) return;
       if (!containerRef.current) return;
       e.preventDefault();
@@ -40,9 +40,9 @@ export const ContextMenu = () => {
       containerRef.current.style.left = `${x}px`;
     };
 
-    const onClick = (e:MouseEvent) => {
+    const onClick = (e: MouseEvent) => {
       if (e.target === containerRef.current ||
-          containerRef.current?.contains(e.target as HTMLElement)
+        containerRef.current?.contains(e.target as HTMLElement)
       ) return;
       setIsOpen(false);
     };
@@ -92,7 +92,7 @@ export const ContextMenu = () => {
   }, [openDeleteModal]);
 
   const onCreateNewFileClick = useCallback(() => {
-    createNewFile();
+    createNewFile('TlDraw');
     setIsOpen(false);
   }, [createNewFile]);
 
@@ -103,53 +103,53 @@ export const ContextMenu = () => {
 
   return (
     <S.Container>
-    <S.MenuContainer ref={containerRef} $isOpen={isOpen} >
-      {selectedItemIds.length === 1 && (
-        <>
-          <button type='button' onClick={onSingleItemOpenClick}>
+      <S.MenuContainer ref={containerRef} $isOpen={isOpen} >
+        {selectedItemIds.length === 1 && (
+          <>
+            <button type='button' onClick={onSingleItemOpenClick}>
+              <Icon icon='mingcute:cursor-2-line' />
+              Open
+            </button>
+            <button type='button' onClick={onRenameClick}>
+              <Icon icon='gg:rename' />
+              Rename
+            </button>
+            <button type='button' onClick={onDeleteClick}>
+              <Icon icon='mingcute:delete-2-line' />
+              Delete
+            </button>
+          </>
+        )}
+
+        {selectedItemIds.length > 1 && hasSelectedFiles && (
+          <button type='button' onClick={onOpenClick}>
             <Icon icon='mingcute:cursor-2-line' />
-            Open
+            Open Selection
           </button>
-          <button type='button' onClick={onRenameClick}>
-            <Icon icon='gg:rename' />
-            Rename
-          </button>
-          <button type='button' onClick={onDeleteClick}>
-            <Icon icon='mingcute:delete-2-line' />
-            Delete
-          </button>
-        </>
-      )}
+        )}
 
-      {selectedItemIds.length > 1 && hasSelectedFiles && (
-        <button type='button' onClick={onOpenClick}>
-          <Icon icon='mingcute:cursor-2-line' />
-          Open Selection
-        </button>
-      )}
+        {selectedItemIds.length > 1 && (
+          <>
+            <button type='button' onClick={onDeleteClick}>
+              <Icon icon='mingcute:delete-2-line' />
+              Delete Selection
+            </button>
+          </>
+        )}
 
-      {selectedItemIds.length > 1 && (
-        <>
-          <button type='button' onClick={onDeleteClick}>
-            <Icon icon='mingcute:delete-2-line' />
-            Delete Selection
-          </button>
-        </>
-      )}
-
-      {selectedItemIds.length === 0 && (
-        <>
-          <button type='button' onClick={onCreateNewFileClick}>
-            <Icon icon='mingcute:file-new-line' />
-            New Drawing
-          </button>
-          <button type='button' onClick={onCreateNewFolderClick}>
-            <Icon icon='mingcute:new-folder-line' />
-            New Folder
-          </button>
-        </>
-      )}
-    </S.MenuContainer>
+        {selectedItemIds.length === 0 && (
+          <>
+            <button type='button' onClick={onCreateNewFileClick}>
+              <Icon icon='mingcute:file-new-line' />
+              New Drawing
+            </button>
+            <button type='button' onClick={onCreateNewFolderClick}>
+              <Icon icon='mingcute:new-folder-line' />
+              New Folder
+            </button>
+          </>
+        )}
+      </S.MenuContainer>
     </S.Container>
   );
 };

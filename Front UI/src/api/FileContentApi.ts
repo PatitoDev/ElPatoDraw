@@ -1,5 +1,4 @@
 import { API_URLS } from '../settings';
-import { Drawing } from '../types/Entity';
 import { AuthenticationApi } from './AuthenticationApi';
 
 const apiURL = API_URLS.worker;
@@ -15,11 +14,11 @@ const getFileContent = async (id: string) => {
   return resp;
 };
 
-const updateFileContent = async (id:string, drawing: Drawing) => {
+const updateFileContent = async (id:string, content: string) => {
   const token = await AuthenticationApi.getToken();
 
   await fetch(apiURL + `/${id}`, {
-    body: JSON.stringify(drawing),
+    body: content,
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',

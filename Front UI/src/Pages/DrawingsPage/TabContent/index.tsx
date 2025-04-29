@@ -1,6 +1,6 @@
 import * as S from './styles';
 import { DrawingList } from '../../../Components/DrawingList';
-import DrawingLoader from '../../../Components/DrawingView/DrawingLoader';
+import DrawingLoader from '../../../Components/FileViewer';
 import { useFileStorageStore } from '../../../Store/FileStorageStore';
 
 export const TabContent = () => {
@@ -13,7 +13,7 @@ export const TabContent = () => {
   return (
     <S.Container>
       { currentFolder && (
-        <S.ListContainer style={{ 
+        <S.ListContainer style={{
           display: fileIdCurrentlyEditing === null ? '' : 'none'
         }}>
           <DrawingList />
@@ -21,12 +21,13 @@ export const TabContent = () => {
       )}
 
       {activeFiles.map(file => (
-        <S.DrawingContainer key={file.id} style={{ 
+        <S.DrawingContainer key={file.id} style={{
           display: fileIdCurrentlyEditing === file.id ? '' : 'none'
         }}>
           <DrawingLoader
             key={file.id}
             id={file.id}
+            type={file.type}
           />
         </S.DrawingContainer>
       ))}
