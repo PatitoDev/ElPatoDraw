@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { createTLStore, getSnapshot, loadSnapshot, Tldraw } from 'tldraw';
+import { useEffect, useMemo } from 'react';
+import { createTLStore, getSnapshot, Tldraw, TLEditorSnapshot, TLStoreOptions } from 'tldraw';
 import { useDrawingStore } from '../../../Store/useDrawingStore';
 import { useDebounce } from '../../../hooks/useDebounce';
 
@@ -17,24 +17,30 @@ export const TlDrawEditor = ({ id, initialData }: TlDrawEditorProps) => {
 
   const debouncedDrawingData = useDebounce(fileContent, 1 * 1000);
 
-  const [store] = useState(() => createTLStore());
+  const store = useMemo(() => {
+    const snapshot = initialData ? JSON.parse(initialData) as TLEditorSnapshot : undefined;
 
+    const options: TLStoreOptions = {
+      snapshot
+      /*
+      assets: {
+        upload: console.log,
+        resolve: console.log,
+      }
+      */
+    };
 
-  useEffect(() => {
-    if (initialData) {
-      const snapshot = JSON.parse(initialData);
-      loadSnapshot(store, snapshot);
-    }
+    const newStore = createTLStore(options);
 
-    store.listen(() => {
-      const snap = getSnapshot(store);
+    newStore.listen(() => {
+      const snap = getSnapshot(newStore);
       updateContent(id, JSON.stringify(snap));
     }, {
       scope: 'document',
       source: 'user'
     });
-  }, [id, initialData, updateContent, store]);
-
+    return newStore;
+  }, [id, initialData, updateContent]);
 
   useEffect(() => {
     save(id);
