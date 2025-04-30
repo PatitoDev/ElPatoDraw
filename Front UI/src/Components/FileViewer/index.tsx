@@ -53,7 +53,6 @@ const DrawingLoader = ({ id, type }: DrawingLoaderProps) => {
           return;
         }
 
-        // not every file will be text
         const textContent = await resp.text();
 
         setState({

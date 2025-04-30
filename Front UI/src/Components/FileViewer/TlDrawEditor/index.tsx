@@ -21,16 +21,13 @@ export const TlDrawEditor = ({ id, initialData }: TlDrawEditorProps) => {
 
 
   useEffect(() => {
-    console.log(initialData);
     if (initialData) {
-      console.log('loading initial data');
       const snapshot = JSON.parse(initialData);
       loadSnapshot(store, snapshot);
     }
 
     store.listen(() => {
       const snap = getSnapshot(store);
-      console.log('changes ready');
       updateContent(id, JSON.stringify(snap));
     }, {
       scope: 'document',
