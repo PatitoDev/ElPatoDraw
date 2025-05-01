@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { FileChild, Folder, FolderChild } from '../types/File';
+import { FileChild, FileType, Folder, FolderChild } from '../types/File';
 import { MetadataApi } from '../api/MetadataApi';
 import { createRef, RefObject } from 'react';
 import { useDrawingStore } from './useDrawingStore';
@@ -22,7 +22,7 @@ export interface FileStorageStore {
   openFile: (fileId: string, shouldFocus?: boolean) => void,
   closeFile: (fileId: string) => Promise<void>,
 
-  createNewFile: () => Promise<void>,
+  createNewFile: (fileType: FileType) => Promise<void>,
   createNewFolder: () => Promise<void>
 
   isDragging: boolean
@@ -127,9 +127,9 @@ export const useFileStorageStore = create<FileStorageStore>()((set, get) => ({
     });
   },
 
-  createNewFile: async () => {
+  createNewFile: async (fileType: FileType) => {
     const currentFolderId = get().currentFolder?.metadata?.id;
-    const createdFileId = await MetadataApi.createFile('New Drawing', 'Excalidraw', currentFolderId);
+    const createdFileId = await MetadataApi.createFile('New Drawing', fileType, currentFolderId);
     await get().refreshCurrentFolder();
 
     if (!createdFileId) return;

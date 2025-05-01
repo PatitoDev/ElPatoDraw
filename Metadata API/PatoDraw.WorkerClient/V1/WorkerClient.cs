@@ -1,8 +1,6 @@
-﻿using System.Net.Http.Json;
+﻿namespace PatoDraw.Worker.V1;
 
-namespace PatoDraw.Worker;
-
-public class WorkerClient: IWorkerClient
+public class WorkerClient : IWorkerClient
 {
     private readonly HttpClient _httpClient;
     private readonly string _baseUrl;

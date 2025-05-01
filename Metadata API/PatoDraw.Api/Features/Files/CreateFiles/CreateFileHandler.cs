@@ -2,7 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using PatoDraw.Api.ValidationHelpers;
 using PatoDraw.Infrastructure;
-using PatoDraw.Worker;
+using PatoDraw.Infrastructure.Entities;
+using PatoDraw.Worker.V1;
 
 namespace PatoDraw.Api.Features.Files.CreateDirectory;
 
@@ -70,6 +71,7 @@ public class CreateFileHandler : IRequestHandler<CreateFileRequest, ApiResult<Gu
             OwnerId = request.OwnerId,
             ParentFolderId = request.FilePayload.ParentFolderId,
             Type = request.FilePayload.Type,
+            Assets = []
         };
 
         _dbContext.Add(createdFile);

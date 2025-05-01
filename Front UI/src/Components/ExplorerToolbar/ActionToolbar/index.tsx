@@ -86,7 +86,7 @@ export const ActionToolbar = () => {
       <ButtonIcon type='button' title='New folder' onClick={createNewFolder}>
         <Icon icon='mingcute:new-folder-line' />
       </ButtonIcon>
-      <ButtonIcon type='button' title='New file' onClick={createNewFile}>
+      <ButtonIcon type='button' title='New file' onClick={() => createNewFile('TlDraw')}>
         <Icon icon='mingcute:file-new-line' />
       </ButtonIcon>
 

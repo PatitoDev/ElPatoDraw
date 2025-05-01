@@ -10,35 +10,32 @@ export interface DrawingState {
 }
 
 export interface DrawingStore {
-  drawingData: Record<string, DrawingState>,
-  updateState: (id: string, state: DrawingState) => void,
+  fileContentMap: Record<string, string>,
+  updateContent: (id: string, content: string) => void,
   save: (id: string) => Promise<void>,
   closeAndSave: (id: string) => Promise<void>,
 }
 
 export const useDrawingStore = create<DrawingStore>()((set, get) => ({
-  drawingData: {},
-  updateState: (id, state) => {
+  fileContentMap: {},
+  updateContent: (id, content) => {
     set(prev => (
-      { drawingData: { ...prev.drawingData, [id]: state } }
+      { fileContentMap: { ...prev.fileContentMap, [id]: content } }
     ));
   },
   closeAndSave: async (id) => {
     await get().save(id);
     set(prev => {
-      delete prev.drawingData[id];
-      return { drawingData: prev.drawingData };
+      delete prev.fileContentMap[id];
+      return { fileContentMap: prev.fileContentMap };
     });
   },
   save: async (id) => {
-    const drawing = get().drawingData[id];
-    if (!drawing) return;
+    const content = get().fileContentMap[id];
+    if (!content) return;
 
-    const data = JSON.parse(JSON.stringify(drawing));
 
-    await FileContentApi.updateFileContent(id, {
-      data,
-    });
+    await FileContentApi.updateFileContent(id, content);
     console.log('File saved ', id);
   },
 }));

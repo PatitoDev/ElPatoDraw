@@ -1,4 +1,4 @@
-import { Env } from "../../types/env";
+import { Env } from "../../../types/env";
 
 export const deleteFileHandler = async (
   request: Request,

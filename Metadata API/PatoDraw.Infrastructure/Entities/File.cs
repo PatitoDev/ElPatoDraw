@@ -16,6 +16,8 @@ public class File
 
     public required DateTime ModifiedAt; 
 
+    public required IReadOnlyList<Asset> Assets;
+
     public DateTime? DeletedAt;
 
     public Guid? ParentFolderId;
