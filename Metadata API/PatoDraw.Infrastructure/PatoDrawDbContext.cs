@@ -9,9 +9,14 @@ public class PatoDrawDbContext: DbContext
 
     public DbSet<Folder> Folders { get; set; }
     public DbSet<Entities.File> Files { get; set; }
+    public DbSet<Asset> Assets { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Asset>(x => {
+            x.ToTable("Asset");
+        });
+
         modelBuilder.Entity<Entities.File>(x => {
             x.ToTable("File");
         });

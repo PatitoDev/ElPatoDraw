@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PatoDraw.Api;
 
@@ -14,7 +15,7 @@ public record ApiResult<T>
         Payload = payload
     };
 
-    public static ApiResult<T> Failure(int status, string? error) => new()
+    public static ApiResult<T> Failure(int status, string? error = null) => new()
     {
         Status = status,
         Error = error
@@ -35,6 +36,6 @@ public record ApiResult<T>
             return result;
         }
 
-        throw new Exception("Malformed api result");
+        return new StatusCodeResult(Status);
     }
 }

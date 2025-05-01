@@ -16,6 +16,8 @@
   <ItemGroup>
     <None Remove="Migrations\02\02-Set-Folder-Color-Optional-DOWN.sql" />
     <None Remove="Migrations\02\02-Set-Folder-Color-Optional-UP.sql" />
+    <None Remove="Migrations\03\03-Add-Asset-Table-DOWN.sql" />
+    <None Remove="Migrations\03\03-Add-Asset-Table-UP.sql" />
   </ItemGroup>
 
   <ItemGroup>

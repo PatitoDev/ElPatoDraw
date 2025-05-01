@@ -1,4 +1,4 @@
-﻿namespace PatoDraw.Worker;
+﻿namespace PatoDraw.Worker.V1;
 
 public interface IWorkerClient
 {
