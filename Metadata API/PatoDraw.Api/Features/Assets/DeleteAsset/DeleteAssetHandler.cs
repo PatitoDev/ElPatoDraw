@@ -32,6 +32,9 @@ public class DeleteAssetHandler : IRequestHandler<DeleteAssetRequest, ApiResult<
 
         await _fileContentApiClient.DeleteFile(assetMetadata.Id, cancellationToken);
 
+        _dbContext.Remove(assetMetadata);
+        await _dbContext.SaveChangesAsync(CancellationToken.None);
+
         return ApiResult<bool>.Success(true);
     }
 }
