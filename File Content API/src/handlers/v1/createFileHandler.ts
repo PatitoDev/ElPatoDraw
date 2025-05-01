@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { Env } from '../../types/env';
+import { Env } from '../../../types/env';
 
 export const createFileHandler = async (
   request: Request,
