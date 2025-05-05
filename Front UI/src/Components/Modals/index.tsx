@@ -1,7 +1,8 @@
-import * as S from './styles';
-import { useModalStore } from '../../Store/ModalStore';
-import { DeleteSelectionModal } from './DeleteSelectionModal';
 import { useEffect, useRef } from 'react';
+
+import * as S from './styles';
+import { DeleteSelectionModal } from './DeleteSelectionModal';
+import { useModalStore } from '@Store/useModalStore';
 
 
 export const Modals = () => {

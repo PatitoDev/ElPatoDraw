@@ -3,8 +3,10 @@ import { Excalidraw, restoreAppState, restoreElements } from '@excalidraw/excali
 import { AppState, BinaryFiles, ExcalidrawInitialDataState } from '@excalidraw/excalidraw/types/types';
 import { useCallback, useEffect, useState } from 'react';
 import { ExcalidrawElement } from '@excalidraw/excalidraw/types/element/types';
-import { useDebounce } from '../../../hooks/useDebounce';
-import { useDrawingStore } from '../../../Store/useDrawingStore';
+
+import { useDebounce } from '@Hooks/useDebounce';
+import { useFileContentStore } from '@Store/useFileContentStore';
+
 
 export interface DrawingFile {
   data: object,
@@ -16,9 +18,9 @@ export interface ExcalidrawEditorProps {
 }
 
 export const ExcalidrawEditor = ({ id, initialData }: ExcalidrawEditorProps) => {
-  const fileContent = useDrawingStore(store => store.fileContentMap[id]);
-  const save = useDrawingStore(store => store.save);
-  const updateContent = useDrawingStore(store => store.updateContent);
+  const fileContent = useFileContentStore(store => store.fileContentMap[id]);
+  const save = useFileContentStore(store => store.save);
+  const updateContent = useFileContentStore(store => store.updateContent);
 
   const debouncedValue = useDebounce(fileContent, 1 * 1000);
 

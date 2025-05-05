@@ -78,6 +78,9 @@ importers:
       vite:
         specifier: ^6.2.6
         version: 6.2.6(@types/node@22.14.1)
+      vite-tsconfig-paths:
+        specifier: ^5.1.4
+        version: 5.1.4(typescript@5.8.3)(vite@6.2.6(@types/node@22.14.1))
 
 packages:
 
@@ -1582,6 +1585,9 @@ packages:
     resolution: {integrity: sha512-DpLKbNU4WylpxJykQujfCcwYWiV/Jhm50Goo0wrVILAv5jOr9d+H+UR3PhSCD2rCCEIg0uc+G+muBTwD54JhDQ==}
     engines: {node: '>= 0.4'}
 
+  globrex@0.1.2:
+    resolution: {integrity: sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==}
+
   gopd@1.2.0:
     resolution: {integrity: sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==}
     engines: {node: '>= 0.4'}
@@ -2206,6 +2212,16 @@ packages:
     peerDependencies:
       typescript: '>=4.8.4'
 
+  tsconfck@3.1.5:
+    resolution: {integrity: sha512-CLDfGgUp7XPswWnezWwsCRxNmgQjhYq3VXHM0/XIRxhVrKw0M1if9agzryh1QS3nxjCROvV+xWxoJO1YctzzWg==}
+    engines: {node: ^18 || >=20}
+    hasBin: true
+    peerDependencies:
+      typescript: ^5.0.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
 
@@ -2278,6 +2294,14 @@ packages:
     resolution: {integrity: sha512-Rb46I4cGGVBmjamjphe8L/UnvJD+uPPtTkNvX5mZgqdbavhI4EbgIWJiIHXJ8bc/i9EQGPRh4DwEURJ552Do0A==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  vite-tsconfig-paths@5.1.4:
+    resolution: {integrity: sha512-cYj0LRuLV2c2sMqhqhGpaO3LretdtMn/BVX4cPLanIZuwwrkVl+lK84E/miEXkCHWXuq65rhNN4rXsBcOB3S4w==}
+    peerDependencies:
+      vite: '*'
+    peerDependenciesMeta:
+      vite:
+        optional: true
 
   vite@6.2.6:
     resolution: {integrity: sha512-9xpjNl3kR4rVDZgPNdTL0/c6ao4km69a/2ihNQbcANz8RuCOK3hQBmLSJf3bRKVQjVMda+YvizNE8AwvogcPbw==}
@@ -4010,6 +4034,8 @@ snapshots:
       define-properties: 1.2.1
       gopd: 1.2.0
 
+  globrex@0.1.2: {}
+
   gopd@1.2.0: {}
 
   graphemer@1.4.0: {}
@@ -4768,6 +4794,10 @@ snapshots:
     dependencies:
       typescript: 5.8.3
 
+  tsconfck@3.1.5(typescript@5.8.3):
+    optionalDependencies:
+      typescript: 5.8.3
+
   tslib@2.6.2: {}
 
   type-check@0.4.0:
@@ -4852,6 +4882,17 @@ snapshots:
   use-sync-external-store@1.5.0(react@18.3.1):
     dependencies:
       react: 18.3.1
+
+  vite-tsconfig-paths@5.1.4(typescript@5.8.3)(vite@6.2.6(@types/node@22.14.1)):
+    dependencies:
+      debug: 4.4.0
+      globrex: 0.1.2
+      tsconfck: 3.1.5(typescript@5.8.3)
+    optionalDependencies:
+      vite: 6.2.6(@types/node@22.14.1)
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
 
   vite@6.2.6(@types/node@22.14.1):
     dependencies:

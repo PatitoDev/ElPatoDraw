@@ -1,5 +1,5 @@
 import { API_URLS } from '../settings';
-import { File, FileType, Folder } from '../types/File';
+import { File, FileType, Folder } from '@Types/File';
 import { AuthenticationApi } from './AuthenticationApi';
 
 const baseUrl = API_URLS.metadataApi;

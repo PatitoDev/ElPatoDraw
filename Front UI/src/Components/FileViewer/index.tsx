@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { FileContentApi } from '../../api/FileContentApi';
-import styled, { keyframes } from 'styled-components';
 import { Icon } from '@iconify/react';
-import { FileType } from '../../types/File';
+import styled, { keyframes } from 'styled-components';
+
+import { FileContentApi } from '@Api/FileContentApi';
+import { FileType } from '@Types/File';
 import { ExcalidrawEditor } from './ExcalidrawEditor';
 import { TlDrawEditor } from './TlDrawEditor';
 

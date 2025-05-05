@@ -1,7 +1,7 @@
-import DrawingsPage from './Pages/DrawingsPage';
+import { HomePage } from './Pages/HomePage';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
-import { AuthenticationApi } from './api/AuthenticationApi';
+import { AuthenticationApi } from '@Api/AuthenticationApi';
 import { ThemeProvider } from 'styled-components';
 import { mainTheme } from './theme';
 import { isProd } from './settings';
@@ -41,7 +41,7 @@ function App() {
   return (
     <ThemeProvider theme={mainTheme}>
       <div style={{ height: '100vh', width: '100vw' }}>
-        <DrawingsPage />
+        <HomePage />
       </div>
     </ThemeProvider>
   );

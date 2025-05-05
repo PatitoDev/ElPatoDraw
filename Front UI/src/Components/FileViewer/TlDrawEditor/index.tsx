@@ -1,12 +1,13 @@
+import 'tldraw/tldraw.css';
 import { useEffect, useMemo, useState } from 'react';
 import { createTLStore, Editor, getSnapshot, Tldraw, TLEditorSnapshot, TLStoreOptions } from 'tldraw';
-import { useDrawingStore } from '../../../Store/useDrawingStore';
-import { useDebounce } from '../../../hooks/useDebounce';
-import { AssetApi } from '../../../api/AssetApi';
-import { useCacheAssetStore } from './useCacheAssetStore';
-import { useFileStorageStore } from '../../../Store/FileStorageStore';
 
-import 'tldraw/tldraw.css';
+import { useDebounce } from '@Hooks/useDebounce';
+import { AssetApi } from '@Api/AssetApi';
+import { useFileContentStore } from '@Store/useFileContentStore';
+import { useFileStore } from '@Store/useFileStore';
+import { useCacheAssetStore } from './useCacheAssetStore';
+
 
 export interface TlDrawEditorProps {
   id: string,
@@ -19,11 +20,11 @@ export const TlDrawEditor = ({ id, initialData }: TlDrawEditorProps) => {
   const deleteAssets = useCacheAssetStore(cache => cache.deleteAssets);
   const getAssetUrl = useCacheAssetStore(cache => cache.getAssetUrl);
 
-  const fileContent = useDrawingStore(state => state.fileContentMap[id]);
-  const updateContent = useDrawingStore(state => state.updateContent);
-  const save = useDrawingStore(state => state.save);
+  const fileContent = useFileContentStore(state => state.fileContentMap[id]);
+  const updateContent = useFileContentStore(state => state.updateContent);
+  const save = useFileContentStore(state => state.save);
 
-  const isFocused = useFileStorageStore(state => state.fileIdCurrentlyEditing === id);
+  const isFocused = useFileStore(state => state.focusedFileId === id);
 
   const debouncedDrawingData = useDebounce(fileContent, 1 * 1000);
   const [editor, setEditor] = useState<Editor | null>(null);
