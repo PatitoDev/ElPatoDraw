@@ -2,6 +2,7 @@ import { StateCreator } from 'zustand';
 import { FileActionStoreSlice, FilterOptions, NavigationFileStoreSlice, SelectionStoreSlice } from './types';
 import { MetadataApi } from '@Api/MetadataApi';
 import { useFileContentStore } from '@Store/useFileContentStore';
+import { createRef } from 'react';
 
 export const useNavigationFileStoreSlice: StateCreator<
 SelectionStoreSlice & NavigationFileStoreSlice & FileActionStoreSlice,
@@ -34,9 +35,15 @@ NavigationFileStoreSlice
     await get().changeToFolder(folderId ?? null);
   },
 
+  filterInputRef: createRef<HTMLInputElement>(),
   isFilterActive: false,
   setIsFilterActive: (value) => {
     set({ isFilterActive: value });
+
+    const input = get().filterInputRef.current;
+    if (value && input) {
+      input.focus();
+    }
   },
   filteredValue: '',
   filteredRegexValue: null,

@@ -7,13 +7,21 @@ SelectionStoreSlice & NavigationFileStoreSlice & FileActionStoreSlice,
 [],
 [],
 SelectionStoreSlice
-> = (set) => ({
+> = (set, get) => ({
   itemContainerRef: createRef<HTMLDivElement>(),
 
   isDragging: false,
   setIsDragging: (value) => set({ isDragging: value }),
 
   selectedItemIds: [],
+  selectAll: () => {
+    const folder = get().currentFolder;
+    if (!folder) return;
+
+    get().setSelectedItemsIds(
+      [...folder.files.map(f => f.id), ...folder.folders.map(f => f.id)]
+    );
+  },
   clearSelection: () => {
     set({ selectedItemIds: [] });
   },

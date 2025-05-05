@@ -11,12 +11,31 @@ export const useFolderKeybinds = () => {
   const openFile = useFileStore(store => store.openFile);
   const changeToFolder = useFileStore(store => store.changeToFolder);
   const getSelectedItems = useFileStore(store => store.getSelectedItems);
+  const selectAll = useFileStore(store => store.selectAll);
 
   const editSelectedFileName = useFileStore(store => store.editSelectedFileName);
+  const setIsFilterActive = useFileStore(store => store.setIsFilterActive);
 
-  useEvent(document, 'keyup', (e: KeyboardEvent) => {
+  useEvent(document, 'keydown', (e: KeyboardEvent) => {
     if (!isOnHomeTab) return;
     if (isEditingName) return;
+
+    if (e.repeat) return;
+
+    if (e.ctrlKey) {
+      switch (e.key) {
+      case 'f':
+        e.preventDefault();
+        setIsFilterActive(true);
+        return;
+      case 'a':
+        e.preventDefault();
+        selectAll();
+        return;
+      }
+    }
+
+    // actions after selecting something
     if (selectedItemIds.length === 0) return;
 
     if (e.key === 'Backspace' || e.key === 'Delete') {
