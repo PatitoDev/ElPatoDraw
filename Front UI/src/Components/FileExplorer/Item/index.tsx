@@ -6,6 +6,7 @@ import * as S from './styles';
 import { DraggedItem } from '@Components/FileExplorer/DraggedItem';
 import { MIDDLE_MOUSE_BTN, RIGHT_MOUSE_BTN } from '@/buttons';
 import { useFileStore } from '@Store/useFileStore';
+import { ItemNameLabel } from './ItemNameLabel';
 
 export interface ItemProps {
   id: string,
@@ -224,7 +225,9 @@ export const Item = ({
           value={inputNameValue}
           onChange={e => setInputNameValue(e.target.value)}
         /> :
-        <S.Name>{name}</S.Name>
+        <S.Name>
+          <ItemNameLabel itemName={name} />
+        </S.Name>
       }
     </S.Container>
   );

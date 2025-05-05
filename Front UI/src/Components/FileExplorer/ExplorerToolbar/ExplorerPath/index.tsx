@@ -1,19 +1,17 @@
 import { Icon } from '@iconify/react';
-import { useState } from 'react';
 
 import * as S from './styles';
 import { useFileStore } from '@Store/useFileStore';
 import { ButtonIcon } from '@Core/ButtonIcon';
 import { PathActionButton } from './PathActionButton';
-import { SearchFilter } from './SearchFilter';
 
 
 export const ExplorerPath = () => {
-  const [isFilterActive, setIsFilterActive] = useState(false);
-
   const currentFolder = useFileStore(state => state.currentFolder);
   const navigateToParentFolder = useFileStore(state => state.navigateToParentFolder);
   const changeToFolder = useFileStore(state => state.changeToFolder);
+  const setIsFilterActive = useFileStore(state => state.setIsFilterActive);
+  const isFilterActive = useFileStore(state => state.isFilterActive);
 
   const onDragOver: React.DragEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
@@ -28,12 +26,10 @@ export const ExplorerPath = () => {
       <ButtonIcon
         type='button'
         title='Search'
-        onClick={() => setIsFilterActive(v => !v)}
+        onClick={() => setIsFilterActive(!isFilterActive)}
       >
         <Icon icon='mingcute:search-2-fill' />
       </ButtonIcon>
-
-      <SearchFilter isActive={isFilterActive} />
 
       <ButtonIcon
         title='Back'

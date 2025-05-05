@@ -7,4 +7,6 @@ export const Container = styled.div`
   padding: 0.5em 1em;
   flex-wrap: wrap;
   position: relative;
+  z-index: 2;
+  background-color: ${({ theme }) => theme.colors.background};
 `;

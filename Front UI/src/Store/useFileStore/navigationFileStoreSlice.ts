@@ -1,5 +1,5 @@
 import { StateCreator } from 'zustand';
-import { FileActionStoreSlice, NavigationFileStoreSlice, SelectionStoreSlice } from './types';
+import { FileActionStoreSlice, FilterOptions, NavigationFileStoreSlice, SelectionStoreSlice } from './types';
 import { MetadataApi } from '@Api/MetadataApi';
 import { useFileContentStore } from '@Store/useFileContentStore';
 
@@ -34,9 +34,24 @@ NavigationFileStoreSlice
     await get().changeToFolder(folderId ?? null);
   },
 
+  isFilterActive: false,
+  setIsFilterActive: (value) => {
+    set({ isFilterActive: value });
+  },
   filteredValue: '',
+  filteredRegexValue: null,
   setFilteredValue: (value) => {
-    set({ filteredValue: value });
+    const valueEscaped = value.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
+
+    const regexFlags = get().filterOptions.caseSensitive ? 'g' : 'gi';
+    const regex = value.length === 0 ? null : new RegExp(`(${valueEscaped})`, regexFlags);
+    set({ filteredValue: value, filteredRegexValue: regex });
+  },
+  filterOptions: { caseSensitive: false },
+  setFilterOptions: ( value: FilterOptions ) => {
+    set({ filterOptions: value });
+    // refresh the filter value to update the regex flags
+    get().setFilteredValue(get().filteredValue);
   },
 
   showExplorer: async () => {

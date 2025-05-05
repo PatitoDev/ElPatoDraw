@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
 
 export const Container = styled.div`
+  pointer-events: none;
   overflow: hidden;
   position: absolute;
   top: 0;
@@ -10,6 +11,7 @@ export const Container = styled.div`
 `;
 
 export const MenuContainer = styled.div<{ $isOpen: boolean }>`
+  pointer-events: auto;
   z-index: 99999;
 
   ${({ $isOpen }) => !$isOpen && css`

@@ -22,9 +22,9 @@ export const FileGrid = styled.div`
 
 export const NoContent = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   padding: 5em;
   gap: 1em;
 `;
