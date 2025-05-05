@@ -5,7 +5,7 @@ export const Container = styled.div`
   display: flex;
   padding-top: 1em;
   align-items: center;
-  gap: 0.5em;
+  gap: 0.8em;
 
   white-space: nowrap;
   overflow-x: auto;
@@ -13,11 +13,14 @@ export const Container = styled.div`
 `;
 
 export const HomeTab = styled.div<{ $selected: boolean }>`
-  ${({ $selected }) => $selected ? 
+  ${({ $selected }) => $selected ?
     css`
       transform: translateY(0);
       background-color: ${({ theme }) => theme.colors.background};
       box-shadow: 0 10px 0 ${({ theme }) => theme.colors.background};
+      &:after {
+        opacity: 1;
+      }
     `
     :
     css`
@@ -25,6 +28,9 @@ export const HomeTab = styled.div<{ $selected: boolean }>`
       color: ${({ theme }) => theme.colors.notSelectedTabColor};
       background-color: ${({ theme }) => theme.colors.notSelectedTabBackground};
       box-shadow: 0 10px 0 ${({ theme }) => theme.colors.notSelectedTabBackground};
+      &:after {
+        opacity: 0;
+      }
     `
 }
   transition:
@@ -32,6 +38,9 @@ export const HomeTab = styled.div<{ $selected: boolean }>`
     transform 0.15s cubic-bezier(0, 0.82, 0.165, 2),
     background-color 0.15s cubic-bezier(0, 0.82, 0.165, 2)
   ;
+  &:after {
+    transition: opacity 0.15s;
+  }
   display: flex;
   align-items: center;
   justify-content: center;
@@ -44,14 +53,28 @@ export const HomeTab = styled.div<{ $selected: boolean }>`
   &:hover {
     transform: translateY(0);
   }
+
+  &:after {
+    right: -10px;
+    bottom: 0;
+    position: absolute;
+    content: '';
+    width: 10px;
+    height: 10px;
+    background-color: ${({ theme }) => theme.colors.background };
+    mask: radial-gradient(100% 100% at top right,rgb(0 0 0/0%) 100%,rgb(0 0 0/100%));
+  }
 `;
 
 export const Tab = styled.div<{ $selected: boolean, $fileColor: string }>`
-  ${({ $selected }) => $selected ? 
+  ${({ $selected }) => $selected ?
     css`
       transform: translateY(0);
       background-color: ${({ theme }) => theme.colors.background};
       box-shadow: 0 10px 0 ${({ theme }) => theme.colors.background};
+      &:after, &:before {
+        opacity: 1;
+      }
     `
     :
     css`
@@ -59,6 +82,9 @@ export const Tab = styled.div<{ $selected: boolean, $fileColor: string }>`
       color: ${({ theme }) => theme.colors.notSelectedTabColor};
       background-color: ${({ theme }) => theme.colors.notSelectedTabBackground};
       box-shadow: 0 10px 0 ${({ theme }) => theme.colors.notSelectedTabBackground};
+      &:after, &:before {
+        opacity: 0;
+      }
     `
 }
 
@@ -71,7 +97,7 @@ export const Tab = styled.div<{ $selected: boolean, $fileColor: string }>`
   border-radius: 0.5em 0.5em 0 0;
 
   cursor: pointer;
-  transition: 
+  transition:
     opacity 0.20s cubic-bezier(0, 0.82, 0.165, 2),
     transform 0.20s cubic-bezier(0, 0.82, 0.165, 2),
     background-color 0.15s cubic-bezier(0, 0.82, 0.165, 2)
@@ -95,6 +121,30 @@ export const Tab = styled.div<{ $selected: boolean, $fileColor: string }>`
         opacity: 1;
       }
     `}
+  }
+
+  &:after {
+    right: -10px;
+    bottom: 0;
+    position: absolute;
+    content: '';
+    width: 10px;
+    height: 10px;
+    background-color: ${({ theme }) => theme.colors.background };
+    mask: radial-gradient(100% 100% at top right,rgb(0 0 0/0%) 100%,rgb(0 0 0/100%));
+    transition: opacity 0.20s;
+  }
+
+  &:before {
+    left: -10px;
+    bottom: 0;
+    position: absolute;
+    content: '';
+    width: 10px;
+    height: 10px;
+    background-color: ${({ theme }) => theme.colors.background };
+    mask: radial-gradient(100% 100% at top left,rgb(0 0 0/0%) 100%,rgb(0 0 0/100%));
+    transition: opacity 0.20s;
   }
 `;
 
