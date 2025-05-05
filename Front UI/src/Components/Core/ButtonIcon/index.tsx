@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const ButtonIcon = styled.button`
+export const ButtonIcon = styled.button<{ $isActive?: boolean }>`
   font-size: 25px;
   display: inline-flex;
   align-items: center;
@@ -30,4 +30,9 @@ export const ButtonIcon = styled.button`
   &:disabled {
     opacity: 0.4;
   }
+
+  ${({ $isActive }) => $isActive && css`
+    opacity: 1;
+    background-color: ${({ theme }) => theme.colors.backgroundLight}
+  `}
 `;

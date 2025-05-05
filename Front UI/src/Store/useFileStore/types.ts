@@ -14,14 +14,23 @@ export interface SelectionStoreSlice {
   setSelectedItemsIds: (fileIds: Array<string>) => void,
 }
 
+export interface FilterOptions {
+  caseSensitive: boolean
+}
+
 export interface NavigationFileStoreSlice {
   currentFolder: Folder | null,
   changeToFolder: (folderId: string | null) => Promise<void>,
   navigateToParentFolder: () => Promise<void>,
   refreshCurrentFolder: () => Promise<void>,
 
+  isFilterActive: boolean,
+  setIsFilterActive: (value: boolean) => void,
   filteredValue: string,
+  filteredRegexValue: RegExp | null,
   setFilteredValue: (value: string) => void,
+  filterOptions: FilterOptions,
+  setFilterOptions: (value: FilterOptions) => void,
 
   showExplorer: () => Promise<void>,
   openFile: (fileId: string, shouldFocus?: boolean) => void,
