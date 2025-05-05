@@ -8,6 +8,7 @@ export interface SelectionStoreSlice {
   setIsDragging: (value: boolean) => void,
 
   selectedItemIds: Array<string>,
+  selectAll: () => void,
   clearSelection: () => void,
   addToSelection: (fileId: string) => void,
   removeFromSelection: (fileId: string) => void,
@@ -24,6 +25,7 @@ export interface NavigationFileStoreSlice {
   navigateToParentFolder: () => Promise<void>,
   refreshCurrentFolder: () => Promise<void>,
 
+  filterInputRef: RefObject<HTMLInputElement>,
   isFilterActive: boolean,
   setIsFilterActive: (value: boolean) => void,
   filteredValue: string,

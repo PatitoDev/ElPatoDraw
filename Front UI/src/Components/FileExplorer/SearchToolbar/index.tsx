@@ -11,6 +11,7 @@ export const SearchToolbar = () => {
   const setValue = useFileStore(store => store.setFilteredValue);
   const filterOptions = useFileStore(store => store.filterOptions);
   const setFilterOptions = useFileStore(store => store.setFilterOptions);
+  const inputSearchRef = useFileStore(store => store.filterInputRef);
 
   return (
     <S.Container $isActive={isActive}>
@@ -26,11 +27,13 @@ export const SearchToolbar = () => {
         <Icon aria-hidden icon='mingcute:font-size-line' />
       </ButtonIcon>
       <input
+        ref={inputSearchRef}
         name='File filter'
         type='text'
         placeholder='Search'
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => {setValue(e.target.value); }}
+        onKeyDown={(e) => e.stopPropagation()}
         onKeyUp={(e) => e.stopPropagation()}
       />
     </S.Container>
