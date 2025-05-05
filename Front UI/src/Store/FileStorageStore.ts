@@ -73,10 +73,17 @@ export const useFileStorageStore = create<FileStorageStore>()((set, get) => ({
   changeToFolder: async (folderId) => {
     const folder = await MetadataApi.getFolder(folderId);
     if (folder === null) return;
+    const isRefreshing = (get().currentFolder?.metadata?.id ?? null) === folderId;
+
     set({ currentFolder: folder });
     set(prev => ({ activeFiles: [
       ...prev.activeFiles.map(f => folder.files.find(file => file.id === f.id) ?? f)
     ]}));
+
+    if (!isRefreshing) {
+      // clear selection on navigation to avoid modifying items out of view;
+      set({ selectedItemIds: [] });
+    }
   },
 
   navigateToParentFolder: async () => {
