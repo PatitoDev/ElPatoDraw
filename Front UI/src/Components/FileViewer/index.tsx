@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
-import { FileContentApi } from '../../api/FileContentApi';
-import styled, { keyframes } from 'styled-components';
 import { Icon } from '@iconify/react';
-import { FileType } from '../../types/File';
+import styled, { keyframes } from 'styled-components';
+
+import { FileContentApi } from '@Api/FileContentApi';
+import { FileType } from '@Types/File';
 import { ExcalidrawEditor } from './ExcalidrawEditor';
 import { TlDrawEditor } from './TlDrawEditor';
 
-export interface DrawingLoaderProps {
+export interface FileLoaderProps {
   id: string,
   type: FileType
 }
@@ -32,7 +33,7 @@ const LoadingContainer = styled.div`
   }
 `;
 
-const DrawingLoader = ({ id, type }: DrawingLoaderProps) => {
+export const FileLoader = ({ id, type }: FileLoaderProps) => {
   const [state, setState] = useState<{
     isLoading: boolean,
     data: string | null,
@@ -73,7 +74,7 @@ const DrawingLoader = ({ id, type }: DrawingLoaderProps) => {
   }, [id]);
 
   if (state.hasError) return (
-    <h2>Error loading drawing, try again later.</h2>
+    <h2>Error loading file, try again later.</h2>
   );
 
   if (state.isLoading) return (
@@ -99,5 +100,3 @@ const DrawingLoader = ({ id, type }: DrawingLoaderProps) => {
     );
   }
 };
-
-export default DrawingLoader;

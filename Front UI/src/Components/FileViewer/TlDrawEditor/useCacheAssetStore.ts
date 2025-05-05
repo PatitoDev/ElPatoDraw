@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { AssetApi } from '../../../api/AssetApi';
+import { AssetApi } from '@Api/AssetApi';
 
 
 export interface CacheAssetStore {

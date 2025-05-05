@@ -1,10 +1,10 @@
-import { useFileStorageStore } from '../../../Store/FileStorageStore';
-import { useModalStore } from '../../../Store/ModalStore';
+import { useFileStore } from '@Store/useFileStore';
+import { useModalStore } from '@Store/useModalStore';
 import * as S from './styles';
 
 export const DeleteSelectionModal = () => {
-  const selectedItemIds = useFileStorageStore(state => state.selectedItemIds);
-  const deleteSelection = useFileStorageStore(state => state.deleteSelection);
+  const selectedItemIds = useFileStore(state => state.selectedItemIds);
+  const deleteSelection = useFileStore(state => state.deleteSelection);
   const closeModal = useModalStore(state => state.closeModal);
 
   const onYesClicked = async () => {
