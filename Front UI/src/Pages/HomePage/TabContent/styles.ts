@@ -13,7 +13,7 @@ export const ListContainer = styled.div`
   height: 100%;
 `;
 
-export const DrawingContainer = styled.div`
+export const ViewerContainer = styled.div`
   height: 100%;
   border: solid ${({ theme }) => theme.colors.background} 5px;
   border-radius: 1em;

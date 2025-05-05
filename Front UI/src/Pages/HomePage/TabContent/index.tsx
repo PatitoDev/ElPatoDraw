@@ -1,5 +1,5 @@
+import { FileLoader } from '@/Components/FileViewer';
 import * as S from './styles';
-import DrawingLoader from '@Components/FileViewer';
 import { FileExplorer } from '@Components/FileExplorer';
 import { useFileStore } from '@Store/useFileStore';
 
@@ -20,15 +20,15 @@ export const TabContent = () => {
       )}
 
       {openedFiles.map(file => (
-        <S.DrawingContainer key={file.id} style={{
+        <S.ViewerContainer key={file.id} style={{
           display: focusedFileId === file.id ? '' : 'none'
         }}>
-          <DrawingLoader
+          <FileLoader
             key={file.id}
             id={file.id}
             type={file.type}
           />
-        </S.DrawingContainer>
+        </S.ViewerContainer>
       ))}
     </S.Container>
   );
