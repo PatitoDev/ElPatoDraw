@@ -19,7 +19,7 @@ FileActionStoreSlice
 
     if (!createdFileId) return;
     set({
-      focusedFileId: createdFileId,
+      editingNameFileId: createdFileId,
       selectedItemIds: [createdFileId]
     });
   },
