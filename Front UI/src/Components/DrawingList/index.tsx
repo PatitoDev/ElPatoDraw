@@ -6,6 +6,7 @@ import { useTheme } from 'styled-components';
 import { SelectionBox } from '../SelectionBox';
 import { useEffect, useMemo, useRef } from 'react';
 import { Icon } from '@iconify/react';
+import { FileListFooter } from '../FileListFooter';
 
 export const DrawingList = () => {
   const filteredValue = useFileStorageStore(state => state.filteredValue);
@@ -70,6 +71,7 @@ export const DrawingList = () => {
           />
         ))}
       </S.FileGrid>
+      <FileListFooter />
     </S.Container>
   );
 };
