@@ -1,0 +1,4 @@
+[build]
+  ignore = "1"
+  base = "Front UI/"
+  public = "Front UI/dist/"

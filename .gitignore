@@ -205,3 +205,6 @@ dist
 
 .dev.vars
 .wrangler/
+
+
+.netlify
